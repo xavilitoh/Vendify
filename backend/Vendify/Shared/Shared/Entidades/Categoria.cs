@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Shared.Entidades
 {
-    public class Marca : ModeloBaseCompleto
+    public class Categoria : ModeloBaseCompleto
     {
-
+        
     }
 }

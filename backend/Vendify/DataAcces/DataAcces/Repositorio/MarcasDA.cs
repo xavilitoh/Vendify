@@ -8,11 +8,9 @@ using System.Threading.Tasks;
 
 namespace DataAcces.Repositorio
 {
-    public interface IMarcasDA
+    public interface IMarcasDA : InterfaceBase<Marca>
     {
-        Task<Marca> Save(Marca marca);
-        Task<Marca> Get(int id);
-        Task<List<Marca>> Get();
+
     }
     public class MarcasDA : IMarcasDA
     {
