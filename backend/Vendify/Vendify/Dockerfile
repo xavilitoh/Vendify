@@ -9,17 +9,17 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["backend/Vendify/Vendify/Vendify.csproj", "Vendify/"]
-COPY ["backend/Vendify/DataAcces/DataAcces/DataAcces.csproj", "DataAcces/DataAcces/"]
-COPY ["backend/Vendify/Shared/Shared/Shared.csproj", "Shared/Shared/"]
-RUN dotnet restore "./backend/Vendify/Vendify/Vendify.csproj"
+COPY ["/home/runner/work/Vendify/Vendify/backend/Vendify/Vendify/Vendify.csproj", "Vendify/"]
+COPY ["/home/runner/work/Vendify/Vendify/backend/Vendify/DataAcces/DataAcces/DataAcces.csproj", "DataAcces/DataAcces/"]
+COPY ["/home/runner/work/Vendify/Vendify/backend/Vendify/Shared/Shared/Shared.csproj", "Shared/Shared/"]
+RUN dotnet restore "/home/runner/work/Vendify/Vendify/backend/Vendify/Vendify/Vendify.csproj"
 COPY . .
 WORKDIR "/src/Vendify"
-RUN dotnet build "./backend/Vendify/Vendify.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "/home/runner/work/Vendify/Vendify/backend/Vendify/Vendify.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./backend/Vendify/Vendify.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "/home/runner/work/Vendify/Vendify/backend/Vendify/Vendify.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
