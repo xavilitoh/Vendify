@@ -31,8 +31,7 @@ namespace Test.Categorias
         public async Task GET_OK()
         {
             var result = await _controller.Get();
-
-            Assert.NotNull(result);
+                        Assert.NotNull(result);
             Assert.IsType<OkObjectResult>(result);
         }
 

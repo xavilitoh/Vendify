@@ -10,6 +10,8 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Vendify/Vendify.csproj", "Vendify/"]
+COPY ["DataAcces/DataAcces/DataAcces.csproj", "DataAcces/DataAcces/"]
+COPY ["Shared/Shared/Shared.csproj", "Shared/Shared/"]
 RUN dotnet restore "./Vendify/Vendify.csproj"
 COPY . .
 WORKDIR "/src/Vendify"
