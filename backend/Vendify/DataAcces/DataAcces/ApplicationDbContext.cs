@@ -16,6 +16,7 @@ namespace DataAcces
         string _db = "ventify.db";
         public DbSet<Marca> Marcas { get; set; }
         public DbSet<Categoria> Categorias { get; set; }
+        public DbSet<Subcategoria> Subategorias { get; set; }
 
         public ApplicationDbContext()
         {
@@ -55,7 +56,19 @@ namespace DataAcces
                 entity.HasKey(e => e.Id);
             });
 
+            modelBuilder.Entity<Subcategoria>().ToTable("Subcategorias");
+            modelBuilder.Entity<Subcategoria>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+            });
+
             base.OnModelCreating(modelBuilder);
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            OnBeforeSaving();
+            return base.SaveChangesAsync(cancellationToken);
         }
 
         private void OnBeforeSaving()

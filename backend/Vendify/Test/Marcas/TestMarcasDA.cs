@@ -19,6 +19,7 @@ namespace Test.Marcas
 
         public TestMarcasDA()
         {
+            dbContext.Marcas.ExecuteDelete();
             _marcaDA = new MarcasDA(dbContext);
         }
 

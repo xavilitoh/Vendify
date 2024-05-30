@@ -17,6 +17,7 @@ namespace Test.Categorias
 
         public CategoriaDATest()
         {
+            dbContext.Categorias.ExecuteDelete();
             _categoriaDA = new CategoriaDA(dbContext);
         }
 
@@ -36,10 +37,10 @@ namespace Test.Categorias
         [Fact]
         public async Task Save_Categoria_OK()
         {
-            var result = await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas" });
-            var desc = result.Descripcion;
+            var desc = "Galletas";
+            var result = await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = desc });
             Assert.IsType<Categoria>(result);
-            Assert.Equal(desc, result.Descripcion);
+            Assert.Equal(desc.ToUpper(), result.Descripcion);
         }
     }
 }
