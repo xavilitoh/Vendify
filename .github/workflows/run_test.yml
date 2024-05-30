@@ -32,7 +32,7 @@ jobs:
       
     - name: Build
       run: dotnet build --configuration Release --no-restore
-      working-directory: ./backend/Vendify/Vendify
+      working-directory: backend/Vendify/Vendify
     
     - name: Test
       run: dotnet test --no-restore --verbosity normal
