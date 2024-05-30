@@ -51,4 +51,4 @@ Este proyecto está bajo la licencia [MIT License](LICENSE).
 
 ## Contacto
 
-Si tienes alguna pregunta o sugerencia, por favor contacta a [nombre del desarrollador](mailto:correo@ejemplo.com).
+Si tienes alguna pregunta o sugerencia, por favor contacta a [Xavier Berroa](mailto:ing.wxbo@gmail.com).
