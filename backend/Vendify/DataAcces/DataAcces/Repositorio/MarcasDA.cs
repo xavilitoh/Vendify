@@ -21,10 +21,10 @@ namespace DataAcces.Repositorio
             this.dbContext = dbContext;
         }
 
-        public async Task<Marca> Get(int id)
+        public async Task<Marca?> Get(int id)
         {
             return await dbContext.Marcas.AsNoTracking()
-                .FirstOrDefaultAsync(model => model.Id == id) ?? new();
+                .FirstOrDefaultAsync(model => model.Id == id) ?? null;
         }
 
         public async Task<List<Marca>> Get()

@@ -7,23 +7,25 @@ using System.Text;
 using System.Threading.Tasks;
 using Vendify.Controllers;
 using Microsoft.EntityFrameworkCore;
-using Shared.Entidades;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Entidades;
 using Vendify.DTO;
 
-namespace Test.Categorias
+namespace Test.Subcategorias
 {
-    public class CatedoriasControllerTest
+    public class SubcategoriasControllerTest
     {
+        private readonly SubcategoriasDA _subcategoriaDA;
         private readonly CategoriaDA _categoriaDA;
         private readonly ApplicationDbContext dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
-        private readonly CategoriasController _controller;
+        private readonly SubcategoriasController _controller;
 
-        public CatedoriasControllerTest()
+        public SubcategoriasControllerTest()
         {
-            dbContext.Categorias.ExecuteDelete();
+            dbContext.Subategorias.ExecuteDelete();
+            _subcategoriaDA = new SubcategoriasDA(dbContext);
             _categoriaDA = new CategoriaDA(dbContext);
-            _controller = new CategoriasController(_categoriaDA);
+            _controller = new SubcategoriasController(_subcategoriaDA);
         }
 
 
@@ -32,49 +34,31 @@ namespace Test.Categorias
         {
             //preparacion 
 
-            dbContext.Categorias.ExecuteDelete();
-            await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas" });
-            await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas2" });
-            await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas3" });
+            dbContext.Subategorias.ExecuteDelete();
+
+            var Cat_result = await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas" });
+
+            await _subcategoriaDA.Save(new Subcategoria { Id = 0, Descripcion = "Salada", ICategoria = Cat_result.Id });
+            await _subcategoriaDA.Save(new Subcategoria { Id = 0, Descripcion = "Salada2", ICategoria = Cat_result.Id });
+            await _subcategoriaDA.Save(new Subcategoria { Id = 0, Descripcion = "Salada3", ICategoria = Cat_result.Id });
 
             var result = await _controller.Get();
             Assert.NotNull(result);
             Assert.IsType<OkObjectResult>(result);
-        }
-
-        [Fact]
-        public async Task GET_DATA_VALIDATION_OK()
-        {
-            //preparacion 
-
-            dbContext.Categorias.ExecuteDelete();
-            await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas" });
-            await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas2" });
-            await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas3" });
-
-            //ejecucion
-
-            var result = await _controller.Get();
-
-            //evaluacion
-
-            Assert.NotNull(result);
-            Assert.IsType<OkObjectResult>(result);
-            var categorias = Assert.IsType<List<Categoria>>(result.Value);
-
         }
 
         [Fact]
         public async Task GET_BY_ID_OK()
         {
             dbContext.Categorias.ExecuteDelete();
-            var desc = "Galletas";
-            var result_save = await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = desc });
+            var Cat_result = await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas" });
+            var desc = "Salada";
+            var result_save = await _subcategoriaDA.Save(new Subcategoria { Id = 0, Descripcion = desc, ICategoria = Cat_result.Id});
             var result = await _controller.Get(result_save.Id);
 
             Assert.NotNull(result);
             Assert.IsType<OkObjectResult>(result);
-            var cat = Assert.IsType<Categoria>(result.Value);
+            var cat = Assert.IsType<Subcategoria>(result.Value);
             Assert.Equal(desc.ToUpper(), cat.Descripcion);
         }
 
@@ -83,7 +67,7 @@ namespace Test.Categorias
         {
             dbContext.Categorias.ExecuteDelete();
 
-            var _dto = new CategoriaDTO();
+            var _dto = new SubcategoriaDTO();
 
             var result = await _controller.Post(_dto);
 
@@ -98,13 +82,14 @@ namespace Test.Categorias
         {
             dbContext.Categorias.ExecuteDelete();
 
-            var _dto = new CategoriaDTO { Descripcion = "Galletas" };
+            var Cat_result = await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas" });
+            var _dto = new SubcategoriaDTO { Descripcion = "Galletas", IdCategoria = Cat_result.Id };
 
             var result = await _controller.Post(_dto);
 
             Assert.NotNull(result);
             Assert.IsType<OkObjectResult>(result);
-            Assert.IsType<Categoria>(result.Value);
+            Assert.IsType<Subcategoria>(result.Value);
         }
     }
 }

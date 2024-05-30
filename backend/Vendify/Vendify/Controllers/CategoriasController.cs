@@ -23,7 +23,8 @@ namespace Vendify.Controllers
         public async Task<ObjectResult> Get()
         {
             var data = await categoriaDA.Get();
-            return Ok(data.ToList());
+
+            return (data.ToList().Count < 1) ?  NotFound("No se encontraron registros") :  Ok(data.ToList());
         }
 
         // GET api/<CategoriasController>/5
@@ -31,7 +32,8 @@ namespace Vendify.Controllers
         public async Task<ObjectResult> Get(int id)
         {
             var data = await categoriaDA.Get(id);
-            return Ok(data);
+
+            return (data == null) ? NotFound($"Categoria {id} no encontrada") : Ok(data);
         }
 
         // POST api/<CategoriasController>

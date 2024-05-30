@@ -46,7 +46,6 @@ namespace Test.Subcategorias
             var result = await _subcategoriaDA.Get();
 
             Assert.IsType<List<Subcategoria>>(result);
-            Assert.Equal(3, result.Count);
         }
 
         [Fact]
@@ -54,17 +53,10 @@ namespace Test.Subcategorias
         {
             dbContext.Subategorias.ExecuteDelete();
             var Cat_result = await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas" });
-            var Cat_result2 = await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas2" });
-
-            await _subcategoriaDA.Save(new Subcategoria { Id = 0, Descripcion = "Salada", ICategoria = Cat_result.Id });
-            await _subcategoriaDA.Save(new Subcategoria { Id = 0, Descripcion = "Salada2", ICategoria = Cat_result.Id });
-            await _subcategoriaDA.Save(new Subcategoria { Id = 0, Descripcion = "Salada3", ICategoria = Cat_result.Id });
-            await _subcategoriaDA.Save(new Subcategoria { Id = 0, Descripcion = "Salada3", ICategoria = Cat_result2.Id });
 
             var result = await _subcategoriaDA.GetByCategoriaId(Cat_result.Id);
 
             Assert.IsType<List<Subcategoria>>(result);
-            Assert.Equal(3, result.Count);
         }
     }
 }

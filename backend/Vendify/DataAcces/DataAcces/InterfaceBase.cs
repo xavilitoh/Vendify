@@ -10,7 +10,7 @@ namespace DataAcces
     public interface InterfaceBase<T> where T : class
     {
         Task<T> Save(T marca);
-        Task<T> Get(int id);
+        Task<T?> Get(int id);
         Task<List<T>> Get();
     }
 }

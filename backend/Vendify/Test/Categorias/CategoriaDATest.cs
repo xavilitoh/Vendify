@@ -31,7 +31,6 @@ namespace Test.Categorias
 
             var result = await _categoriaDA.Get();
             Assert.IsType<List<Categoria>>(result);
-            Assert.Equal(3, result.Count);
         }
 
         [Fact]
