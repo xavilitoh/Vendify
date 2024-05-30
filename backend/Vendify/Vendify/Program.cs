@@ -1,3 +1,4 @@
+using DataAcces;
 using DataAcces.Repositorio;
 using Vendify.Controllers;
 
@@ -10,15 +11,18 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IMarcasDA, MarcasDA>();
+builder.Services.AddScoped<ICategoriaDA, CategoriaDA>();
+builder.Services.AddScoped<ISubcategoriasDA, SubcategoriasDA>();
+builder.Services.AddScoped<ApplicationDbContext>();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
 app.UseHttpsRedirection();
 

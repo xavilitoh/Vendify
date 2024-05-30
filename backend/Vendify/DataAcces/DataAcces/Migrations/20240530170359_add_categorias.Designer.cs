@@ -3,6 +3,7 @@ using System;
 using DataAcces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAcces.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240530170359_add_categorias")]
+    partial class add_categorias
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
@@ -63,46 +66,6 @@ namespace DataAcces.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Marcas", (string)null);
-                });
-
-            modelBuilder.Entity("Shared.Entidades.Subcategoria", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("Enable")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("FechaCreacion")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("FechaModificacion")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ICategoria")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ICategoria");
-
-                    b.ToTable("Subcategorias", (string)null);
-                });
-
-            modelBuilder.Entity("Shared.Entidades.Subcategoria", b =>
-                {
-                    b.HasOne("Shared.Entidades.Categoria", "Categoria")
-                        .WithMany()
-                        .HasForeignKey("ICategoria")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Categoria");
                 });
 #pragma warning restore 612, 618
         }
