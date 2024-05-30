@@ -1,35 +1,24 @@
-name: .NET Core Test
+name: dotnet test
 
-on:
-  push:
-    branches: [ dev ]
-  pull_request:
-    branches: [ dev ]
+on: [push]
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '3.1.x', '6.0.x' ]
 
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v2
+      - uses: actions/checkout@v4
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '**/**'  # Replace with your desired .NET version (e.g., 6.0.x)
-
-      - name: Restore dependencies
+          dotnet-version: '8.0'
+      - name: Install dependencies
         run: dotnet restore
-
       - name: Build
-        run: dotnet build --configuration Release
-
-      - name: Test
-        run: dotnet test --configuration Release --no-build  # Avoid redundant build
-
-      - name: Upload test results (optional)
-        uses: actions/upload-artifact@v3
-        if: always()  # Upload artifacts on all workflows
-        with:
-          name: test-results
-          path: test/test-result.txt
+        run: dotnet build
+      - name: Test with the dotnet CLI
+        run: dotnet test
