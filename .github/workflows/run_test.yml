@@ -32,4 +32,4 @@ jobs:
         if: always()  # Upload artifacts on all workflows
         with:
           name: test-results
-          path: **/test/**.trx
+          path: test/test-result.txt
