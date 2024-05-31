@@ -55,5 +55,22 @@ namespace DataAcces.Repositorio
                 throw;
             }
         }
+
+        public async Task<int> Update(Subcategoria modelo)
+        {
+            await dbContext.Database.EnsureCreatedAsync();
+
+            try
+            {
+                dbContext.Update(modelo);
+                await dbContext.SaveChangesAsync();
+
+                return 1;
+            }
+            catch (Exception ex)
+            {
+                return -1;
+            }
+        }
     }
 }

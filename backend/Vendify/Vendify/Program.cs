@@ -1,4 +1,4 @@
-using DataAcces;
+﻿using DataAcces;
 using DataAcces.Repositorio;
 using Vendify.Controllers;
 
@@ -22,6 +22,12 @@ var app = builder.Build();
 //{
     app.UseSwagger();
     app.UseSwaggerUI();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+};
 //}
 
 app.UseHttpsRedirection();
@@ -29,7 +35,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.MapMarcaEndpoints();
 
 app.Run();

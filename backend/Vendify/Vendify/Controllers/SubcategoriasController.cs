@@ -53,5 +53,16 @@ namespace Vendify.Controllers
 
             return Ok(result);
         }
+
+        [HttpPut]
+        public async Task<ObjectResult> Put([FromBody] Subcategoria dto, int id)
+        {
+            if (id != dto.Id) return BadRequest("Id no coincide con el objeto de registro");
+            if (string.IsNullOrEmpty(dto.Descripcion)) return BadRequest("El campo descripcion es requerido");
+
+            var result = await subcategoriasDA.Update(dto);
+
+            return result > 0 ? Ok("Operacion exitosa") : BadRequest("Algo salio mal :(");
+        }
     }
 }

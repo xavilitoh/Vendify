@@ -63,5 +63,16 @@ namespace Test.Marcas
             var result = await _marcaDA.Get(_input);
             Assert.Null( result);
         }
+
+        [Fact]
+        public async Task GET_Marca_UPDATE_OK()
+        {
+            var data = await _marcaDA.Save(new Marca { Id = 0, Descripcion = "oreo" });
+
+            data.Descripcion = "oreoUpdate";
+            var result = await _marcaDA.Update(data);
+
+            Assert.Equal(1, result);
+        }
     }
 }

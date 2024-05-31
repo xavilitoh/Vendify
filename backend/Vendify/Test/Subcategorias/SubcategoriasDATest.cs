@@ -58,5 +58,18 @@ namespace Test.Subcategorias
 
             Assert.IsType<List<Subcategoria>>(result);
         }
+
+
+        [Fact]
+        public async Task Update_Marca_OK()
+        {
+            var Cat_result = await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas" });
+
+            var data = await _subcategoriaDA.Save(new Subcategoria { Id = 0, Descripcion = "Salada", ICategoria = Cat_result.Id });
+            var result = await _subcategoriaDA.Update(data);
+
+            Assert.IsType<int>(result);
+            Assert.Equal(1, result);
+        }
     }
 }

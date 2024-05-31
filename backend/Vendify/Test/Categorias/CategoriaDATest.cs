@@ -41,5 +41,17 @@ namespace Test.Categorias
             Assert.IsType<Categoria>(result);
             Assert.Equal(desc.ToUpper(), result.Descripcion);
         }
+
+        [Fact]
+        public async Task UPDATE_Categoria_OK()
+        {
+            var desc = "Galletas";
+            var DATA = await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = desc });
+
+            var result = await _categoriaDA.Update(DATA);
+
+            Assert.IsType<int>(result);
+            Assert.Equal(1, result);
+        }
     }
 }

@@ -49,5 +49,23 @@ namespace DataAcces.Repositorio
                 throw;
             }
         }
+
+        public async Task<int> Update(Categoria modelo)
+        {
+            await dbContext.Database.EnsureCreatedAsync();
+
+            try
+            {
+                dbContext.Update(modelo);
+                dbContext.SaveChanges();
+
+                return 1;
+            }
+            catch (Exception ex)
+            {
+                return -1;
+            }
+
+        }
     }
 }
