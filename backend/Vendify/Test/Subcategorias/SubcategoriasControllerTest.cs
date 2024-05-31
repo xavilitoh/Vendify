@@ -15,14 +15,13 @@ namespace Test.Subcategorias
 {
     public class SubcategoriasControllerTest
     {
-        private readonly SubcategoriasDA _subcategoriaDA;
-        private readonly CategoriaDA _categoriaDA;
-        private readonly ApplicationDbContext dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
-        private readonly SubcategoriasController _controller;
+        private  SubcategoriasDA _subcategoriaDA;
+        private  CategoriaDA _categoriaDA;
+        private  ApplicationDbContext dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
+        private  SubcategoriasController _controller;
 
         public SubcategoriasControllerTest()
         {
-            dbContext.Subategorias.ExecuteDelete();
             _subcategoriaDA = new SubcategoriasDA(dbContext);
             _categoriaDA = new CategoriaDA(dbContext);
             _controller = new SubcategoriasController(_subcategoriaDA);
@@ -34,7 +33,9 @@ namespace Test.Subcategorias
         {
             //preparacion 
 
-            dbContext.Subategorias.ExecuteDelete();
+            dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
+            _categoriaDA = new CategoriaDA(dbContext);
+            _subcategoriaDA = new SubcategoriasDA(dbContext);
 
             var Cat_result = await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas" });
 
@@ -50,7 +51,11 @@ namespace Test.Subcategorias
         [Fact]
         public async Task GET_BY_ID_OK()
         {
-            dbContext.Categorias.ExecuteDelete();
+
+            dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
+            _categoriaDA = new CategoriaDA(dbContext);
+            _subcategoriaDA = new SubcategoriasDA(dbContext);
+
             var Cat_result = await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas" });
             var desc = "Salada";
             var result_save = await _subcategoriaDA.Save(new Subcategoria { Id = 0, Descripcion = desc, ICategoria = Cat_result.Id});
@@ -65,7 +70,9 @@ namespace Test.Subcategorias
         [Fact]
         public async Task SAVE_FAIL()
         {
-            dbContext.Categorias.ExecuteDelete();
+            dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
+            _categoriaDA = new CategoriaDA(dbContext);
+            _subcategoriaDA = new SubcategoriasDA(dbContext);
 
             var _dto = new SubcategoriaDTO();
 
@@ -80,7 +87,9 @@ namespace Test.Subcategorias
         [Fact]
         public async Task SAVE_OK()
         {
-            dbContext.Categorias.ExecuteDelete();
+            dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
+            _categoriaDA = new CategoriaDA(dbContext);
+            _subcategoriaDA = new SubcategoriasDA(dbContext);
 
             var Cat_result = await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas" });
             var _dto = new SubcategoriaDTO { Descripcion = "Galletas", IdCategoria = Cat_result.Id };

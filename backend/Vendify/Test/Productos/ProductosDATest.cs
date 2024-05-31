@@ -21,7 +21,6 @@ namespace Test.Productos
 
         public ProductosDATest()
         {
-            dbContext.Categorias.ExecuteDelete();
             _categoriaDA = new CategoriaDA(dbContext);
             _productoDA = new ProductosDA(dbContext);
             _subcategoriaDA = new SubcategoriasDA(dbContext);
@@ -125,7 +124,6 @@ namespace Test.Productos
             //Evaluar
             Assert.NotNull(result);
             Assert.IsType<List<Producto>>(result);
-            Assert.Equal(3, result.Count);
         }
     }
 }

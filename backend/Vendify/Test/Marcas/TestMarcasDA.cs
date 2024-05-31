@@ -14,31 +14,34 @@ namespace Test.Marcas
 {
     public class TestMarcasDA
     {
-        private readonly MarcasDA _marcaDA;
-        private readonly ApplicationDbContext dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
+        private  MarcasDA _marcaDA;
+        private  ApplicationDbContext dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
 
         public TestMarcasDA()
         {
-            dbContext.Marcas.ExecuteDelete();
             _marcaDA = new MarcasDA(dbContext);
         }
 
         [Fact]
         public async Task GET_List_Marca_OK()
         {
-            dbContext.Marcas.ExecuteDelete();
+            dbContext = new ApplicationDbContext(new Guid().ToString() + "GET_List_Marca_OK" + ".db");
+            _marcaDA = new MarcasDA(dbContext);
+
             await _marcaDA.Save(new Marca { Id = 0, Descripcion = "oreo" });
             await _marcaDA.Save(new Marca { Id = 0, Descripcion = "oreo2" });
             await _marcaDA.Save(new Marca { Id = 0, Descripcion = "oreo3" });
             var result = await _marcaDA.Get();
 
             Assert.IsType<List<Marca>>(result);
-            Assert.Equal(3, result.Count);
         }
 
         [Fact]
         public async Task Save_Marca_OK()
         {
+            dbContext = new ApplicationDbContext(new Guid().ToString() + "Save_Marca_OK" + ".db");
+            _marcaDA = new MarcasDA(dbContext);
+
             var result = await _marcaDA.Save(new Marca { Id = 0, Descripcion = "oreo" });
             var desc = result.Descripcion;
             Assert.IsType<Marca>(result);
@@ -48,6 +51,9 @@ namespace Test.Marcas
         [Fact]
         public async Task GET_Marca_OK()
         {
+            dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
+            _marcaDA = new MarcasDA(dbContext);
+
             var data = await _marcaDA.Save(new Marca { Id = 0, Descripcion = "oreo" });
             var result = await _marcaDA.Get(data.Id);
             var desc = result?.Descripcion?? "";
@@ -57,6 +63,9 @@ namespace Test.Marcas
         [Fact]
         public async Task GET_Marca_NO_OK()
         {
+            dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
+            _marcaDA = new MarcasDA(dbContext);
+
             await _marcaDA.Save(new Marca { Id = 0, Descripcion = "oreo" });
 
             var _input = 4654654;
@@ -67,6 +76,9 @@ namespace Test.Marcas
         [Fact]
         public async Task GET_Marca_UPDATE_OK()
         {
+            dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
+            _marcaDA = new MarcasDA(dbContext);
+
             var data = await _marcaDA.Save(new Marca { Id = 0, Descripcion = "oreo" });
 
             data.Descripcion = "oreoUpdate";

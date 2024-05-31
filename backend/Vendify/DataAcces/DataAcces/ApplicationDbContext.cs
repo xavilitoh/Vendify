@@ -46,22 +46,22 @@ namespace DataAcces
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Marca>().ToTable("Marcas");
-            modelBuilder.Entity<Marca>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-            });
+            //modelBuilder.Entity<Marca>(entity =>
+            //{
+            //    entity.HasKey(e => e.Id);
+            //});
 
             modelBuilder.Entity<Categoria>().ToTable("Categorias");
-            modelBuilder.Entity<Categoria>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-            });
+            //modelBuilder.Entity<Categoria>(entity =>
+            //{
+            //    entity.HasKey(e => e.Id);
+            //});
 
             modelBuilder.Entity<Subcategoria>().ToTable("Subcategorias");
-            modelBuilder.Entity<Subcategoria>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-            });
+            //modelBuilder.Entity<Subcategoria>(entity =>
+            //{
+            //    entity.HasKey(e => e.Id);
+            //});
 
             base.OnModelCreating(modelBuilder);
         }
