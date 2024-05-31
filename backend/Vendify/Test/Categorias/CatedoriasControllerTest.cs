@@ -30,8 +30,15 @@ namespace Test.Categorias
         [Fact]
         public async Task GET_OK()
         {
+            //preparacion 
+
+            dbContext.Categorias.ExecuteDelete();
+            await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas" });
+            await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas2" });
+            await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas3" });
+
             var result = await _controller.Get();
-                        Assert.NotNull(result);
+            Assert.NotNull(result);
             Assert.IsType<OkObjectResult>(result);
         }
 

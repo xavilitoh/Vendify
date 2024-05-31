@@ -65,6 +65,57 @@ namespace DataAcces.Migrations
                     b.ToTable("Marcas", (string)null);
                 });
 
+            modelBuilder.Entity("Shared.Entidades.Producto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("BarCode")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("ConImpuesto")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Enable")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("FechaModificacion")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("IdCategoria")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("IdMarca")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("IdSubcategoria")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("StockMinimo")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdCategoria");
+
+                    b.HasIndex("IdMarca");
+
+                    b.HasIndex("IdSubcategoria");
+
+                    b.ToTable("Productos");
+                });
+
             modelBuilder.Entity("Shared.Entidades.Subcategoria", b =>
                 {
                     b.Property<int>("Id")
@@ -92,6 +143,27 @@ namespace DataAcces.Migrations
                     b.HasIndex("ICategoria");
 
                     b.ToTable("Subcategorias", (string)null);
+                });
+
+            modelBuilder.Entity("Shared.Entidades.Producto", b =>
+                {
+                    b.HasOne("Shared.Entidades.Categoria", "Categoria")
+                        .WithMany()
+                        .HasForeignKey("IdCategoria");
+
+                    b.HasOne("Shared.Entidades.Marca", "Marca")
+                        .WithMany()
+                        .HasForeignKey("IdMarca");
+
+                    b.HasOne("Shared.Entidades.Subcategoria", "Subcategoria")
+                        .WithMany()
+                        .HasForeignKey("IdSubcategoria");
+
+                    b.Navigation("Categoria");
+
+                    b.Navigation("Marca");
+
+                    b.Navigation("Subcategoria");
                 });
 
             modelBuilder.Entity("Shared.Entidades.Subcategoria", b =>

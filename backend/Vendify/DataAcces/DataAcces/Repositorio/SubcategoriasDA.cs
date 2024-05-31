@@ -23,20 +23,20 @@ namespace DataAcces.Repositorio
             this.dbContext = dbContext;
         }
 
-        public async Task<Subcategoria> Get(int id)
+        public async Task<Subcategoria?> Get(int id)
         {
-            return await dbContext.Subategorias.AsNoTracking()
-                .FirstOrDefaultAsync(model => model.Id == id) ?? new();
+            return await dbContext.Subategorias.AsNoTracking().Include(a=> a.Categoria)
+                .FirstOrDefaultAsync(model => model.Id == id) ?? null;
         }
 
         public async Task<List<Subcategoria>> Get()
         {
-            return await dbContext.Subategorias.AsNoTracking().ToListAsync();
+            return await dbContext.Subategorias.AsNoTracking().Include(a => a.Categoria).ToListAsync();
         }
 
         public async Task<List<Subcategoria>> GetByCategoriaId(int IdCategoria)
         {
-            return await dbContext.Subategorias.AsNoTracking().Where(a=> a.ICategoria == IdCategoria).ToListAsync();
+            return await dbContext.Subategorias.AsNoTracking().Include(a => a.Categoria).Where(a=> a.ICategoria == IdCategoria).ToListAsync();
         }
 
         public async Task<Subcategoria> Save(Subcategoria subcategoria)
@@ -53,6 +53,23 @@ namespace DataAcces.Repositorio
             catch (Exception ex)
             {
                 throw;
+            }
+        }
+
+        public async Task<int> Update(Subcategoria modelo)
+        {
+            await dbContext.Database.EnsureCreatedAsync();
+
+            try
+            {
+                dbContext.Update(modelo);
+                await dbContext.SaveChangesAsync();
+
+                return 1;
+            }
+            catch (Exception ex)
+            {
+                return -1;
             }
         }
     }

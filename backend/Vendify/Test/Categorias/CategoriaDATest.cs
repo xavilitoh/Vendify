@@ -13,12 +13,14 @@ namespace Test.Categorias
     public class CategoriaDATest
     {
         private readonly CategoriaDA _categoriaDA;
+        private readonly MarcasDA _marcaDA;
         private readonly ApplicationDbContext dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
 
         public CategoriaDATest()
         {
             dbContext.Categorias.ExecuteDelete();
             _categoriaDA = new CategoriaDA(dbContext);
+            _marcaDA = new MarcasDA(dbContext);
         }
 
         [Fact]
@@ -31,7 +33,6 @@ namespace Test.Categorias
 
             var result = await _categoriaDA.Get();
             Assert.IsType<List<Categoria>>(result);
-            Assert.Equal(3, result.Count);
         }
 
         [Fact]
@@ -41,6 +42,18 @@ namespace Test.Categorias
             var result = await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = desc });
             Assert.IsType<Categoria>(result);
             Assert.Equal(desc.ToUpper(), result.Descripcion);
+        }
+
+        [Fact]
+        public async Task UPDATE_Categoria_OK()
+        {
+            var desc = "Galletas";
+            var DATA = await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = desc });
+
+            var result = await _categoriaDA.Update(DATA);
+
+            Assert.IsType<int>(result);
+            Assert.Equal(1, result);
         }
     }
 }

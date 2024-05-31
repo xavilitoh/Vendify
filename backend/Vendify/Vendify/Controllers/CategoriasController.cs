@@ -23,7 +23,8 @@ namespace Vendify.Controllers
         public async Task<ObjectResult> Get()
         {
             var data = await categoriaDA.Get();
-            return Ok(data.ToList());
+
+            return (data.ToList().Count < 1) ?  NotFound("No se encontraron registros") :  Ok(data.ToList());
         }
 
         // GET api/<CategoriasController>/5
@@ -31,7 +32,8 @@ namespace Vendify.Controllers
         public async Task<ObjectResult> Get(int id)
         {
             var data = await categoriaDA.Get(id);
-            return Ok(data);
+
+            return (data == null) ? NotFound($"Categoria {id} no encontrada") : Ok(data);
         }
 
         // POST api/<CategoriasController>
@@ -48,6 +50,17 @@ namespace Vendify.Controllers
             var result = await categoriaDA.Save(categoria);
 
             return Ok(result);
+        }
+
+        [HttpPut]
+        public async Task<ObjectResult> Put([FromBody] Categoria dto, int id)
+        {
+            if (id != dto.Id) return BadRequest("Id no coincide con el objeto de registro");
+            if (string.IsNullOrEmpty(dto.Descripcion)) return BadRequest("El campo descripcion es requerido");
+
+            var result = await categoriaDA.Update(dto);
+
+            return result > 0 ? Ok("Operacion exitosa") : BadRequest("Algo salio mal :(");
         }
     }
 }

@@ -48,8 +48,9 @@ namespace Test.Marcas
         [Fact]
         public async Task GET_Marca_OK()
         {
-            var result = await _marcaDA.Get(1);
-            var desc = result.Descripcion;
+            var data = await _marcaDA.Save(new Marca { Id = 0, Descripcion = "oreo" });
+            var result = await _marcaDA.Get(data.Id);
+            var desc = result?.Descripcion?? "";
             Assert.IsType<Marca>(result);
         }
 
@@ -60,8 +61,18 @@ namespace Test.Marcas
 
             var _input = 4654654;
             var result = await _marcaDA.Get(_input);
-            var id = result.Id;
-            Assert.NotEqual(id, _input);
+            Assert.Null( result);
+        }
+
+        [Fact]
+        public async Task GET_Marca_UPDATE_OK()
+        {
+            var data = await _marcaDA.Save(new Marca { Id = 0, Descripcion = "oreo" });
+
+            data.Descripcion = "oreoUpdate";
+            var result = await _marcaDA.Update(data);
+
+            Assert.Equal(1, result);
         }
     }
 }

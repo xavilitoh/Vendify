@@ -1,4 +1,4 @@
-using DataAcces;
+﻿using DataAcces;
 using DataAcces.Repositorio;
 using Vendify.Controllers;
 
@@ -13,6 +13,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IMarcasDA, MarcasDA>();
 builder.Services.AddScoped<ICategoriaDA, CategoriaDA>();
 builder.Services.AddScoped<ISubcategoriasDA, SubcategoriasDA>();
+builder.Services.AddScoped<IProductosDA, ProductosDA>();
 builder.Services.AddScoped<ApplicationDbContext>();
 
 var app = builder.Build();
@@ -22,6 +23,12 @@ var app = builder.Build();
 //{
     app.UseSwagger();
     app.UseSwaggerUI();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+};
 //}
 
 app.UseHttpsRedirection();
@@ -29,7 +36,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.MapMarcaEndpoints();
 
 app.Run();
