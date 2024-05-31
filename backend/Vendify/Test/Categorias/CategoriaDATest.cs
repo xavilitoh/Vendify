@@ -13,12 +13,14 @@ namespace Test.Categorias
     public class CategoriaDATest
     {
         private readonly CategoriaDA _categoriaDA;
+        private readonly MarcasDA _marcaDA;
         private readonly ApplicationDbContext dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
 
         public CategoriaDATest()
         {
             dbContext.Categorias.ExecuteDelete();
             _categoriaDA = new CategoriaDA(dbContext);
+            _marcaDA = new MarcasDA(dbContext);
         }
 
         [Fact]
