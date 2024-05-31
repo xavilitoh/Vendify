@@ -18,7 +18,6 @@ namespace Test.Categorias
 
         public CategoriaDATest()
         {
-            dbContext.Categorias.ExecuteDelete();
             _categoriaDA = new CategoriaDA(dbContext);
             _marcaDA = new MarcasDA(dbContext);
         }
@@ -26,7 +25,6 @@ namespace Test.Categorias
         [Fact]
         public async Task GET_List_Categoria_OK()
         {
-            dbContext.Categorias.ExecuteDelete();
             await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas" });
             await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas2" });
             await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas3" });

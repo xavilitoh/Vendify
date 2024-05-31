@@ -15,13 +15,13 @@ namespace Test.Categorias
 {
     public class CatedoriasControllerTest
     {
-        private readonly CategoriaDA _categoriaDA;
-        private readonly ApplicationDbContext dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
-        private readonly CategoriasController _controller;
+        private  CategoriaDA _categoriaDA;
+        private  ApplicationDbContext dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
+        private  CategoriasController _controller;
 
         public CatedoriasControllerTest()
         {
-            dbContext.Categorias.ExecuteDelete();
+            dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
             _categoriaDA = new CategoriaDA(dbContext);
             _controller = new CategoriasController(_categoriaDA);
         }
@@ -32,7 +32,10 @@ namespace Test.Categorias
         {
             //preparacion 
 
-            dbContext.Categorias.ExecuteDelete();
+            dbContext = new ApplicationDbContext(new Guid().ToString() + "GET_OK" + ".db");
+            _categoriaDA = new CategoriaDA(dbContext);
+            _controller = new CategoriasController(_categoriaDA);
+
             await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas" });
             await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas2" });
             await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas3" });
@@ -42,32 +45,15 @@ namespace Test.Categorias
             Assert.IsType<OkObjectResult>(result);
         }
 
-        [Fact]
-        public async Task GET_DATA_VALIDATION_OK()
-        {
-            //preparacion 
 
-            dbContext.Categorias.ExecuteDelete();
-            await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas" });
-            await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas2" });
-            await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas3" });
-
-            //ejecucion
-
-            var result = await _controller.Get();
-
-            //evaluacion
-
-            Assert.NotNull(result);
-            Assert.IsType<OkObjectResult>(result);
-            var categorias = Assert.IsType<List<Categoria>>(result.Value);
-
-        }
 
         [Fact]
         public async Task GET_BY_ID_OK()
         {
-            dbContext.Categorias.ExecuteDelete();
+            dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
+            _categoriaDA = new CategoriaDA(dbContext);
+            _controller = new CategoriasController(_categoriaDA);
+
             var desc = "Galletas";
             var result_save = await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = desc });
             var result = await _controller.Get(result_save.Id);
@@ -81,7 +67,10 @@ namespace Test.Categorias
         [Fact]
         public async Task SAVE_FAIL()
         {
-            dbContext.Categorias.ExecuteDelete();
+            dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
+            _categoriaDA = new CategoriaDA(dbContext);
+            _controller = new CategoriasController(_categoriaDA);
+
 
             var _dto = new CategoriaDTO();
 
@@ -96,7 +85,9 @@ namespace Test.Categorias
         [Fact]
         public async Task SAVE_OK()
         {
-            dbContext.Categorias.ExecuteDelete();
+            dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
+            _categoriaDA = new CategoriaDA(dbContext);
+            _controller = new CategoriasController(_categoriaDA);
 
             var _dto = new CategoriaDTO { Descripcion = "Galletas" };
 

@@ -12,9 +12,9 @@ namespace Test.Subcategorias
 {
     public class SubcategoriasDATest
     {
-        private readonly SubcategoriasDA _subcategoriaDA;
-        private readonly CategoriaDA _categoriaDA;
-        private readonly ApplicationDbContext dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
+        private  SubcategoriasDA _subcategoriaDA;
+        private  CategoriaDA _categoriaDA;
+        private  ApplicationDbContext dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
 
         public SubcategoriasDATest()
         {
@@ -25,6 +25,10 @@ namespace Test.Subcategorias
         [Fact]
         public async Task Save_Marca_OK()
         {
+            dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
+            _categoriaDA = new CategoriaDA(dbContext);
+            _subcategoriaDA = new SubcategoriasDA(dbContext);
+
             var Cat_result = await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas" });
 
             var result = await _subcategoriaDA.Save(new Subcategoria { Id = 0, Descripcion = "Salada", ICategoria = Cat_result.Id });
@@ -36,7 +40,10 @@ namespace Test.Subcategorias
         [Fact]
         public async Task GET_List_SubCat_OK()
         {
-            dbContext.Subategorias.ExecuteDelete();
+            dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
+            _categoriaDA = new CategoriaDA(dbContext);
+            _subcategoriaDA = new SubcategoriasDA(dbContext);
+
             var Cat_result = await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas" });
 
             await _subcategoriaDA.Save(new Subcategoria { Id = 0, Descripcion = "Salada", ICategoria = Cat_result.Id });
@@ -51,7 +58,10 @@ namespace Test.Subcategorias
         [Fact]
         public async Task GET_List_SubCat_By_Cat_OK()
         {
-            dbContext.Subategorias.ExecuteDelete();
+            dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
+            _categoriaDA = new CategoriaDA(dbContext);
+            _subcategoriaDA = new SubcategoriasDA(dbContext);
+
             var Cat_result = await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas" });
 
             var result = await _subcategoriaDA.GetByCategoriaId(Cat_result.Id);
@@ -63,6 +73,10 @@ namespace Test.Subcategorias
         [Fact]
         public async Task Update_Marca_OK()
         {
+            dbContext = new ApplicationDbContext(new Guid().ToString() + ".db");
+            _categoriaDA = new CategoriaDA(dbContext);
+            _subcategoriaDA = new SubcategoriasDA(dbContext);
+
             var Cat_result = await _categoriaDA.Save(new Categoria { Id = 0, Descripcion = "Galletas" });
 
             var data = await _subcategoriaDA.Save(new Subcategoria { Id = 0, Descripcion = "Salada", ICategoria = Cat_result.Id });
