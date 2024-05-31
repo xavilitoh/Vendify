@@ -121,7 +121,7 @@ namespace Test.Productos
 
             //Evaluar
             Assert.IsType<OkObjectResult>(result);
-            var produc = Assert.IsType<List<Producto>>(result.Value);\
+            var produc = Assert.IsType<List<Producto>>(result.Value);
         }
 
     }
