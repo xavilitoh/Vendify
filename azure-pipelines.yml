@@ -1,29 +1,41 @@
-# Docker
-# Build a Docker image
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+name: Testing
 
-trigger:
-- main
+on:
+  push:
+  pull_request:
+    branches: [ main, dev ]
+    paths:
+    - '**.cs'
+    - '**.csproj'
 
-resources:
-- repo: self
+env:
+  DOTNET_VERSION: '8.0' # The .NET SDK version to use
 
-variables:
-  tag: '$(Build.BuildId)'
+jobs:
+  build-and-test:
 
-stages:
-- stage: Build
-  displayName: Build image
-  jobs:
-  - job: Build
-    displayName: Build
-    pool:
-      vmImage: ubuntu-latest
+    name: build-and-test-${{matrix.os}}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        #os: [ubuntu-latest]
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+
     steps:
-    - task: Docker@2
-      displayName: Build an image
-      inputs:
-        command: build
-        dockerfile: '$(Build.SourcesDirectory)/backend/Vendify/Vendify/Dockerfile'
-        tags: |
-          $(tag)
+    - uses: actions/checkout@v3
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Install dependencies
+      run: dotnet restore
+      working-directory: backend/Vendify/Vendify
+      
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+      working-directory: backend/Vendify/Vendify
+    
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal
+      working-directory: backend/Vendify/Vendify
