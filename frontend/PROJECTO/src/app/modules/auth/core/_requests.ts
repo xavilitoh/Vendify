@@ -3,7 +3,7 @@ import { AuthModel, UserModel } from "./_models";
 
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
-export const GET_USER_BY_ACCESSTOKEN_URL = `${API_URL}/verify_token`;
+export const GET_USER_BY_ACCESSTOKEN_URL = `${API_URL}/account/validatetoken`;
 export const LOGIN_URL = `${API_URL}/account/login`;
 export const REGISTER_URL = `${API_URL}/register`;
 export const REQUEST_PASSWORD_URL = `${API_URL}/forgot_password`;
@@ -12,7 +12,7 @@ export const REQUEST_PASSWORD_URL = `${API_URL}/forgot_password`;
 export function login(userName: string, pass: string) {
   return axios.post<AuthModel>(LOGIN_URL, {
     userName,
-    pass, 
+    pass,
   });
 }
 
@@ -41,7 +41,15 @@ export function requestPassword(email: string) {
 }
 
 export function getUserByToken(token: string) {
-  return axios.post<UserModel>(GET_USER_BY_ACCESSTOKEN_URL, {
-    api_token: token,
-  });
+  const config = {
+    headers: {
+      Accept: "application/json",
+      Authorization: token,
+    },
+  };
+
+  return axios.get<UserModel>(
+    GET_USER_BY_ACCESSTOKEN_URL,
+    config
+  );
 }

@@ -19,6 +19,8 @@ import {App} from '../App'
  */
 const {BASE_URL} = import.meta.env
 
+console.log(BASE_URL)
+
 const AppRoutes: FC = () => {
   const {currentUser} = useAuth()
   return (

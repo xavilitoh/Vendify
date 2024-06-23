@@ -3,9 +3,11 @@ import * as Yup from "yup";
 import clsx from "clsx";
 import { Link } from "react-router-dom";
 import { useFormik } from "formik";
-import { getUserByToken, login } from "../core/_requests";
+import Cookies from "js-cookie";
+import { login } from "../core/_requests";
 import { toAbsoluteUrl } from "../../../../_metronic/helpers";
 import { useAuth } from "../core/Auth";
+import { AuthModel } from "../core/_models";
 
 const loginSchema = Yup.object().shape({
   username: Yup.string()
@@ -19,8 +21,8 @@ const loginSchema = Yup.object().shape({
 });
 
 const initialValues = {
-  username: "admin",
-  password: "demo",
+  username: "enderson273014@gmail.com",
+  password: "Gomez2730!",
 };
 
 export function Login() {
@@ -32,12 +34,18 @@ export function Login() {
     validationSchema: loginSchema,
     onSubmit: async (values, { setStatus, setSubmitting }) => {
       setLoading(true);
-      console.log(values);
       try {
-        const {data} = await login(values.username, values.password);
-        console.log(data)
-        saveAuth(data.token);
-        setCurrentUser(data.usuario)
+        const { data } = await login(values.username, values.password);
+        const authData: AuthModel = {
+          token: data.token,
+          usuario: data.usuario,
+        };
+        saveAuth(authData);
+        setCurrentUser(data.usuario);
+        Cookies.set("AuthToken", authData.token, { expires: 7 });
+        Cookies.set("CurrentUser", JSON.stringify(authData.usuario), {
+          expires: 7,
+        });
       } catch (error) {
         console.error(error);
         saveAuth(undefined);
