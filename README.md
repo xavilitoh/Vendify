@@ -1,54 +1,27 @@
-# VENDIFY
+# React + TypeScript + Vite
 
-Este es un sistema de punto de venta desarrollado con React para el frontend y .NET Core 8 para el backend.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Descripción
+Currently, two official plugins are available:
 
-Este sistema de punto de venta proporciona una interfaz intuitiva y fácil de usar para gestionar las ventas, inventario y clientes de tu negocio. Con una combinación de tecnologías modernas, garantiza un rendimiento óptimo y una experiencia fluida para los usuarios.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Características
+## Expanding the ESLint configuration
 
-- Registro y autenticación de usuarios
-- Gestión de productos y categorías
-- Registro y seguimiento de ventas
-- Administración de inventario
-- Gestión de clientes
-- Generación de informes de ventas
-- Seguridad de datos
+If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
 
-## Tecnologías Utilizadas
+- Configure the top-level `parserOptions` property like this:
 
-- **Frontend:** React
-- **Backend:** .NET Core 8
+```js
+   parserOptions: {
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+    project: ['./tsconfig.json', './tsconfig.node.json'],
+    tsconfigRootDir: __dirname,
+   },
+```
 
-## Instalación
-
-1. Clona este repositorio en tu máquina local.
-2. Abre la carpeta `frontend` y ejecuta `npm install` para instalar las dependencias del frontend.
-3. Abre la carpeta `backend` y ejecuta `dotnet restore` para restaurar las dependencias del backend.
-4. Configura la conexión a la base de datos en el backend según sea necesario.
-5. Ejecuta el frontend y el backend por separado utilizando los comandos adecuados.
-
-## Contribución
-
-¡Las contribuciones son bienvenidas! Si deseas contribuir a este proyecto, por favor sigue los siguientes pasos:
-
-1. Haz un fork del repositorio.
-2. Crea una nueva rama (`git checkout -b feature/feature-name`).
-3. Realiza tus cambios y asegúrate de seguir las guías de estilo.
-4. Haz commit de tus cambios (`git commit -am 'Añade nueva funcionalidad'`).
-5. Haz push a la rama (`git push origin feature/feature-name`).
-6. Crea un nuevo Pull Request.
-
-## Colaboradores
-
-- [engomez2730](https://github.com/engomez2730)
-- [xavilito](https://github.com/xavilito)
-
-## Licencia
-
-Este proyecto está bajo la licencia [MIT License](LICENSE).
-
-## Contacto
-
-Si tienes alguna pregunta o sugerencia, por favor contacta a [Xavier Berroa](mailto:ing.wxbo@gmail.com).
+- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
+- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
+- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
