@@ -39,7 +39,7 @@ const HeaderComponent: React.FC<HeaderProps> = ({ isDarkMode, items }) => {
         style={{
           display: "flex", // Enables flexbox
           flex: 0.1, // Flex grow, shrink, and basis
-          minWidth: "250px", // Minimum width
+          minWidth: "270px", // Minimum width
           height: "inherit", // Full height of the container
           alignItems: "center", // Centers items vertically
           justifyContent: "center",

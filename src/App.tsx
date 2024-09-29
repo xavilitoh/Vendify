@@ -1,20 +1,25 @@
-//REACT
 import React, { useState } from "react";
-//REACT-ROUTER
-import { Routes, Route } from "react-router-dom";
-
-//ANT-DESIGN
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import {
   LaptopOutlined,
   NotificationOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
-import { Breadcrumb, Layout, ConfigProvider, theme, Switch } from "antd";
+import {
+  Breadcrumb,
+  Layout,
+  ConfigProvider,
+  theme,
+  Switch,
+  Button,
+} from "antd";
+import Cookies from "js-cookie"; // For token storage
+import { useNavigate } from "react-router-dom";
 import SiderComponent from "./Pages/Sider";
 import HeaderComponent from "./Pages/Header";
 import Home from "./Pages/Home";
-//Items Layout
+import Login from "./Pages/Login";
 
 const { Content } = Layout;
 
@@ -22,23 +27,23 @@ const ItemSider: MenuProps["items"] = [
   { key: 1, icon: React.createElement(UserOutlined), label: "Usuarios" },
   { key: 2, icon: React.createElement(LaptopOutlined), label: `Productos` },
   {
-    key: 2,
+    key: 3,
     icon: React.createElement(NotificationOutlined),
     label: `Categorias`,
   },
-  { key: 2, icon: React.createElement(NotificationOutlined), label: `Pagos` },
+  { key: 4, icon: React.createElement(NotificationOutlined), label: `Pagos` },
 ];
 
 const lightTheme = {
-  colorPrimary: "#1890ff", // Primary color for light mode
-  colorBgContainer: "#fff", // Background color for light mode
-  borderRadius: 8, // Example of customizing border radius
+  colorPrimary: "#1890ff",
+  colorBgContainer: "#fff",
+  borderRadius: 8,
 };
 
 const darkTheme = {
-  colorPrimary: "#00b96b", // Primary color for dark mode
-  colorBgContainer: "black", // Background color for dark mode
-  borderRadius: 8, // Example of customizing border radius
+  colorPrimary: "#00b96b",
+  colorBgContainer: "black",
+  borderRadius: 8,
 };
 
 const App: React.FC = () => {
@@ -47,14 +52,29 @@ const App: React.FC = () => {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  // Toggle dark mode
   const toggleDarkMode = (checked: boolean) => {
     setIsDarkMode(checked);
   };
 
+  const navigate = useNavigate();
+
+  // Logout function
+  const handleLogout = () => {
+    Cookies.remove("token"); // Remove the token from cookies
+    navigate("/login"); // Redirect to the login page
+  };
+
+  // Menu items for header
   const ItemsMenu: MenuProps["items"] = [
-    { key: 1, label: `Perfil` },
-    { key: 2, label: `Salir` },
+    { key: 1, label: `Perfil` }, // Profile option (can be linked to profile page if needed)
+    {
+      key: 2,
+      label: (
+        <Button onClick={handleLogout} style={{ cursor: "pointer" }}>
+          Salir
+        </Button>
+      ), // 'Salir' (Logout) option
+    },
     {
       key: "switch",
       label: (
@@ -68,26 +88,46 @@ const App: React.FC = () => {
     },
   ];
 
+  const isAuthenticated = !!Cookies.get("token");
+
+  const ProtectedRoute: React.FC<{ children: JSX.Element }> = ({
+    children,
+  }) => {
+    const location = useLocation();
+
+    if (!isAuthenticated) {
+      return <Navigate to="/login" replace state={{ from: location }} />;
+    }
+
+    return children;
+  };
+
   return (
     <ConfigProvider
       theme={{
         algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
-        token: isDarkMode ? darkTheme : lightTheme, // Apply custom theme tokens
+        token: isDarkMode ? darkTheme : lightTheme,
       }}
     >
       <Layout>
-        <HeaderComponent isDarkMode={isDarkMode} items={ItemsMenu} />
+        {isAuthenticated && (
+          <HeaderComponent isDarkMode={isDarkMode} items={ItemsMenu} />
+        )}
         <Layout>
-          <SiderComponent
-            items={ItemSider}
-            backgroundColor={colorBgContainer}
-          />
+          {isAuthenticated && (
+            <SiderComponent
+              items={ItemSider}
+              backgroundColor={colorBgContainer}
+            />
+          )}
           <Layout style={{ padding: "0 24px 24px" }}>
-            <Breadcrumb style={{ margin: "16px 0" }}>
-              <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-              <Breadcrumb.Item>Lista</Breadcrumb.Item>
-              <Breadcrumb.Item>App</Breadcrumb.Item>
-            </Breadcrumb>
+            {isAuthenticated && (
+              <Breadcrumb style={{ margin: "16px 0" }}>
+                <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+                <Breadcrumb.Item>Lista</Breadcrumb.Item>
+                <Breadcrumb.Item>App</Breadcrumb.Item>
+              </Breadcrumb>
+            )}
             <Content
               style={{
                 padding: 24,
@@ -101,7 +141,20 @@ const App: React.FC = () => {
               }}
             >
               <Routes>
-                <Route path="/" element={<Home />}></Route>
+                {/* Public route for login */}
+                <Route path="/login" element={<Login />} />
+
+                {/* Protected route for Home */}
+                <Route
+                  path="/"
+                  element={
+                    <ProtectedRoute>
+                      <Home />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Add more protected routes here */}
               </Routes>
             </Content>
           </Layout>
