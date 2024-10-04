@@ -6,18 +6,17 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
-// Define the type for the login form values
 interface LoginFormValues {
   email: string;
   password: string;
 }
 
-// Define the expected response structure from the API
 interface LoginResponse {
   token: string;
-  user: {
-    id: number;
-    name: string;
+  usuario: {
+    nombre: string;
+    apellido: string;
+    email: string;
   };
 }
 
@@ -25,12 +24,10 @@ const LoginForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Handle form submission
   const onFinish = async (values: LoginFormValues) => {
     setLoading(true);
 
     try {
-      // Make API call to the login endpoint
       const response: AxiosResponse<LoginResponse> = await axios.post(
         "https://vendify_api.wxbolab.com/api/Account/Login",
         {
@@ -39,19 +36,13 @@ const LoginForm: React.FC = () => {
         }
       );
 
-      // Extract token from the response
       const { token } = response.data;
-
-      // Store the token in cookies
+      const { nombre } = response.data.usuario;
       Cookies.set("token", token, { expires: 7 });
 
-      // Display a success message
-      message.success("Ha entrado con exito");
-
-      // Redirect to the dashboard
+      message.success(`Bienvenido, ${nombre}`);
       navigate("/");
     } catch (error) {
-      // Display error message
       console.log(error);
       message.error("Contraseña o correo incorrectos");
     } finally {

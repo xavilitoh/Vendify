@@ -17,7 +17,6 @@ const HeaderComponent: React.FC<HeaderProps> = ({ isDarkMode, items }) => {
         justifyContent: "space-between",
         height: "7vh",
         background: `${isDarkMode ? "black" : "#fff"}`,
-        // Keeps space between logo and menu
       }}
     >
       <div
@@ -37,14 +36,14 @@ const HeaderComponent: React.FC<HeaderProps> = ({ isDarkMode, items }) => {
         defaultSelectedKeys={["2"]}
         items={items}
         style={{
-          display: "flex", // Enables flexbox
-          flex: 0.1, // Flex grow, shrink, and basis
-          minWidth: "270px", // Minimum width
-          height: "inherit", // Full height of the container
-          alignItems: "center", // Centers items vertically
+          display: "flex",
+          flex: 0.1,
+          minWidth: "270px",
+          height: "inherit",
+          alignItems: "center",
           justifyContent: "center",
           background: "inherit",
-          border: "none", // Centers items horizontally
+          border: "none",
         }}
       />
     </header>
