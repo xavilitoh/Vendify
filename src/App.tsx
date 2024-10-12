@@ -14,6 +14,7 @@ import BreadcrumbComponent from "./Components/BreadCrumb";
 import ThemeSwitcher from "./Components/ThemeSwitcher";
 import { ItemSider } from "./Components/SiderItems";
 import Usuarios from "./Components/Usuarios/Usuarios";
+import Categorias from "./Components/Categorias/Categorias";
 const { Content } = Layout;
 
 const lightTheme = {
@@ -118,6 +119,15 @@ const App: React.FC = () => {
                   element={
                     <ProtectedRoute>
                       <Usuarios />
+                    </ProtectedRoute>
+                  }
+                />
+
+                <Route
+                  path="/categorias"
+                  element={
+                    <ProtectedRoute>
+                      <Categorias />
                     </ProtectedRoute>
                   }
                 />

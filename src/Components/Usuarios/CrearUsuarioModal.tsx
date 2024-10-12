@@ -1,4 +1,3 @@
-import React from "react";
 import { Modal, Form, Input, DatePicker, Radio, Button } from "antd";
 import moment from "moment";
 
@@ -9,7 +8,7 @@ interface CreateUserFormValues {
   apellidos: string;
   telefono: string;
   address: string;
-  fecaNac: string; 
+  fecaNac: string;
   noDocumento: string;
   sexo: boolean;
 }
@@ -48,10 +47,9 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
         form={form}
         layout="vertical"
         onFinish={(values) => {
-  
           const formattedValues = {
             ...values,
-            fecaNac: values.fecaNac.format("YYYY-MM-DD"), 
+            fecaNac: values.fecaNac.format("YYYY-MM-DD"),
           };
 
           onSubmit(formattedValues as CreateUserFormValues);

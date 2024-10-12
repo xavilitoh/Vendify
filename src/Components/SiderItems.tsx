@@ -23,7 +23,7 @@ export const ItemSider: MenuProps["items"] = [
   {
     key: 3,
     icon: React.createElement(NotificationOutlined),
-    label: `Categorias`,
+    label: <Link to="categorias"> Categorias</Link>,
   },
   { key: 4, icon: React.createElement(NotificationOutlined), label: `Pagos` },
 ];
