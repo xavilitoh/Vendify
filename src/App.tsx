@@ -30,14 +30,21 @@ const darkTheme = {
 };
 
 const App: React.FC = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
+  // Leer el tema guardado en localStorage o usar el valor por defecto (modo claro)
+const [isDarkMode, setIsDarkMode] = useState(() => {
+  const savedTheme = localStorage.getItem("isDarkMode");
+  return savedTheme ? JSON.parse(savedTheme) : false;
+});
 
-  const toggleDarkMode = (checked: boolean) => {
-    setIsDarkMode(checked);
-  };
+const {
+  token: { colorBgContainer },
+} = theme.useToken();
+
+// Función para cambiar el tema y guardar la preferencia en localStorage
+const toggleDarkMode = (checked: boolean) => {
+  setIsDarkMode(checked);
+  localStorage.setItem("isDarkMode", JSON.stringify(checked)); // Guardar el tema en localStorage
+};
 
   const navigate = useNavigate();
 
