@@ -15,6 +15,7 @@ import ThemeSwitcher from "./Components/ThemeSwitcher";
 import { ItemSider } from "./Components/SiderItems";
 import Usuarios from "./Components/Usuarios/Usuarios";
 import Categorias from "./Components/Categorias/Categorias";
+import Registrarse from "./Pages/Registrarse";
 const { Content } = Layout;
 
 const lightTheme = {
@@ -104,6 +105,7 @@ const App: React.FC = () => {
             >
               <Routes>
                 <Route path="/login" element={<Login />} />
+                <Route path="/registrarse" element={<Registrarse />} />
 
                 <Route
                   path="/"

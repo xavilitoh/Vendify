@@ -1,0 +1,24 @@
+/* src/Components/RegistrationForm.css */
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  flex-direction: column;
+  padding: 20px;
+  transition: all;
+}
+
+.steps-content {
+  margin-top: 24px;
+  padding: 24px;
+  background: #fff;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.steps-action {
+  margin-top: 16px;
+  text-align: center;
+}
