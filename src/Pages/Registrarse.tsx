@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Steps, Form, Input, Button, message, Radio, DatePicker } from "antd";
+import { Steps, Form, Input, Button, message, Radio, DatePicker,Upload } from "antd";
 import { FormInstance } from "antd/lib/form";
 import type { RadioChangeEvent } from "antd";
 import "./Registrarse.css";
@@ -8,7 +8,7 @@ import apiClient from "../Api/VendifyApi";
 
 const { Step } = Steps;
 
-interface User {
+interface Usuario {
   email: string;
   pass: string;
   nombres: string;
@@ -18,14 +18,11 @@ interface User {
   fecaNac: string;
   noDocumento: string;
   sexo: boolean;
-  idEntidad: number;
 }
 
-interface Company {
-  id: number;
+interface Empresa {
   nombre: string;
   rnc: string;
-  idArchivo: number;
   foto: string;
   direccion: string;
   telefono1: string;
@@ -33,9 +30,11 @@ interface Company {
   email: string;
 }
 
+
+
 interface FormValues {
-  usuario: User;
-  empresa: Company;
+  usuario: Usuario;
+  empresa: Empresa;
 }
 
 const RegistrationForm: React.FC = () => {
@@ -43,6 +42,31 @@ const RegistrationForm: React.FC = () => {
   const [form] = Form.useForm<FormInstance<FormValues>>();
   const [sexo, setSexo] = useState<boolean>(true);
 
+  const handlePhotoChange = (info: any) => {
+    console.log(info); 
+    
+
+    const file = info.file.originFileObj || info.file;
+    
+    if (file instanceof File) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setFormData((prevData) => ({
+          ...prevData,
+          empresa: {
+            ...prevData.empresa,
+            foto: base64String,
+          },
+        }));
+      };
+      reader.readAsDataURL(file); 
+    } else {
+      console.error("Uploaded file is not a valid File object.");
+    }
+  };
+  
+  
   const [formData, setFormData] = useState<FormValues>({
     usuario: {
       email: "",
@@ -54,18 +78,16 @@ const RegistrationForm: React.FC = () => {
       fecaNac: "",
       noDocumento: "",
       sexo: true,
-      idEntidad: 0,
+
     },
     empresa: {
-      id: 1,
       nombre: "",
       rnc: "",
-      idArchivo: 0,
       foto: "default.png",
       direccion: "",
       telefono1: "",
       telefono2: "",
-      email: "",
+      email: ""
     },
   });
 
@@ -75,7 +97,14 @@ const RegistrationForm: React.FC = () => {
       .then((values) => {
         setFormData((prevData) => ({
           ...prevData,
-          ...values,
+          usuario: {
+            ...prevData.usuario,
+            ...values.usuario,
+          },
+          empresa: {
+            ...prevData.empresa,
+            ...values.empresa,
+          },
         }));
         setCurrent(current + 1);
       })
@@ -89,16 +118,24 @@ const RegistrationForm: React.FC = () => {
   };
 
   const onFinish = async (values: FormValues) => {
-    // Merge final form values
-    const finalValues = { ...formData, ...values };
-    console.log("Form values:", finalValues);
 
+    const finalValues = { ...formData, ...values };
+
+  if (finalValues.usuario.fecaNac) {
+    finalValues.usuario.fecaNac = moment(finalValues.usuario.fecaNac).format("YYYY-MM-DD");
+    console.log( finalValues.usuario.fecaNac)
+    finalValues.empresa.foto = 'string'
+  }
+    console.log(finalValues)
     try {
+
+  
       const response = await apiClient.post("/Account/Register", {
         body: JSON.stringify(finalValues),
       });
 
-      console.log(response);
+      
+
     } catch (error) {
       console.log(error);
       message.error("Registration Failed");
@@ -299,6 +336,19 @@ const RegistrationForm: React.FC = () => {
           >
             <Input />
           </Form.Item>
+          <Form.Item
+          label="Foto de la Compañía"
+          name={["empresa", "foto"]}
+          rules={[{ required: true, message: "Por favor agrega la foto de la compañía" }]}
+        >
+          <Upload
+            showUploadList={false}
+            onChange={handlePhotoChange}
+            beforeUpload={() => false} 
+          >
+            <Button>Subir Photo</Button>
+          </Upload>
+        </Form.Item>
         </Form>
       ),
     },
@@ -315,17 +365,17 @@ const RegistrationForm: React.FC = () => {
       <div className="steps-action" style={{ marginTop: 16 }}>
         {current < steps.length - 1 && (
           <Button type="primary" onClick={() => next()}>
-            Next
+            Siguiente
           </Button>
         )}
         {current === steps.length - 1 && (
           <Button type="primary" onClick={() => form.submit()}>
-            Submit
+            Cargar
           </Button>
         )}
         {current > 0 && (
           <Button style={{ marginLeft: 8 }} onClick={() => prev()}>
-            Previous
+            Anterior
           </Button>
         )}
       </div>
