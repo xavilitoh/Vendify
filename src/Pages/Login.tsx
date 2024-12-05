@@ -14,7 +14,7 @@ interface LoginFormValues {
 interface LoginResponse {
   token: string;
   usuario: {
-    nombre: string;
+    nombres: string;
     apellido: string;
     email: string;
   };
@@ -37,10 +37,12 @@ const LoginForm: React.FC = () => {
       );
 
       const { token } = response.data;
-      const { nombre } = response.data.usuario;
+      const { usuario } = response.data;
       Cookies.set("token", token, { expires: 7 });
+      Cookies.set("usuario", JSON.stringify(usuario), { expires: 7 });
 
-      message.success(`Bienvenido, ${nombre}`);
+
+      message.success(`Bienvenido, ${usuario?.nombres}`);
       navigate("/");
     } catch (error) {
       console.log(error);
@@ -52,6 +54,7 @@ const LoginForm: React.FC = () => {
 
   return (
     <div className="login">
+      <h1 className="">Entrar</h1>
       <Form
         name="login"
         className="login-form"
@@ -98,6 +101,9 @@ const LoginForm: React.FC = () => {
             Entrar
           </Button>
         </Form.Item>
+        <a className="login-form-forgot" href="/registrarse">
+            ¿No tienes Cuenta? Registrate aqui
+        </a>
       </Form>
     </div>
   );

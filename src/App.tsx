@@ -16,6 +16,8 @@ import { ItemSider } from "./Components/SiderItems";
 import Usuarios from "./Components/Usuarios/Usuarios";
 import Categorias from "./Components/Categorias/Categorias";
 import Registrarse from "./Pages/Registrarse";
+import Marcas from "./Components/Marcas/Marcas";
+import Precios from "./Components/Precios/Precios";
 const { Content } = Layout;
 
 const lightTheme = {
@@ -146,6 +148,23 @@ const toggleDarkMode = (checked: boolean) => {
                   element={
                     <ProtectedRoute>
                       <Productos />
+                    </ProtectedRoute>
+                  }
+                />
+
+                <Route
+                  path="/marcas"
+                  element={
+                    <ProtectedRoute>
+                      <Marcas />
+                    </ProtectedRoute>
+                  }
+                />
+                    <Route
+                  path="/precios"
+                  element={
+                    <ProtectedRoute>
+                      <Precios />
                     </ProtectedRoute>
                   }
                 />

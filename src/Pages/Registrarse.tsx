@@ -5,6 +5,7 @@ import type { RadioChangeEvent } from "antd";
 import "./Registrarse.css";
 import moment from "moment";
 import apiClient from "../Api/VendifyApi";
+import axios from "axios";
 
 const { Step } = Steps;
 
@@ -129,12 +130,18 @@ const RegistrationForm: React.FC = () => {
     console.log(finalValues)
     try {
 
-  
-      const response = await apiClient.post("/Account/Register", {
-        body: JSON.stringify(finalValues),
-      });
 
-      
+
+
+/*       const response = await axios.post('https://vendify_api.wxbolab.com/api/Account/Register', finalValues);
+ */
+
+  
+        const response = await apiClient.post("/Account/Register", finalValues);  
+
+      console.log(response,'RESPONDE')
+
+      message.success("Usuario Registrado con exito");
 
     } catch (error) {
       console.log(error);

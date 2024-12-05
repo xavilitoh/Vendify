@@ -25,5 +25,19 @@ export const ItemSider: MenuProps["items"] = [
     icon: React.createElement(NotificationOutlined),
     label: <Link to="categorias"> Categorias</Link>,
   },
-  { key: 4, icon: React.createElement(NotificationOutlined), label: `Pagos` },
+  {
+    key: 4,
+    icon: React.createElement(NotificationOutlined),
+    label: <Link to="marcas"> Marcas</Link>,
+  },
+  {
+    key: 5,
+    icon: React.createElement(NotificationOutlined),
+    label: <Link to="precios"> Precios</Link>,
+  },
+  {
+    key: 6,
+    icon: React.createElement(NotificationOutlined),
+    label: <Link to="subcategorias"> SubCategorias</Link>,
+  }
 ];

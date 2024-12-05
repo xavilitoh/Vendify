@@ -86,8 +86,6 @@ export const updateCategory = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const token = Cookies.get("token");
-      console.log(id, descripcion, enable, fechaCreacion, fechaModificacion);
 
       const response = await api.put(
         `/categorias?id=${id}`,
@@ -98,11 +96,6 @@ export const updateCategory = createAsyncThunk(
           fechaCreacion: fechaCreacion,
           fechaModificacion: fechaModificacion,
         }, // Request body
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
       );
 
       console.log(response);
