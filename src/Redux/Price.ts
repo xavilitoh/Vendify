@@ -1,59 +1,65 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "./Store";
 import api from "../Api/VendifyApi";
-import Cookies from "js-cookie";
 import { AxiosError } from "axios";
 
-
+// Entidad Interface
 export interface Entidad {
-    id: number;
-    nombre: string;
-    rnc: string;
-    idArchivo: number;
-    foto: string;
-    direccion: string;
-    telefono1: string;
-    telefono2: string;
-    email: string;
-  }
+  id: number;
+  nombre: string;
+  rnc: string;
+  idArchivo: number;
+  foto: string;
+  direccion: string;
+  telefono1: string;
+  telefono2: string;
+  email: string;
+}
 
+// Price Interface
 export interface Price {
   id: number;
   descripcion: string;
-  enable:boolean;
-  idEntidad:Number;
-  entidad:Entidad | null
+  enable: boolean;
+  idEntidad: number;
+  entidad: Entidad | null;
 }
 
+// State Interface
 interface PriceState {
   prices: Price[];
   loading: boolean;
 }
 
+// Initial State
 const initialState: PriceState = {
   prices: [],
   loading: false,
 };
 
-// Thunks
-export const fetchPrices = createAsyncThunk("precios", async () => {
+// Fetch Prices Thunk
+export const fetchPrices = createAsyncThunk<Price[]>(
+  "prices/fetchPrices",
+  async () => {
+    const response = await api.get<Price[]>("/precios");
+    return response.data; // Ensure response is typed as Price[]
+  }
+);
 
-
-  const response = await api.get("/precios");
-  return response.data;
-});
-
-export const createPrice = createAsyncThunk(
+// Create Price Thunk
+export const createPrice = createAsyncThunk<
+  Price, // Return type
+  { descripcion: string }, // Argument type
+  { rejectValue: string } // Reject value type
+>(
   "prices/createPrice",
-  async (price: { descripcion: string }, { rejectWithValue }) => {
+  async (price, { rejectWithValue }) => {
     try {
-     
-      const response = await api.post(
+      const response = await api.post<Price,any>(
         "/precios",
         { descripcion: price.descripcion }
       );
-
-      return response.data;
+      return response.data; // Ensure response is typed as Price
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
         return rejectWithValue(error.response.data);
@@ -64,46 +70,29 @@ export const createPrice = createAsyncThunk(
   }
 );
 
-export const updatePrice = createAsyncThunk(
+// Update Price Thunk
+export const updatePrice = createAsyncThunk<
+  Price, // Return type
+  Price, // Argument type
+  { rejectValue: string } // Reject value type
+>(
   "prices/updatePrice",
-  async (
-    price: {
-      id: number;
-      descripcion: string;
-      enable: boolean;
-      idEntidad: number;
-      entidad: {
-        id: number;
-        nombre: string;
-        rnc: string;
-        idArchivo: number;
-        foto: string;
-        direccion: string;
-        telefono1: string;
-        telefono2: string;
-        email: string;
-      } | null;
-    },
-    { rejectWithValue }
-  ) => {
+  async (price, { rejectWithValue }) => {
     try {
-
-      const response = await api.put(
+      const response = await api.put<Price,any>(
         `/precios?id=${price.id}`,
-        price,
+        price
       );
-
-      console.log(response)
-
-      return response.data;
+      return response.data; // Ensure response is typed as Price
     } catch (error) {
-      console.log(error)
-      return rejectWithValue("Error updating price");
+      if (error instanceof AxiosError && error.response) {
+        return rejectWithValue(error.response.data);
+      } else {
+        return rejectWithValue("Error updating price");
+      }
     }
   }
 );
-
-
 
 // Slice
 const priceSlice = createSlice({
@@ -116,20 +105,29 @@ const priceSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchPrices.fulfilled, (state, action) => {
-        state.prices = action.payload;
+        state.prices = action.payload; // Correctly typed as Price[]
         state.loading = false;
       })
       .addCase(fetchPrices.rejected, (state) => {
         state.loading = false;
       })
       .addCase(createPrice.fulfilled, (state, action) => {
-        state.prices.push(action.payload);
+        state.prices.push(action.payload); // Correctly typed as Price
+      })
+      .addCase(updatePrice.fulfilled, (state, action) => {
+        const index = state.prices.findIndex(
+          (price) => price.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.prices[index] = action.payload; // Update the price in the array
+        }
       });
   },
 });
 
 // Selectors
-export const selectPrices = (state: RootState) => state.prices.prices;
-export const selectLoading = (state: RootState) => state.prices.loading;
+export const selectPrices = (state: RootState) => state.precios.prices;
+export const selectLoading = (state: RootState) => state.precios.loading;
 
+// Export Reducer
 export default priceSlice.reducer;

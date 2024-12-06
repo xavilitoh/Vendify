@@ -13,6 +13,8 @@ export interface categorias {
   enable: boolean;
 }
 
+
+
 interface CategoryState {
   categorias: categorias[];
   loading: boolean;
@@ -23,7 +25,7 @@ const initialState: CategoryState = {
   loading: false,
 };
 
-export const fetchCategories = createAsyncThunk(
+export const fetchCategories = createAsyncThunk<categorias[]>(
   "categories/fetchCategories",
   async () => {
     const token = Cookies.get("token");
@@ -31,24 +33,23 @@ export const fetchCategories = createAsyncThunk(
 
     headers.set("Authorization", `Bearer ${token}`);
 
-    const response = await api.get("/Categorias", {
+    const response = await api.get<categorias[]>("/Categorias", {
       headers,
     });
     return response.data;
   }
 );
 
-export const createCategory = createAsyncThunk(
+
+export const createCategory = createAsyncThunk<
+  categorias, // Return type of the thunk
+  { descripcion: string }, // Argument type for the thunk
+  { rejectValue: string } // Type for rejectWithValue
+>(
   "categories/createCategory",
-  async (category: { descripcion: string }, { rejectWithValue }) => {
+  async (category, { rejectWithValue }) => {
     try {
-      const token = Cookies.get("token");
-
-      if (!token) {
-        throw new Error("Token not found");
-      }
-
-      const response = await api.post("/Categorias", {
+      const response = await api.post<categorias,any>("/Categorias", {
         descripcion: category.descripcion,
       });
 

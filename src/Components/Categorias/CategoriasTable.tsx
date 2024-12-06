@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, message,Tag,Switch } from "antd";
+import { Table, Button, message,Switch } from "antd";
 import moment from "moment";
 import { useDispatch } from "react-redux";
 import EditCategoryModal from "./EditarCategoria";

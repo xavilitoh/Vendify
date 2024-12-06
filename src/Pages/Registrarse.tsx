@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { Steps, Form, Input, Button, message, Radio, DatePicker,Upload } from "antd";
-import { FormInstance } from "antd/lib/form";
 import type { RadioChangeEvent } from "antd";
 import "./Registrarse.css";
 import moment from "moment";
 import apiClient from "../Api/VendifyApi";
-import axios from "axios";
+
 
 const { Step } = Steps;
 
@@ -40,7 +39,7 @@ interface FormValues {
 
 const RegistrationForm: React.FC = () => {
   const [current, setCurrent] = useState<number>(0);
-  const [form] = Form.useForm<FormInstance<FormValues>>();
+  const [form] = Form.useForm<FormValues>(); // No necesitas FormInstance<FormValues>
   const [sexo, setSexo] = useState<boolean>(true);
 
   const handlePhotoChange = (info: any) => {
@@ -127,14 +126,8 @@ const RegistrationForm: React.FC = () => {
     console.log( finalValues.usuario.fecaNac)
     finalValues.empresa.foto = 'string'
   }
-    console.log(finalValues)
+  
     try {
-
-
-
-
-/*       const response = await axios.post('https://vendify_api.wxbolab.com/api/Account/Register', finalValues);
- */
 
   
         const response = await apiClient.post("/Account/Register", finalValues);  

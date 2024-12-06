@@ -3,12 +3,7 @@ import apiClient from "../Api/VendifyApi";
 import { AxiosError, AxiosHeaders } from "axios";
 import Cookies from "js-cookie";
 
-interface UserState {
-  loading: boolean;
-  error: string | null;
-  users: CreateUserFormValues[] | null;
-}
-
+// Define CreateUserFormValues Interface
 interface CreateUserFormValues {
   email: string;
   pass: string;
@@ -21,33 +16,34 @@ interface CreateUserFormValues {
   sexo: boolean;
 }
 
+// Define UserState Interface
+interface UserState {
+  loading: boolean;
+  error: string | null;
+  users: CreateUserFormValues[] | null;
+}
+
+// Initial State
 const initialState: UserState = {
   loading: false,
   error: null,
   users: null,
 };
 
-export const createUser = createAsyncThunk(
+// Create User Thunk
+export const createUser = createAsyncThunk<
+  CreateUserFormValues, // Return type
+  CreateUserFormValues, // Argument type
+  { rejectValue: string } // Reject value type
+>(
   "user/createUser",
-  async (userData: CreateUserFormValues, { rejectWithValue }) => {
+  async (userData, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post("/Users/Create", {
-        email: userData.email,
-        pass: userData.pass,
-        nombres: userData.nombres,
-        apellidos: userData.apellidos,
-        telefono: userData.telefono,
-        address: userData.address,
-        fecaNac: userData.fecaNac,
-        noDocumento: userData.noDocumento,
-        sexo: userData.sexo,
-      });
-      console.log(response.data);
+      const response = await apiClient.post<CreateUserFormValues,any>("/Users/Create", userData);
       return response.data;
     } catch (error) {
-      console.log(error);
       if (error instanceof AxiosError && error.response) {
-        return rejectWithValue(error.response.data);
+        return rejectWithValue(error.response.data as string);
       } else {
         return rejectWithValue("Something went wrong");
       }
@@ -55,7 +51,12 @@ export const createUser = createAsyncThunk(
   }
 );
 
-export const fetchUsers = createAsyncThunk(
+// Fetch Users Thunk
+export const fetchUsers = createAsyncThunk<
+  CreateUserFormValues[], // Return type
+  void, // Argument type
+  { rejectValue: string } // Reject value type
+>(
   "user/fetchUsers",
   async (_, { rejectWithValue }) => {
     try {
@@ -64,14 +65,14 @@ export const fetchUsers = createAsyncThunk(
       const headers = new AxiosHeaders();
       headers.set("Authorization", `Bearer ${token}`); // Use the set method for AxiosHeaders
 
-      const response = await apiClient.get("/Users", {
+      const response = await apiClient.get<CreateUserFormValues[]>("/Users", {
         headers, // Pass the AxiosHeaders instance
       });
 
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
-        return rejectWithValue(error.response.data);
+        return rejectWithValue(error.response.data as string);
       } else {
         return rejectWithValue("Something went wrong");
       }
@@ -79,6 +80,7 @@ export const fetchUsers = createAsyncThunk(
   }
 );
 
+// User Slice
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -104,7 +106,7 @@ const userSlice = createSlice({
       })
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.loading = false;
-        state.users = action.payload ;
+        state.users = action.payload; // Correctly typed as CreateUserFormValues[]
       })
       .addCase(fetchUsers.rejected, (state, action) => {
         state.loading = false;
@@ -113,4 +115,5 @@ const userSlice = createSlice({
   },
 });
 
+// Export Reducer
 export default userSlice.reducer;

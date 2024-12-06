@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "./Store";
 import api from "../Api/VendifyApi";
+import { AxiosError } from "axios";
 
-import { AxiosHeaders, AxiosError } from "axios";
-
+// Entity Interface
 export interface Entidad {
   id: number;
   nombre: string;
@@ -16,6 +16,7 @@ export interface Entidad {
   email: string;
 }
 
+// Marca Interface
 export interface Marca {
   id: number;
   descripcion: string;
@@ -26,35 +27,37 @@ export interface Marca {
   fechaModificacion: string | null;
 }
 
+// State Interface
 interface MarcaState {
   marcas: Marca[];
   loading: boolean;
 }
 
+// Initial State
 const initialState: MarcaState = {
   marcas: [],
   loading: false,
 };
 
-// Thunks
-export const fetchMarcas = createAsyncThunk(
+// Fetch Marcas Thunk
+export const fetchMarcas = createAsyncThunk<Marca[]>(
   "marcas/fetchMarcas",
   async () => {
-
-
-    const response = await api.get("/Marcas");
+    const response = await api.get<Marca[]>("/Marcas");
     return response.data;
   }
 );
 
-export const createMarca = createAsyncThunk(
+// Create Marca Thunk
+export const createMarca = createAsyncThunk<
+  Marca, // Return type
+  { descripcion: string; idEntidad?: number }, // Argument type
+  { rejectValue: string } // Reject value type
+>(
   "marcas/createMarca",
-  async (marca: { descripcion: string; idEntidad?: number }, { rejectWithValue }) => {
+  async (marca, { rejectWithValue }) => {
     try {
-  
-
-      const response = await api.post("/Marcas", marca);
-
+      const response = await api.post<Marca,any>("/Marcas", marca);
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
@@ -68,6 +71,7 @@ export const createMarca = createAsyncThunk(
   }
 );
 
+// Update Marca Thunk
 interface UpdateMarcaPayload {
   id: number;
   descripcion: string;
@@ -77,19 +81,25 @@ interface UpdateMarcaPayload {
   fechaModificacion: string | null;
 }
 
-export const updateMarca = createAsyncThunk(
+export const updateMarca = createAsyncThunk<
+  Marca, // Return type
+  UpdateMarcaPayload, // Argument type
+  { rejectValue: string } // Reject value type
+>(
   "marcas/updateMarca",
-  async (payload: UpdateMarcaPayload, { rejectWithValue }) => {
+  async (payload, { rejectWithValue }) => {
     try {
-
-      const response = await api.put(
-        `/marcas?id=${payload.id}`,
+      const response = await api.put<Marca,any>(
+        `/Marcas?id=${payload.id}`,
         payload
       );
-
       return response.data;
     } catch (error) {
-      return rejectWithValue("Error updating marca");
+      if (error instanceof AxiosError && error.response) {
+        return rejectWithValue(error.response.data);
+      } else {
+        return rejectWithValue("Error updating marca");
+      }
     }
   }
 );
@@ -105,14 +115,22 @@ const marcaSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchMarcas.fulfilled, (state, action) => {
-        state.marcas = action.payload;
+        state.marcas = action.payload; // Correctly typed as Marca[]
         state.loading = false;
       })
       .addCase(fetchMarcas.rejected, (state) => {
         state.loading = false;
       })
       .addCase(createMarca.fulfilled, (state, action) => {
-        state.marcas.push(action.payload);
+        state.marcas.push(action.payload); // Correctly typed as Marca
+      })
+      .addCase(updateMarca.fulfilled, (state, action) => {
+        const index = state.marcas.findIndex(
+          (marca) => marca.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.marcas[index] = action.payload; // Update the marca in the array
+        }
       });
   },
 });
@@ -121,4 +139,5 @@ const marcaSlice = createSlice({
 export const selectMarcas = (state: RootState) => state.marcas.marcas;
 export const selectLoading = (state: RootState) => state.marcas.loading;
 
+// Export Reducer
 export default marcaSlice.reducer;

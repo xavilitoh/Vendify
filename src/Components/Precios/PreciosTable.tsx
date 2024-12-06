@@ -1,4 +1,4 @@
-import { Table, Button, message, Tag,Switch } from "antd";
+import { Table, Button, message, Switch } from "antd";
 import { useState,useEffect } from "react";
 
 import { useDispatch } from "react-redux";
@@ -46,7 +46,9 @@ const PricesTable: React.FC<PricesTableProps> = ({ prices, loading }) => {
         updatePrice({
           id: selectedPrice.id,
           descripcion: values.descripcion,
-          enable: values.enable, // Include enable in the payload
+          enable: values.enable,
+          idEntidad: 0, // Placeholder value
+          entidad: null, // Include enable in the payload
         })
       )
         .then(() => {
