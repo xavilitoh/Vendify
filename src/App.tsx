@@ -1,7 +1,8 @@
 // src/App.tsx
 import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import { Layout, ConfigProvider, theme, Button } from "antd";
+import { Layout, ConfigProvider, theme, Button,Avatar } from "antd";
+import { UserOutlined } from '@ant-design/icons';
 import Cookies from "js-cookie"; // For token storage
 import { useNavigate } from "react-router-dom";
 import SiderComponent from "./Pages/Sider";
@@ -18,6 +19,7 @@ import Categorias from "./Components/Categorias/Categorias";
 import Registrarse from "./Pages/Registrarse";
 import Marcas from "./Components/Marcas/Marcas";
 import Precios from "./Components/Precios/Precios";
+import Unidades from "./Components/Unidades/Unidades";
 const { Content } = Layout;
 
 const lightTheme = {
@@ -58,7 +60,7 @@ const toggleDarkMode = (checked: boolean) => {
   };
 
   const ItemsMenu = [
-    { key: 1, label: `Perfil` },
+    { key: 1, label: (<Avatar size={30} icon={<UserOutlined /> }/>)},
     {
       key: 2,
       label: (
@@ -114,7 +116,7 @@ const toggleDarkMode = (checked: boolean) => {
             >
               <Routes>
                 <Route path="/login" element={<Login />} />
-                <Route path="/registrarse" element={<Registrarse />} />
+                <Route path="/registrarse" element={<Registrarse  isDarkMode={isDarkMode}/>} />
 
                 <Route
                   path="/"
@@ -168,6 +170,15 @@ const toggleDarkMode = (checked: boolean) => {
                     </ProtectedRoute>
                   }
                 />
+                <Route
+                  path="/unidades"
+                  element={
+                    <ProtectedRoute>
+                      <Unidades />
+                    </ProtectedRoute>
+                  }
+                />
+                
               </Routes>
             </Content>
           </Layout>

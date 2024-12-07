@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, message,Tag } from "antd";
+import { Table, Button, message,Switch } from "antd";
 import moment from "moment";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Redux/Store";
@@ -112,7 +112,9 @@ const MarcasTable: React.FC<MarcasTableProps> = ({ marcas, loading }) => {
       title: "Habilitado",
       dataIndex: "enable",
       key: "enable",
-      render: (enable: boolean) => (enable ? <Tag color="#87d068">Si</Tag> : <Tag color="#f50">No</Tag>),
+      render: (enable: boolean) => (
+        <Switch checked={enable} disabled />
+      ),
     },
     {
       title: "Acción",

@@ -6,6 +6,9 @@ import {
   LaptopOutlined,
   NotificationOutlined,
   UserOutlined,
+  WindowsOutlined,
+  SubnodeOutlined,
+  EuroOutlined  
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 
@@ -22,22 +25,22 @@ export const ItemSider: MenuProps["items"] = [
   },
   {
     key: 3,
-    icon: React.createElement(NotificationOutlined),
+    icon: React.createElement(WindowsOutlined),
     label: <Link to="categorias"> Categorias</Link>,
   },
   {
     key: 4,
-    icon: React.createElement(NotificationOutlined),
+    icon: React.createElement(SubnodeOutlined),
     label: <Link to="marcas"> Marcas</Link>,
   },
   {
     key: 5,
-    icon: React.createElement(NotificationOutlined),
+    icon: React.createElement(EuroOutlined),
     label: <Link to="precios"> Precios</Link>,
   },
   {
     key: 6,
     icon: React.createElement(NotificationOutlined),
-    label: <Link to="subcategorias"> SubCategorias</Link>,
+    label: <Link to="Unidades"> Unidades</Link>,
   }
 ];

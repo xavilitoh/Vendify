@@ -4,6 +4,7 @@ import type { RadioChangeEvent } from "antd";
 import "./Registrarse.css";
 import moment from "moment";
 import apiClient from "../Api/VendifyApi";
+import { useNavigate  } from "react-router-dom";
 
 
 const { Step } = Steps;
@@ -30,6 +31,9 @@ interface Empresa {
   email: string;
 }
 
+interface RegistrarseProps {
+  isDarkMode: boolean;
+}
 
 
 interface FormValues {
@@ -37,10 +41,11 @@ interface FormValues {
   empresa: Empresa;
 }
 
-const RegistrationForm: React.FC = () => {
+const RegistrationForm: React.FC<RegistrarseProps> = () => {
   const [current, setCurrent] = useState<number>(0);
   const [form] = Form.useForm<FormValues>(); // No necesitas FormInstance<FormValues>
   const [sexo, setSexo] = useState<boolean>(true);
+  const navigate = useNavigate()
 
   const handlePhotoChange = (info: any) => {
     console.log(info); 
@@ -62,7 +67,7 @@ const RegistrationForm: React.FC = () => {
       };
       reader.readAsDataURL(file); 
     } else {
-      console.error("Uploaded file is not a valid File object.");
+      console.error("Error subiendo la Imagen");
     }
   };
   
@@ -109,7 +114,7 @@ const RegistrationForm: React.FC = () => {
         setCurrent(current + 1);
       })
       .catch((errorInfo) => {
-        console.error("Validation Failed:", errorInfo);
+        console.error("Falló en validación:", errorInfo);
       });
   };
 
@@ -132,10 +137,8 @@ const RegistrationForm: React.FC = () => {
   
         const response = await apiClient.post("/Account/Register", finalValues);  
 
-      console.log(response,'RESPONDE')
-
-      message.success("Usuario Registrado con exito");
-
+      message.success("Usuario Registrado con exito",3);
+      navigate('/usuarios')
     } catch (error) {
       console.log(error);
       message.error("Registration Failed");

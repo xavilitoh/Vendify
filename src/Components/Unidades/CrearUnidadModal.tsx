@@ -1,18 +1,18 @@
-// components/CreateCategoryModal.tsx
 import React from "react";
 import { Modal, Form, Input, Button } from "antd";
 
-interface CreateCategoryFormValues {
+interface CreateUnidadFormValues {
   descripcion: string;
+  abreviatura: string;
 }
 
-interface CreateCategoryModalProps {
+interface CreateUnidadModalProps {
   visible: boolean;
   onCancel: () => void;
-  onSubmit: (values: CreateCategoryFormValues) => void;
+  onSubmit: (values: CreateUnidadFormValues) => void;
 }
 
-const CreateCategoryModal: React.FC<CreateCategoryModalProps> = ({
+const CreateUnidadModal: React.FC<CreateUnidadModalProps> = ({
   visible,
   onCancel,
   onSubmit,
@@ -21,7 +21,7 @@ const CreateCategoryModal: React.FC<CreateCategoryModalProps> = ({
 
   return (
     <Modal
-      title="Crear SubCategoria"
+      title="Crear Unidad"
       visible={visible}
       onCancel={() => {
         onCancel();
@@ -40,23 +40,27 @@ const CreateCategoryModal: React.FC<CreateCategoryModalProps> = ({
         form={form}
         layout="vertical"
         onFinish={(values) => {
-          console.log(values);
-          onSubmit(values as CreateCategoryFormValues);
+          onSubmit(values as CreateUnidadFormValues);
           form.resetFields();
         }}
       >
         <Form.Item
           label="Descripción"
           name="descripcion"
-          rules={[
-            { required: true, message: "Por favor ingrese una descripción" },
-          ]}
+          rules={[{ required: true, message: "Por favor ingrese una descripción" }]}
         >
           <Input placeholder="Ingrese la descripción" />
+        </Form.Item>
+        <Form.Item
+          label="Abreviatura"
+          name="abreviatura"
+          rules={[{ required: true, message: "Por favor ingrese una abreviatura" }]}
+        >
+          <Input placeholder="Ingrese la abreviatura" />
         </Form.Item>
       </Form>
     </Modal>
   );
 };
 
-export default CreateCategoryModal;
+export default CreateUnidadModal;
