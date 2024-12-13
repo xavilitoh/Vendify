@@ -1,13 +1,46 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, message,Switch } from "antd";
+import { Table, Button, message, Switch } from "antd";
 import moment from "moment";
 import { useDispatch } from "react-redux";
 import EditCategoryModal from "./EditarCategoria";
+import CreateSubcategoriaModal from "./CrearSubCategoria";
 import { updateCategory } from "../../Redux/CategorySlice";
 import { AppDispatch } from "../../Redux/Store";
-import CreateSubcategoriaModal from "./CreateCategoriaModal";
 import apiClient from "../../Api/VendifyApi";
+import Cookies from "js-cookie";
 
+export interface Empresa {
+  id: number;
+  nombre: string;
+  rnc: string;
+  idArchivo: number | null;
+  foto: string;
+  direccion: string;
+  telefono1: string;
+  telefono2: string;
+  email: string;
+}
+
+export interface Usuario {
+  id: number;
+  idEntidad: number;
+  fullName: string;
+  nombres: string;
+  apellidos: string;
+  email: string;
+  telefono: string;
+  documento: string;
+  direccion: string;
+  fechaNaci: string; // ISO date string
+  sexo: boolean;
+  userName: string;
+  empresa: Empresa;
+}
+
+interface Subcategory {
+  id: number;
+  descripcion: string;
+}
 
 interface Category {
   id: number;
@@ -22,17 +55,12 @@ interface CategoriesTableProps {
   loading: boolean;
 }
 
-const CategoriesTable: React.FC<CategoriesTableProps> = ({
-  categories,
-  loading,
-}) => {
+const CategoriesTable: React.FC<CategoriesTableProps> = ({ categories, loading }) => {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [isSubcategoryModalVisible, setIsSubcategoryModalVisible] =
-  useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-    null
-  );
+  const [isSubcategoryModalVisible, setIsSubcategoryModalVisible] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [categoriesList, setCategoriesList] = useState<Category[]>([]);
+  const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
 
   const dispatch: AppDispatch = useDispatch();
 
@@ -42,11 +70,24 @@ const CategoriesTable: React.FC<CategoriesTableProps> = ({
     }
   }, [categories]);
 
-  const handleSubcategoryClick = (category: Category) => {
+  const handleSubcategoryClick = async (category: Category) => {
     setSelectedCategory(category);
     setIsSubcategoryModalVisible(true);
-  };
 
+    try {
+      const response = await apiClient.get(`Subcategorias/GetByCategoriaId/${category.id}`);
+      if (response.status === 200) {
+        setSubcategories(response.data); // Fetch subcategories for the selected category
+      } else {
+        setSubcategories([]);
+        message.error("Error al obtener las subcategorías");
+      }
+    } catch (error) {
+      console.error(error);
+      setSubcategories([]);
+      message.error("Error inesperado al obtener las subcategorías");
+    }
+  };
 
   const handleEditClick = (category: Category) => {
     setSelectedCategory(category);
@@ -63,10 +104,7 @@ const CategoriesTable: React.FC<CategoriesTableProps> = ({
     setSelectedCategory(null);
   };
 
-  const handleEditSubmit = (values: {
-    descripcion: string;
-    enable: boolean;
-  }) => {
+  const handleEditSubmit = (values: { descripcion: string; enable: boolean }) => {
     if (selectedCategory) {
       dispatch(
         updateCategory({
@@ -103,19 +141,23 @@ const CategoriesTable: React.FC<CategoriesTableProps> = ({
   const handleSubcategorySubmit = async (values: { descripcion: string }) => {
     if (selectedCategory) {
       try {
-        const idEntidad = parseInt(localStorage.getItem("idEntidad") || "0");
+        const usuario = Cookies.get("usuario");
+        if (!usuario) {
+          throw new Error("No se encontraron datos de la entidad");
+        }
+
+        const usuarioFinal = JSON.parse(usuario);
+        const idEntidad = parseInt(usuarioFinal.empresa.id);
+
         const response = await apiClient.post("Subcategorias", {
-  
-            descripcion: values.descripcion,
-            idCategoria: selectedCategory.id,
-            idEntidad,
-          },
-        );
+          descripcion: values.descripcion,
+          idCategoria: selectedCategory.id,
+          idEntidad,
+        });
 
-
-
-        if (response.status = 200) {
+        if (response.status === 200) {
           message.success("Subcategoría creada exitosamente");
+          setSubcategories((prev) => [...prev, { id: response.data.id, descripcion: values.descripcion }]);
           setIsSubcategoryModalVisible(false);
         } else {
           message.error("Error al crear la subcategoría");
@@ -148,30 +190,25 @@ const CategoriesTable: React.FC<CategoriesTableProps> = ({
       title: "Fecha de Modificación",
       dataIndex: "fechaModificacion",
       key: "fechaModificacion",
-      render: (fecha: string | null) =>
-        fecha ? moment(fecha).format("YYYY-MM-DD") : "N/A",
+      render: (fecha: string | null) => (fecha ? moment(fecha).format("YYYY-MM-DD") : "N/A"),
     },
     {
       title: "Habilitado",
       dataIndex: "enable",
       key: "enable",
-      render: (enable: boolean) => <Switch  checked={enable} disabled ></Switch>// Bind to the current state
-      ,
+      render: (enable: boolean) => <Switch checked={enable} disabled />,
     },
     {
       title: "Acción",
       key: "operation",
-      render: (_: any, record: Category) => (
-        [  <Button
-          type="default"
-          onClick={() => handleSubcategoryClick(record)}
-        >
+      render: (_: any, record: Category) => [
+        <Button type="default" onClick={() => handleSubcategoryClick(record)}>
           Gestionar
-        </Button>,<Button type="primary" style={{marginLeft:'5px'}} onClick={() => handleEditClick(record)}>
-          Editar 
-        </Button>]
-        
-      ),
+        </Button>,
+        <Button type="primary" style={{ marginLeft: "5px" }} onClick={() => handleEditClick(record)}>
+          Editar
+        </Button>,
+      ],
     },
   ];
 
@@ -204,14 +241,14 @@ const CategoriesTable: React.FC<CategoriesTableProps> = ({
         />
       )}
 
-{selectedCategory && (
+      {selectedCategory && (
         <CreateSubcategoriaModal
           visible={isSubcategoryModalVisible}
           onCancel={handleCancelSubcategoryModal}
           onSubmit={handleSubcategorySubmit}
+          subcategories={subcategories}
         />
       )}
-
     </>
   );
 };

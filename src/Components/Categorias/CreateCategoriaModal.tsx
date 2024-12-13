@@ -1,6 +1,6 @@
 // components/CreateCategoryModal.tsx
 import React from "react";
-import { Modal, Form, Input, Button } from "antd";
+import { Modal, Form, Input, Button, Table } from "antd";
 
 interface CreateCategoryFormValues {
   descripcion: string;
@@ -21,7 +21,7 @@ const CreateCategoryModal: React.FC<CreateCategoryModalProps> = ({
 
   return (
     <Modal
-      title="Crear SubCategoria"
+      title="Crear Categoria t"
       visible={visible}
       onCancel={() => {
         onCancel();
@@ -36,6 +36,7 @@ const CreateCategoryModal: React.FC<CreateCategoryModalProps> = ({
         </Button>,
       ]}
     >
+
       <Form
         form={form}
         layout="vertical"

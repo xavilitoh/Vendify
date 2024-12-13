@@ -6,6 +6,8 @@ import MarcasSlice from './MarcasSlice'
 import PriceSlide from './Price'
 import SubCategorias from './SubCategoriaSlice'
 import UnidadesSlice from './UnidadesSlice'
+import ProductosLice from './Productos'
+
 
 export const store = configureStore({
   reducer: {
@@ -14,7 +16,8 @@ export const store = configureStore({
     marcas:MarcasSlice,
     precios:PriceSlide,
     subCategorias:SubCategorias,
-    unidades:UnidadesSlice
+    unidades:UnidadesSlice,
+    productos:ProductosLice
   },
 });
 

@@ -133,14 +133,12 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
   }
   
     try {
-
-  
-        const response = await apiClient.post("/Account/Register", finalValues);  
-
+      const response = await apiClient.post("/Account/Register", finalValues);
+      console.log(response)  
       message.success("Usuario Registrado con exito",3);
       navigate('/usuarios')
     } catch (error) {
-      console.log(error);
+      console.log(error)
       message.error("Registration Failed");
     }
   };
