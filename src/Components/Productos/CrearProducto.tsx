@@ -44,7 +44,6 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
   const handleCategoryChange = (idCategoria: number) => {
     const filtered = subcategorias.filter((sub) => sub.iCategoria === idCategoria);
     console.log(filtered)
-    setFilteredSubcategorias(filtered);
     form.setFieldsValue({ idSubcategoria: undefined }); // Resetear selección de subcategoría
   };
 
