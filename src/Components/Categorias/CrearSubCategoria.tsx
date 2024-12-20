@@ -72,31 +72,15 @@ const CreateSubcategoriaModal: React.FC<CreateSubcategoryModalProps> = ({
       ]}
     >
       <div >
+        
         {tags.map((tag) => (
-          <Tag key={tag}>{tag}</Tag>
+          <Tag color="#108ee9" style={{marginTop:'5px'}}  key={tag}>{tag}</Tag>
         ))}
-        {inputVisible ? (
-          <Input
-            ref={inputRef}
-            type="text"
-            size="small"
-            style={{ width: 100 }}
-            value={inputValue}
-            onChange={handleInputChange}
-            onBlur={handleInputConfirm}
-            onPressEnter={handleInputConfirm}
-          />
-        ) : (
-          <Tag
-            onClick={() => setInputVisible(true)}
-            style={{ background: "#fff", borderStyle: "dashed" }}
-          >
-            <PlusOutlined /> Nueva Categoria
-          </Tag>
-        )}
+
       </div>
 
-   {/*    <Form
+      <Form
+        style={{marginTop:'10px'}}
         form={form}
         layout="vertical"
         onFinish={(values) => {
@@ -105,13 +89,13 @@ const CreateSubcategoriaModal: React.FC<CreateSubcategoryModalProps> = ({
         }}
       >
         <Form.Item
-          label="Descripción"
+          label="SubCategoria"
           name="descripcion"
           rules={[{ required: true, message: "Por favor ingrese una descripción" }]}
         >
-          <Input placeholder="Ingrese la descripción" />
+          <Input placeholder="Ingrese la SubCategoria" />
         </Form.Item>
-      </Form> */}
+      </Form>
     </Modal>
   );
 };

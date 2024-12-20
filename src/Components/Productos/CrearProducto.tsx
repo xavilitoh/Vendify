@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, Form, Input, InputNumber, Switch, Select, Button } from "antd";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Redux/Store";
 
 const { Option } = Select;
 
@@ -19,7 +21,6 @@ interface CreateProductModalProps {
   onSubmit: (values: CreateProductFormValues) => void;
   marcas: { id: number; descripcion: string }[];
   categorias: { id: number; descripcion: string }[];
-  subcategorias: { id: number; descripcion: string }[];
 }
 
 const CreateProductModal: React.FC<CreateProductModalProps> = ({
@@ -28,9 +29,30 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
   onSubmit,
   marcas,
   categorias,
-  subcategorias,
 }) => {
   const [form] = Form.useForm();
+  const [filteredSubcategorias, setFilteredSubcategorias] = useState<
+    { id: number; idCategoria: number; descripcion: string }[]
+  >([]);
+
+  // Obtener las subcategorías desde el estado global
+  const subcategorias = useSelector(
+    (state: RootState) => state.subCategorias.subcategorias
+  );
+
+  // Filtrar subcategorías basado en la categoría seleccionada
+  const handleCategoryChange = (idCategoria: number) => {
+    const filtered = subcategorias.filter((sub) => sub.iCategoria === idCategoria);
+    console.log(filtered)
+    setFilteredSubcategorias(filtered);
+    form.setFieldsValue({ idSubcategoria: undefined }); // Resetear selección de subcategoría
+  };
+
+  useEffect(() => {
+    if (!visible) {
+      setFilteredSubcategorias([]); // Resetear cuando el modal se cierra
+    }
+  }, [visible]);
 
   return (
     <Modal
@@ -84,7 +106,7 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
           name="idCategoria"
           rules={[{ required: true, message: "Seleccione una categoría" }]}
         >
-          <Select placeholder="Seleccione una categoría">
+          <Select placeholder="Seleccione una categoría" onChange={handleCategoryChange}>
             {categorias.map((cat) => (
               <Option key={cat.id} value={cat.id}>
                 {cat.descripcion}
@@ -99,7 +121,7 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
           rules={[{ required: true, message: "Seleccione una subcategoría" }]}
         >
           <Select placeholder="Seleccione una subcategoría">
-            {subcategorias.map((sub) => (
+            {filteredSubcategorias.map((sub) => (
               <Option key={sub.id} value={sub.id}>
                 {sub.descripcion}
               </Option>
