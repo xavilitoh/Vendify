@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Modal, Form, Input, Button, Tag, Tooltip, InputRef } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import React, { useEffect, useState } from "react";
+import { Modal, Form, Input, Button, Tag} from "antd";
+
 
 interface Subcategory {
   id: number;
@@ -26,9 +26,7 @@ const CreateSubcategoriaModal: React.FC<CreateSubcategoryModalProps> = ({
 }) => {
   const [form] = Form.useForm();
   const [tags, setTags] = useState<string[]>([]);
-  const [inputVisible, setInputVisible] = useState(false);
-  const [inputValue, setInputValue] = useState("");
-  const inputRef = useRef<InputRef>(null);
+
 
   useEffect(() => {
     if (visible) {
@@ -36,23 +34,8 @@ const CreateSubcategoriaModal: React.FC<CreateSubcategoryModalProps> = ({
     }
   }, [visible, subcategories]);
 
-  useEffect(() => {
-    if (inputVisible) {
-      inputRef.current?.focus();
-    }
-  }, [inputVisible]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
 
-  const handleInputConfirm = () => {
-    if (inputValue && !tags.includes(inputValue)) {
-      setTags([...tags, inputValue]);
-    }
-    setInputVisible(false);
-    setInputValue("");
-  };
 
   return (
     <Modal

@@ -1,73 +1,98 @@
 import React, { useEffect, useState } from "react";
-import { Button, message } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../Redux/Store";
-import { fetchProducts, createProduct } from "../../Redux/Productos";
-import { fetchMarcas } from "../../Redux/MarcasSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { Button, Spin } from "antd";
+import {
+  fetchProducts,
+  selectProducts,
+  selectLoading,
+} from "../../Redux/Productos";
 import { fetchCategories } from "../../Redux/CategorySlice";
-import { fetchSubcategorias } from "../../Redux/SubCategoriaSlice";
+import {
+  fetchSubcategorias,
+  selectSubcategorias,
+} from "../../Redux/SubCategoriaSlice";
+import { fetchMarcas } from "../../Redux/MarcasSlice";
+import { fetchPrices } from "../../Redux/Price";
+import { fetchUnidades } from "../../Redux/UnidadesSlice";
 import CreateProductModal from "./CrearProducto";
-import ProductsTable from "./ProductsTable";
-import Cookies from "js-cookie";
+import EditProductModal from "./EditarProducto";
+import TableProducts from "./TablaProductos";
+import { AppDispatch } from "../../Redux/Store"; // Import the AppDispatch type
+import { Subcategoria } from "../../Redux/SubCategoriaSlice"; // Assuming you have a type defined for Subcategoria
+
 
 const Products: React.FC = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch(); // Cast useDispatch to AppDispatch
+  const products = useSelector(selectProducts);
+  const loading = useSelector(selectLoading);
+  const subcategories = useSelector(selectSubcategorias);
 
-  const { products, loading } = useSelector((state: RootState) => state.productos);
-  const { marcas } = useSelector((state: RootState) => state.marcas);
-  const { categorias } = useSelector((state: RootState) => state.categorias);
-  const { subcategorias } = useSelector((state: RootState) => state.subCategorias);
+  const [isCreateModalVisible, setCreateModalVisible] = useState(false);
+  const [isEditModalVisible, setEditModalVisible] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [filteredSubcategories, setFilteredSubcategories] = useState<Subcategoria[]>([]); // Explicit type
+
 
   useEffect(() => {
     dispatch(fetchProducts());
-
-    // Fetch related data for the form
-    const usuario = Cookies.get("usuario")
-    console.log(usuario)
-    const idEntidad = Cookies.get("usuario") ;
-    
-    if (idEntidad) {
-      dispatch(fetchMarcas());
-      dispatch(fetchCategories());
-      dispatch(fetchSubcategorias());
-    }
+    dispatch(fetchCategories());
+    dispatch(fetchSubcategorias());
+    dispatch(fetchMarcas());
+    dispatch(fetchPrices());
+    dispatch(fetchUnidades());
   }, [dispatch]);
 
-  const handleCreateProduct = async (values: any) => {
-    try {
-      const idEntidad = parseInt(Cookies.get("idEntidad") || "0");
-      const resultAction = await dispatch(createProduct({ ...values, idEntidad }));
-      if (createProduct.fulfilled.match(resultAction)) {
-        message.success("Producto creado exitosamente");
-        setIsModalVisible(false);
-      } else {
-        message.error("Error al crear el producto");
-      }
-    } catch {
-      message.error("Error inesperado al crear el producto");
-    }
+  const handleCategoryChange = (categoryId: number) => {
+    const filtered = subcategories.filter(
+      (subcategory) => subcategory.iCategoria === categoryId
+    );
+    setFilteredSubcategories(filtered); // No error here
+  };
+
+  const handleEdit = (product: any) => {
+    setEditingProduct(product);
+    setEditModalVisible(true);
   };
 
   return (
     <div>
-      <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsModalVisible(true)}>
-        Crear Producto
-      </Button>
+      <div style={{ marginBottom: 16 }}>
+        <Button type="primary" onClick={() => setCreateModalVisible(true)}>
+          Crear Producto
+        </Button>
+      </div>
+
+      {loading ? (
+        <Spin size="large" />
+      ) : (
+        <TableProducts
+          products={products}
+          onEdit={handleEdit}
+          onCategoryChange={handleCategoryChange}
+          filteredSubcategories={filteredSubcategories}
+        />
+      )}
 
       <CreateProductModal
-        visible={isModalVisible}
-        onCancel={() => setIsModalVisible(false)}
-        onSubmit={handleCreateProduct}
-        marcas={marcas}
-        categorias={categorias}
-        subcategorias={subcategorias}
+        visible={isCreateModalVisible}
+        onClose={() => setCreateModalVisible(false)}
+        onCategoryChange={handleCategoryChange}
+        filteredSubcategories={filteredSubcategories}
       />
 
-      <ProductsTable products={products} loading={loading} />
+      {editingProduct && (
+        <EditProductModal
+          visible={isEditModalVisible}
+          product={editingProduct}
+          onClose={() => {
+            setEditModalVisible(false);
+            setEditingProduct(null);
+          }}
+        />
+      )}
     </div>
   );
 };
+
 
 export default Products;

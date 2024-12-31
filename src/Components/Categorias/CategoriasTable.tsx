@@ -73,21 +73,21 @@ const CategoriesTable: React.FC<CategoriesTableProps> = ({ categories, loading }
   const handleSubcategoryClick = async (category: Category) => {
     setSelectedCategory(category);
     setIsSubcategoryModalVisible(true);
-
+  
     try {
-      const response = await apiClient.get(`Subcategorias/GetByCategoriaId/${category.id}`);
+   
+      const response = await apiClient.get<Subcategory[]>(`Subcategorias/GetByCategoriaId/${category.id}`);
       if (response.status === 200) {
-        setSubcategories(response.data); // Fetch subcategories for the selected category
+        setSubcategories(response.data); 
       } else {
-        setSubcategories([]);
+        setSubcategories([]); 
         message.error("Error al obtener las subcategorías");
       }
     } catch (error) {
-      console.error(error);
-      setSubcategories([]);
-      message.error("Error inesperado al obtener las subcategorías");
+      setSubcategories([]); 
     }
   };
+  
 
   const handleEditClick = (category: Category) => {
     setSelectedCategory(category);
@@ -149,7 +149,7 @@ const CategoriesTable: React.FC<CategoriesTableProps> = ({ categories, loading }
         const usuarioFinal = JSON.parse(usuario);
         const idEntidad = parseInt(usuarioFinal.empresa.id);
 
-        const response = await apiClient.post("Subcategorias", {
+        const response = await apiClient.post<Subcategory,any>("Subcategorias", {
           descripcion: values.descripcion,
           idCategoria: selectedCategory.id,
           idEntidad,

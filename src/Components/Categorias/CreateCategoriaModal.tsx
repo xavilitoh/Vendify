@@ -1,6 +1,6 @@
 // components/CreateCategoryModal.tsx
 import React from "react";
-import { Modal, Form, Input, Button, Table } from "antd";
+import { Modal, Form, Input, Button } from "antd";
 
 interface CreateCategoryFormValues {
   descripcion: string;
