@@ -21,6 +21,7 @@ import { AppDispatch } from "../../Redux/Store"; // Import the AppDispatch type
 import { Subcategoria } from "../../Redux/SubCategoriaSlice"; // Assuming you have a type defined for Subcategoria
 
 
+
 const Products: React.FC = () => {
   const dispatch: AppDispatch = useDispatch(); // Cast useDispatch to AppDispatch
   const products = useSelector(selectProducts);

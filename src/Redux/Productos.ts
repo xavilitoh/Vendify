@@ -10,8 +10,13 @@ export interface Precio {
   idProducto?: number; 
 }
 
-export interface Product {
+interface Product {
   id: number;
+  nombre: string;
+  categoria:string;
+  marca:string;
+  subcategoria:string;
+  unidad:string
   idMarca: number;
   idCategoria: number;
   idSubcategoria: number;
@@ -20,8 +25,7 @@ export interface Product {
   stockMinimo: number;
   barCode: string;
   conImpuesto: boolean;
-  idEntidad: number;
-  precios: Precio[]; 
+  precios: Precio[]; // Adjusted type
 }
 
 interface ProductState {

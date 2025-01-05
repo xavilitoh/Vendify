@@ -29,8 +29,8 @@ const lightTheme = {
 };
 
 const darkTheme = {
-  colorPrimary: "#00b96b",
-  colorBgContainer: "black",
+  colorPrimary: "#1890ff",
+  colorBgContainer: "#282929",
   borderRadius: 8,
 };
 

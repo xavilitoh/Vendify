@@ -1,13 +1,15 @@
-import React from "react";
-import { Table, Button } from "antd";
+import React, { useState } from "react";
+import { Table, Button, Switch } from "antd";
+import ProductDetailsDrawer from "./VerProducto";
 
 interface Product {
   id: number;
-  descripcion: string;
+  nombre: string;
   idMarca: number;
   idCategoria: number;
   idSubcategoria: number;
   idUnidad: number;
+  descripcion: string;
   stockMinimo: number;
   barCode: string;
   conImpuesto: boolean;
@@ -23,8 +25,8 @@ interface Subcategoria {
 interface TableProductsProps {
   products: Product[];
   onEdit: (product: Product) => void;
-  onCategoryChange: (categoryId: number) => void;
   filteredSubcategories: Subcategoria[];
+  onCategoryChange: (categoryId: number) => void;
 }
 
 const TableProducts: React.FC<TableProductsProps> = ({
@@ -32,55 +34,50 @@ const TableProducts: React.FC<TableProductsProps> = ({
   onEdit,
   filteredSubcategories,
 }) => {
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
+  const [drawerVisible, setDrawerVisible] = useState(false);
+
+  const showDrawer = (productId: number) => {
+    setSelectedProductId(productId);
+    setDrawerVisible(true);
+  };
+
+  const onCloseDrawer = () => {
+    setDrawerVisible(false);
+    setSelectedProductId(null);
+  };
+
   const columns = [
     {
-      title: "Descripción",
-      dataIndex: "descripcion",
-      key: "descripcion",
+      title: "Nombre",
+      dataIndex: "nombre",
+      key: "nombre",
     },
     {
-      title: "Marca",
-      dataIndex: "idMarca",
-      key: "idMarca",
-    },
-    {
-      title: "Categoría",
-      dataIndex: "idCategoria",
-      key: "idCategoria",
-    },
-    {
-      title: "Subcategoría",
-      dataIndex: "idSubcategoria",
-      key: "idSubcategoria",
-    },
-    {
-      title: "Unidad",
-      dataIndex: "idUnidad",
-      key: "idUnidad",
-    },
-    {
-      title: "Stock Mínimo",
+      title: "Stock",
       dataIndex: "stockMinimo",
       key: "stockMinimo",
-    },
-    {
-      title: "Código de Barras",
-      dataIndex: "barCode",
-      key: "barCode",
     },
     {
       title: "Con Impuesto",
       dataIndex: "conImpuesto",
       key: "conImpuesto",
-      render: (value: boolean) => (value ? "Sí" : "No"),
+      render: (enable: boolean) => <Switch checked={enable} disabled />,
     },
     {
       title: "Acciones",
       key: "actions",
       render: (_: any, record: Product) => (
-        <Button type="link" onClick={() => onEdit(record)}>
-          Editar
-        </Button>
+        <>
+          <Button onClick={() => showDrawer(record.id)}>Ver</Button>
+          <Button
+            type="primary"
+            style={{ marginLeft: "10px" }}
+            onClick={() => onEdit(record)}
+          >
+            Editar
+          </Button>
+        </>
       ),
     },
   ];
@@ -88,6 +85,11 @@ const TableProducts: React.FC<TableProductsProps> = ({
   return (
     <>
       <Table dataSource={products} columns={columns} rowKey="id" />
+      <ProductDetailsDrawer
+        productId={selectedProductId}
+        visible={drawerVisible}
+        onClose={onCloseDrawer}
+      />
       {filteredSubcategories.length > 0 && (
         <div style={{ marginTop: 16 }}>
           <h4>Subcategorías Filtradas:</h4>

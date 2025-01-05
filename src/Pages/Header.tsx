@@ -16,7 +16,7 @@ const HeaderComponent: React.FC<HeaderProps> = ({ isDarkMode, items }) => {
         alignItems: "center",
         justifyContent: "space-between",
         height: "7vh",
-        background: `${isDarkMode ? "black" : "#fff"}`,
+        background: `${isDarkMode ? "#282929" : "#fff"}`,
       }}
     >
       <div
@@ -25,7 +25,7 @@ const HeaderComponent: React.FC<HeaderProps> = ({ isDarkMode, items }) => {
           textTransform: "uppercase",
           marginLeft: "25px",
           fontWeight: "800",
-          color: `${isDarkMode ? "#fff" : "black"}`,
+          color: `${isDarkMode ? "#fff" : "#282929"}`,
         }}
       >
         Vendify

@@ -8,25 +8,24 @@ import { selectMarcas } from "../../Redux/MarcasSlice";
 import { selectPrices } from "../../Redux/Price";
 import { selectUnidades } from "../../Redux/UnidadesSlice";
 import { AppDispatch } from "../../Redux/Store";
-import { Subcategoria } from "../../Redux/SubCategoriaSlice"; // Assuming you have a type defined for Subcategoria
+import { Subcategoria } from "../../Redux/SubCategoriaSlice";
 
 interface CreateProductModalProps {
   visible: boolean;
   onClose: () => void;
-  onCategoryChange: (categoryId: number) => void; // Add this
-  filteredSubcategories: Subcategoria[]; // Add this
+  onCategoryChange: (categoryId: number) => void; // Add this line
+  filteredSubcategories: Subcategoria[]; // Ensure this is also includ
 }
-
 
 const { Option } = Select;
 const { Step } = Steps;
 
 const CreateProductModal: React.FC<CreateProductModalProps> = ({ visible, onClose }) => {
-  const dispatch: AppDispatch = useDispatch(); // Explicitly type dispatch
+  const dispatch: AppDispatch = useDispatch();
   const [form] = Form.useForm();
   const [currentStep, setCurrentStep] = useState(0);
-  const [productData, setProductData] = useState<any>({}); // Store all form data
-  const [priceEntries, setPriceEntries] = useState<any[]>([]); // Store prices array
+  const [productData, setProductData] = useState<any>({});
+  const [priceEntries, setPriceEntries] = useState<any[]>([]);
 
   const categories = useSelector(selectCategories);
   const allSubcategories = useSelector(selectSubcategorias);
@@ -37,7 +36,7 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ visible, onClos
   const [filteredSubcategories, setFilteredSubcategories] = useState<Subcategoria[]>([]);
 
   useEffect(() => {
-    // Optionally dispatch actions to fetch categories, subcategories, brands, prices, and units if not already in state
+    // Optionally dispatch actions to fetch data if not already in state
   }, [dispatch]);
 
   const handleCategoryChange = (categoryId: number) => {
@@ -47,7 +46,6 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ visible, onClos
     setFilteredSubcategories(filtered);
     form.setFieldsValue({ idSubcategoria: undefined });
   };
-
 
   const handleNext = async () => {
     try {
@@ -63,14 +61,28 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ visible, onClos
     setCurrentStep((prevStep) => prevStep - 1);
   };
 
-  const handleAddPrice = (priceData: any) => {
-    setPriceEntries([...priceEntries, { ...priceData, IdProducto: 0 }]);
-    form.resetFields(["IdUnidad", "IdPrecio", "Monto", "Fraccion"]);
+  const handleAddPrice = async () => {
+    try {
+      // Validate only fields related to adding a price
+      const priceData = await form.validateFields([
+        "IdUnidad",
+        "IdPrecio",
+        "Monto",
+        "Fraccion",
+      ]);
+
+      // Add validated price data to the array
+      setPriceEntries([...priceEntries, { ...priceData, IdProducto: 0 }]);
+
+      // Reset price fields after adding
+      form.resetFields(["IdUnidad", "IdPrecio", "Monto", "Fraccion"]);
+    } catch (error) {
+      console.error("Validation failed for price entry:", error);
+    }
   };
 
   const handleSubmit = async () => {
     try {
-      // Validate only fields for steps 0 and 1
       const productValues = await form.validateFields([
         "idMarca",
         "idCategoria",
@@ -81,19 +93,19 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ visible, onClos
         "barCode",
         "conImpuesto",
       ]);
-  
+
       if (priceEntries.length === 0) {
         throw new Error("Debe agregar al menos un precio.");
       }
-  
+
       const finalData = { ...productData, ...productValues, precios: priceEntries };
       console.log(finalData);
-  
+
       await dispatch(createProduct(finalData)).unwrap();
       form.resetFields();
       setProductData({});
       setPriceEntries([]);
-      setCurrentStep(0); // Reset the step to the first step
+      setCurrentStep(0);
       onClose();
     } catch (error) {
       if (error instanceof Error) {
@@ -104,19 +116,17 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ visible, onClos
       }
     }
   };
-  
-  
 
   return (
     <Modal
       title="Crear Producto"
       visible={visible}
       onCancel={() => {
-        setCurrentStep(0); // Reset the step to the first step
-        setProductData({}); // Clear product data
-        setPriceEntries([]); // Clear price entries
-        form.resetFields(); // Reset form fields
-        onClose(); // Close the modal
+        setCurrentStep(0);
+        setProductData({});
+        setPriceEntries([]);
+        form.resetFields();
+        onClose();
       }}
       footer={null}
     >
@@ -264,7 +274,7 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ visible, onClos
             </Form.Item>
             <Button
               type="primary"
-              onClick={() => handleAddPrice(form.getFieldsValue(["IdUnidad", "IdPrecio", "Monto", "Fraccion"]))}
+              onClick={handleAddPrice}
             >
               Agregar Precio
             </Button>
