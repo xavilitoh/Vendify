@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Drawer, Row, Col, Divider, Spin, Table, Button,Tag,Space } from "antd";
+import { Drawer, Row, Col, Divider, Spin, Table, Button, Modal, Input, Space, Tag } from "antd";
+import Barcode from "react-barcode";
 import api from "../../Api/VendifyApi";
-import './VerProducto.css';
-import Barcode from "react-barcode"; // For traditional barcode
-
+import "./VerProducto.css";
 
 interface Product {
   id: number;
   nombre: string;
-  categoria:string;
-  marca:string;
-  subcategoria:string;
-  unidad:string
+  categoria: string;
+  marca: string;
+  subcategoria: string;
+  unidad: string;
   idMarca: number;
   idCategoria: number;
   idSubcategoria: number;
@@ -20,12 +19,12 @@ interface Product {
   stockMinimo: number;
   barCode: string;
   conImpuesto: boolean;
-  precios: Price[]; // Adjusted type
+  precios: Price[];
 }
 
 interface Price {
-  unidad: { descripcion: string } | null;
-  precio: { descripcion: string } | null;
+  idUnidad: number;
+  idPrecio: number;
   monto: number;
   fraccion: number;
 }
@@ -43,8 +42,8 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [product, setProduct] = useState<Product | null>(null);
-
-  console.log(product)
+  const [editingPrice, setEditingPrice] = useState<Price | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
     if (productId && visible) {
@@ -62,6 +61,95 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
     } finally {
       setLoading(false);
     }
+  };
+
+  const updatePrice = async (price: Price) => {
+    if (!product) return;
+
+    try {
+      await api.put(
+        `https://vendify_api.wxbolab.com/api/Productos/UpdatePrecio/${product.id}`,
+        {
+          idUnidad: price.idUnidad,
+          idPrecio: price.idPrecio,
+          idProducto: product.id,
+          monto: price.monto,
+          fraccion: price.fraccion,
+        }
+      );
+
+      setProduct((prev) =>
+        prev
+          ? {
+              ...prev,
+              precios: prev.precios.map((p) =>
+                p.idUnidad === price.idUnidad &&
+                p.idPrecio === price.idPrecio
+                  ? { ...p, monto: price.monto, fraccion: price.fraccion }
+                  : p
+              ),
+            }
+          : null
+      );
+      setIsModalVisible(false);
+    } catch (error) {
+      console.error("Error updating price:", error);
+    }
+  };
+
+  const deletePrice = async (price: Price) => {
+    if (!product) return;
+
+    try {
+      await api.delete(
+        `https://vendify_api.wxbolab.com/api/Productos/DeletePrecio/${product.id}`,
+        {
+          data: {
+            idUnidad: price.idUnidad,
+            idPrecio: price.idPrecio,
+            idProducto: product.id,
+            monto: 0,
+            fraccion: 0,
+          },
+        }
+      );
+
+      setProduct((prev) =>
+        prev
+          ? {
+              ...prev,
+              precios: prev.precios.filter(
+                (p) =>
+                  !(p.idUnidad === price.idUnidad && p.idPrecio === price.idPrecio)
+              ),
+            }
+          : null
+      );
+    } catch (error) {
+      console.error("Error deleting price:", error);
+    }
+  };
+
+  const handleSave = () => {
+    if (editingPrice) {
+      updatePrice(editingPrice);
+    }
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    setEditingPrice(null);
+  };
+
+  const handleDelete = (price: Price) => {
+    Modal.confirm({
+      title: "¿Estás seguro de eliminar este precio?",
+      content: "Esta acción no se puede deshacer.",
+      okText: "Sí",
+      okType: "danger",
+      cancelText: "No",
+      onOk: () => deletePrice(price),
+    });
   };
 
   const columns = [
@@ -88,21 +176,25 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
       key: "fraccion",
     },
     {
-      title: "Accion",
-      dataIndex: "accion",
-      key: "fraccion",
-       render: () => (
-        <>
-          <Button   type="primary">Editar</Button>
+      title: "Acción",
+      key: "accion",
+      render: (_, record: Price) => (
+        <Space>
           <Button
-            color="danger" variant="solid"
-            style={{ marginLeft: "10px" }}
+            type="primary"
+            onClick={() => {
+              setEditingPrice(record);
+              setIsModalVisible(true);
+            }}
           >
+            Editar
+          </Button>
+          <Button danger onClick={() => handleDelete(record)}>
             Eliminar
           </Button>
-        </>
+        </Space>
       ),
-    }
+    },
   ];
 
   return (
@@ -118,12 +210,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
       ) : (
         product && (
           <>
-            <p
-              className="site-description-item-profile-p"
-              style={{ fontSize: '25px', fontWeight: '600' }}
-            >
-              Detalles del Producto
-            </p>
+            <p style={{ fontSize: "25px", fontWeight: "600" }}>Detalles del Producto</p>
             <Row>
               <Col span={12}>
                 <p className="Titulos">Nombre:</p> {product.nombre}
@@ -149,25 +236,52 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
               </Col>
             </Row>
             <Row>
-            <Col span={24}>
+              <Col span={24}>
                 <p className="Titulos">Código de Barras:</p>
-                <Space direction="vertical" align="center">
-                  {/* QR Code */}
-                  <Barcode value={product.barCode || "-"} />                
-                  </Space>
+                <Barcode value={product.barCode || "-"} />
               </Col>
               <Col span={12}>
-                <p className="Titulos"> Con Impuesto:</p> {product.conImpuesto ? <Tag color="#87d068">Si</Tag> :  <Tag color="#f50">No</Tag>}
+                <p className="Titulos">Con Impuesto:</p>
+                {product.conImpuesto ? <Tag color="#87d068">Sí</Tag> : <Tag color="#f50">No</Tag>}
               </Col>
             </Row>
             <Divider />
-            <p style={{ fontSize: '25px', fontWeight: '600' }}>Precios</p>
+            <p style={{ fontSize: "25px", fontWeight: "600" }}>Precios</p>
             <Table
               columns={columns}
               dataSource={product.precios}
-              rowKey={( index) => index.toString()} // Ensures unique row keys
+              rowKey={(record, index) => index.toString()}
               pagination={false}
             />
+            <Modal
+              title="Editar Precio"
+              visible={isModalVisible}
+              onOk={handleSave}
+              onCancel={handleCancel}
+            >
+              <div>
+                <p>Monto:</p>
+                <Input
+                  value={editingPrice?.monto}
+                  onChange={(e) =>
+                    setEditingPrice((prev) =>
+                      prev ? { ...prev, monto: parseFloat(e.target.value) || 0 } : null
+                    )
+                  }
+                />
+              </div>
+              <div>
+                <p>Fracción:</p>
+                <Input
+                  value={editingPrice?.fraccion}
+                  onChange={(e) =>
+                    setEditingPrice((prev) =>
+                      prev ? { ...prev, fraccion: parseFloat(e.target.value) || 0 } : null
+                    )
+                  }
+                />
+              </div>
+            </Modal>
           </>
         )
       )}

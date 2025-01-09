@@ -16,7 +16,7 @@ const HeaderComponent: React.FC<HeaderProps> = ({ isDarkMode, items }) => {
         alignItems: "center",
         justifyContent: "space-between",
         height: "7vh",
-        background: `${isDarkMode ? "#282929" : "#fff"}`,
+        background: `${isDarkMode ? "#000000" : "#fff"}`,
       }}
     >
       <div

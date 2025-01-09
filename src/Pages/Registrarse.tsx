@@ -128,7 +128,6 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
 
   if (finalValues.usuario.fecaNac) {
     finalValues.usuario.fecaNac = moment(finalValues.usuario.fecaNac).format("YYYY-MM-DD");
-    console.log( finalValues.usuario.fecaNac)
     finalValues.empresa.foto = 'string'
   }
   

@@ -36,7 +36,6 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ visible, onClos
   const [filteredSubcategories, setFilteredSubcategories] = useState<Subcategoria[]>([]);
 
   useEffect(() => {
-    // Optionally dispatch actions to fetch data if not already in state
   }, [dispatch]);
 
   const handleCategoryChange = (categoryId: number) => {
@@ -70,11 +69,7 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ visible, onClos
         "Monto",
         "Fraccion",
       ]);
-
-      // Add validated price data to the array
       setPriceEntries([...priceEntries, { ...priceData, IdProducto: 0 }]);
-
-      // Reset price fields after adding
       form.resetFields(["IdUnidad", "IdPrecio", "Monto", "Fraccion"]);
     } catch (error) {
       console.error("Validation failed for price entry:", error);
@@ -99,7 +94,6 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ visible, onClos
       }
 
       const finalData = { ...productData, ...productValues, precios: priceEntries };
-      console.log(finalData);
 
       await dispatch(createProduct(finalData)).unwrap();
       form.resetFields();
