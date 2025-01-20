@@ -34,7 +34,9 @@ const TableProducts: React.FC<TableProductsProps> = ({
   onEdit,
   filteredSubcategories,
 }) => {
-  const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(
+    null
+  );
   const [drawerVisible, setDrawerVisible] = useState(false);
 
   const showDrawer = (productId: number) => {
@@ -84,7 +86,17 @@ const TableProducts: React.FC<TableProductsProps> = ({
 
   return (
     <>
-      <Table dataSource={products} columns={columns} rowKey="id" />
+      <Table
+        dataSource={products}
+        columns={columns}
+        rowKey="id"
+        pagination={{
+          pageSize: 8,
+          showSizeChanger: true,
+          pageSizeOptions: ["5", "10", "20"],
+          defaultCurrent: 1,
+        }}
+      />
       <ProductDetailsDrawer
         productId={selectedProductId}
         visible={drawerVisible}

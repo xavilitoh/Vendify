@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, message,Switch } from "antd";
+import { Table, Button, message, Switch } from "antd";
 import moment from "moment";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Redux/Store";
@@ -49,7 +49,10 @@ const MarcasTable: React.FC<MarcasTableProps> = ({ marcas, loading }) => {
     setSelectedMarca(null);
   };
 
-  const handleEditSubmit = (values: { descripcion: string; enable: boolean }) => {
+  const handleEditSubmit = (values: {
+    descripcion: string;
+    enable: boolean;
+  }) => {
     if (selectedMarca) {
       dispatch(
         updateMarca({
@@ -67,7 +70,11 @@ const MarcasTable: React.FC<MarcasTableProps> = ({ marcas, loading }) => {
           setMarcasList((prev) =>
             prev.map((marca) =>
               marca.id === selectedMarca.id
-                ? { ...marca, descripcion: values.descripcion, enable: values.enable }
+                ? {
+                    ...marca,
+                    descripcion: values.descripcion,
+                    enable: values.enable,
+                  }
                 : marca
             )
           );
@@ -112,9 +119,7 @@ const MarcasTable: React.FC<MarcasTableProps> = ({ marcas, loading }) => {
       title: "Habilitado",
       dataIndex: "enable",
       key: "enable",
-      render: (enable: boolean) => (
-        <Switch checked={enable} disabled />
-      ),
+      render: (enable: boolean) => <Switch checked={enable} disabled />,
     },
     {
       title: "Acción",
@@ -135,7 +140,7 @@ const MarcasTable: React.FC<MarcasTableProps> = ({ marcas, loading }) => {
         rowKey={(record) => record.id.toString()}
         loading={loading}
         pagination={{
-          pageSize: 10,
+          pageSize: 8,
           showSizeChanger: true,
           pageSizeOptions: ["5", "10", "20"],
           defaultCurrent: 1,

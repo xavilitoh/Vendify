@@ -55,16 +55,14 @@ const EditPriceModal: React.FC<EditPriceModalProps> = ({
         <Form.Item
           label="Descripción"
           name="descripcion"
-          rules={[{ required: true, message: "Por favor ingrese una descripción" }]}
+          rules={[
+            { required: true, message: "Por favor ingrese una descripción" },
+          ]}
         >
           <Input placeholder="Ingrese la descripción" />
         </Form.Item>
-        <Form.Item
-          label="Habilitado"
-          name="enable"
-          valuePropName="checked"
-        >
-          <Switch  />
+        <Form.Item label="Habilitado" name="enable" valuePropName="checked">
+          <Switch />
         </Form.Item>
       </Form>
     </Modal>

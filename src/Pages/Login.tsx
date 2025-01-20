@@ -45,7 +45,6 @@ const LoginForm: React.FC = () => {
       message.success(`Bienvenido, ${usuario?.nombres}`);
       navigate("/");
     } catch (error) {
-      console.log(error);
       message.error("Contraseña o correo incorrectos");
     } finally {
       setLoading(false);

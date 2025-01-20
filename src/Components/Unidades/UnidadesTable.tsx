@@ -61,7 +61,11 @@ const UnidadesTable: React.FC<UnidadesTableProps> = ({ unidades, loading }) => {
         setUnidadesList((prev) =>
           prev.map((unidad) =>
             unidad.id === selectedUnidad.id
-              ? { ...unidad, ...values, fechaModificacion: new Date().toISOString() }
+              ? {
+                  ...unidad,
+                  ...values,
+                  fechaModificacion: new Date().toISOString(),
+                }
               : unidad
           )
         );
@@ -91,9 +95,7 @@ const UnidadesTable: React.FC<UnidadesTableProps> = ({ unidades, loading }) => {
       title: "Habilitado",
       dataIndex: "enable",
       key: "enable",
-      render: (enable: boolean) => (
-        <Switch checked={enable} disabled />
-      ),
+      render: (enable: boolean) => <Switch checked={enable} disabled />,
     },
     {
       title: "Acción",
@@ -113,8 +115,8 @@ const UnidadesTable: React.FC<UnidadesTableProps> = ({ unidades, loading }) => {
         dataSource={unidadesList}
         rowKey={(record: Unidad) => record.id.toString()}
         loading={loading}
-        pagination={{ pageSize: 10 }}
-        style={{marginTop:'10px'}}
+        pagination={{ pageSize: 8 }}
+        style={{ marginTop: "10px" }}
       />
 
       {selectedUnidad && (

@@ -55,10 +55,16 @@ interface CategoriesTableProps {
   loading: boolean;
 }
 
-const CategoriesTable: React.FC<CategoriesTableProps> = ({ categories, loading }) => {
+const CategoriesTable: React.FC<CategoriesTableProps> = ({
+  categories,
+  loading,
+}) => {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [isSubcategoryModalVisible, setIsSubcategoryModalVisible] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [isSubcategoryModalVisible, setIsSubcategoryModalVisible] =
+    useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null
+  );
   const [categoriesList, setCategoriesList] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
 
@@ -73,21 +79,21 @@ const CategoriesTable: React.FC<CategoriesTableProps> = ({ categories, loading }
   const handleSubcategoryClick = async (category: Category) => {
     setSelectedCategory(category);
     setIsSubcategoryModalVisible(true);
-  
+
     try {
-   
-      const response = await apiClient.get<Subcategory[]>(`Subcategorias/GetByCategoriaId/${category.id}`);
+      const response = await apiClient.get<Subcategory[]>(
+        `Subcategorias/GetByCategoriaId/${category.id}`
+      );
       if (response.status === 200) {
-        setSubcategories(response.data); 
+        setSubcategories(response.data);
       } else {
-        setSubcategories([]); 
+        setSubcategories([]);
         message.error("Error al obtener las subcategorías");
       }
     } catch (error) {
-      setSubcategories([]); 
+      setSubcategories([]);
     }
   };
-  
 
   const handleEditClick = (category: Category) => {
     setSelectedCategory(category);
@@ -104,7 +110,10 @@ const CategoriesTable: React.FC<CategoriesTableProps> = ({ categories, loading }
     setSelectedCategory(null);
   };
 
-  const handleEditSubmit = (values: { descripcion: string; enable: boolean }) => {
+  const handleEditSubmit = (values: {
+    descripcion: string;
+    enable: boolean;
+  }) => {
     if (selectedCategory) {
       dispatch(
         updateCategory({
@@ -149,15 +158,21 @@ const CategoriesTable: React.FC<CategoriesTableProps> = ({ categories, loading }
         const usuarioFinal = JSON.parse(usuario);
         const idEntidad = parseInt(usuarioFinal.empresa.id);
 
-        const response = await apiClient.post<Subcategory,any>("Subcategorias", {
-          descripcion: values.descripcion,
-          idCategoria: selectedCategory.id,
-          idEntidad,
-        });
+        const response = await apiClient.post<Subcategory, any>(
+          "Subcategorias",
+          {
+            descripcion: values.descripcion,
+            idCategoria: selectedCategory.id,
+            idEntidad,
+          }
+        );
 
         if (response.status === 200) {
           message.success("Subcategoría creada exitosamente");
-          setSubcategories((prev) => [...prev, { id: response.data.id, descripcion: values.descripcion }]);
+          setSubcategories((prev) => [
+            ...prev,
+            { id: response.data.id, descripcion: values.descripcion },
+          ]);
           setIsSubcategoryModalVisible(false);
         } else {
           message.error("Error al crear la subcategoría");
@@ -190,7 +205,8 @@ const CategoriesTable: React.FC<CategoriesTableProps> = ({ categories, loading }
       title: "Fecha de Modificación",
       dataIndex: "fechaModificacion",
       key: "fechaModificacion",
-      render: (fecha: string | null) => (fecha ? moment(fecha).format("YYYY-MM-DD") : "N/A"),
+      render: (fecha: string | null) =>
+        fecha ? moment(fecha).format("YYYY-MM-DD") : "N/A",
     },
     {
       title: "Habilitado",
@@ -205,7 +221,11 @@ const CategoriesTable: React.FC<CategoriesTableProps> = ({ categories, loading }
         <Button type="default" onClick={() => handleSubcategoryClick(record)}>
           Gestionar
         </Button>,
-        <Button type="primary" style={{ marginLeft: "5px" }} onClick={() => handleEditClick(record)}>
+        <Button
+          type="primary"
+          style={{ marginLeft: "5px" }}
+          onClick={() => handleEditClick(record)}
+        >
           Editar
         </Button>,
       ],

@@ -1,9 +1,8 @@
 // src/App.tsx
 import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import { Layout, ConfigProvider, theme, Button,Avatar } from "antd";
-import { UserOutlined } from '@ant-design/icons';
-import Cookies from "js-cookie"; // For token storage
+import { Layout, ConfigProvider, theme, Button } from "antd";
+import Cookies from "js-cookie"; // For 
 import { useNavigate } from "react-router-dom";
 import SiderComponent from "./Pages/Sider";
 import HeaderComponent from "./Pages/Header";
@@ -36,20 +35,20 @@ const darkTheme = {
 
 const App: React.FC = () => {
   // Leer el tema guardado en localStorage o usar el valor por defecto (modo claro)
-const [isDarkMode, setIsDarkMode] = useState(() => {
-  const savedTheme = localStorage.getItem("isDarkMode");
-  return savedTheme ? JSON.parse(savedTheme) : false;
-});
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem("isDarkMode");
+    return savedTheme ? JSON.parse(savedTheme) : false;
+  });
 
-const {
-  token: { colorBgContainer },
-} = theme.useToken();
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
 
-// Función para cambiar el tema y guardar la preferencia en localStorage
-const toggleDarkMode = (checked: boolean) => {
-  setIsDarkMode(checked);
-  localStorage.setItem("isDarkMode", JSON.stringify(checked)); // Guardar el tema en localStorage
-};
+  // Función para cambiar el tema y guardar la preferencia en localStorage
+  const toggleDarkMode = (checked: boolean) => {
+    setIsDarkMode(checked);
+    localStorage.setItem("isDarkMode", JSON.stringify(checked)); // Guardar el tema en localStorage
+  };
 
   const navigate = useNavigate();
 
@@ -60,7 +59,6 @@ const toggleDarkMode = (checked: boolean) => {
   };
 
   const ItemsMenu = [
-    { key: 1, label: (<Avatar size={30} icon={<UserOutlined /> }/>)},
     {
       key: 2,
       label: (
@@ -116,7 +114,10 @@ const toggleDarkMode = (checked: boolean) => {
             >
               <Routes>
                 <Route path="/login" element={<Login />} />
-                <Route path="/registrarse" element={<Registrarse  isDarkMode={isDarkMode}/>} />
+                <Route
+                  path="/registrarse"
+                  element={<Registrarse isDarkMode={isDarkMode} />}
+                />
 
                 <Route
                   path="/"
@@ -162,7 +163,7 @@ const toggleDarkMode = (checked: boolean) => {
                     </ProtectedRoute>
                   }
                 />
-                    <Route
+                <Route
                   path="/precios"
                   element={
                     <ProtectedRoute>
@@ -178,7 +179,6 @@ const toggleDarkMode = (checked: boolean) => {
                     </ProtectedRoute>
                   }
                 />
-                
               </Routes>
             </Content>
           </Layout>

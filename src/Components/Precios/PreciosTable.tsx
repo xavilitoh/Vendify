@@ -1,16 +1,15 @@
 import { Table, Button, message, Switch } from "antd";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Redux/Store";
 import { updatePrice } from "../../Redux/Price";
 import EditPriceModal from "./EditarPrecios";
 
-
 interface Price {
   id: number;
   descripcion: string;
-  enable:boolean
+  enable: boolean;
 }
 
 interface PricesTableProps {
@@ -23,8 +22,6 @@ const PricesTable: React.FC<PricesTableProps> = ({ prices, loading }) => {
   const [selectedPrice, setSelectedPrice] = useState<Price | null>(null);
   const [pricesList, setPricesList] = useState<Price[]>([]);
   const dispatch: AppDispatch = useDispatch();
-
-
 
   useEffect(() => {
     setPricesList(prices);
@@ -40,7 +37,10 @@ const PricesTable: React.FC<PricesTableProps> = ({ prices, loading }) => {
     setSelectedPrice(null);
   };
 
-  const handleEditSubmit = (values: { descripcion: string; enable: boolean }) => {
+  const handleEditSubmit = (values: {
+    descripcion: string;
+    enable: boolean;
+  }) => {
     if (selectedPrice) {
       dispatch(
         updatePrice({
@@ -57,7 +57,11 @@ const PricesTable: React.FC<PricesTableProps> = ({ prices, loading }) => {
           setPricesList((prev) =>
             prev.map((price) =>
               price.id === selectedPrice.id
-                ? { ...price, descripcion: values.descripcion, enable: values.enable }
+                ? {
+                    ...price,
+                    descripcion: values.descripcion,
+                    enable: values.enable,
+                  }
                 : price
             )
           );
@@ -67,7 +71,6 @@ const PricesTable: React.FC<PricesTableProps> = ({ prices, loading }) => {
         });
     }
   };
-  
 
   const columns = [
     {
@@ -85,11 +88,11 @@ const PricesTable: React.FC<PricesTableProps> = ({ prices, loading }) => {
       dataIndex: "enable",
       key: "enable",
       render: (enable: boolean) => (
-     /*    <Tag color={enable ? "green" : "red"}>
+        /*    <Tag color={enable ? "green" : "red"}>
           {enable ? "Sí" : "No"}
         </Tag> */
 
-        <Switch  checked={enable} disabled ></Switch>// Bind to the current state
+        <Switch checked={enable} disabled></Switch> // Bind to the current state
       ),
     },
     {
@@ -111,26 +114,21 @@ const PricesTable: React.FC<PricesTableProps> = ({ prices, loading }) => {
         rowKey={(record) => record.id.toString()}
         loading={loading}
         pagination={{
-          pageSize: 10,
-          showSizeChanger: true,
-          pageSizeOptions: ["5", "10", "20"],
-          defaultCurrent: 1,
+          pageSize: 8,
         }}
         style={{ marginTop: "30px" }}
       />
 
       {selectedPrice && (
-      <EditPriceModal
-      visible={isEditModalVisible}
-      onCancel={handleCancelEditModal}
-      onSubmit={handleEditSubmit}
-      initialValues={{
-        descripcion: selectedPrice.descripcion,
-        enable: selectedPrice.enable,
-      }}
-    />
-    
-    
+        <EditPriceModal
+          visible={isEditModalVisible}
+          onCancel={handleCancelEditModal}
+          onSubmit={handleEditSubmit}
+          initialValues={{
+            descripcion: selectedPrice.descripcion,
+            enable: selectedPrice.enable,
+          }}
+        />
       )}
     </>
   );

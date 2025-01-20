@@ -1,5 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Drawer, Row, Col, Divider, Spin, Table, Button, Modal, Input, Space, Tag } from "antd";
+import {
+  Drawer,
+  Row,
+  Col,
+  Divider,
+  Spin,
+  Table,
+  Button,
+  Modal,
+  Input,
+  Space,
+  Tag,
+} from "antd";
 import Barcode from "react-barcode";
 import api from "../../Api/VendifyApi";
 import "./VerProducto.css";
@@ -54,7 +66,9 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
   const fetchProductDetails = async (id: number) => {
     setLoading(true);
     try {
-      const response = await api.get<Product>(`https://vendify_api.wxbolab.com/api/Productos/${id}`);
+      const response = await api.get<Product>(
+        `https://vendify_api.wxbolab.com/api/Productos/${id}`
+      );
       setProduct(response.data);
     } catch (error) {
       console.error("Error fetching product details:", error);
@@ -83,8 +97,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
           ? {
               ...prev,
               precios: prev.precios.map((p) =>
-                p.idUnidad === price.idUnidad &&
-                p.idPrecio === price.idPrecio
+                p.idUnidad === price.idUnidad && p.idPrecio === price.idPrecio
                   ? { ...p, monto: price.monto, fraccion: price.fraccion }
                   : p
               ),
@@ -102,16 +115,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
 
     try {
       await api.delete(
-        `https://vendify_api.wxbolab.com/api/Productos/DeletePrecio/${product.id}`,
-        {
-          data: {
-            idUnidad: price.idUnidad,
-            idPrecio: price.idPrecio,
-            idProducto: product.id,
-            monto: 0,
-            fraccion: 0,
-          },
-        }
+        `https://vendify_api.wxbolab.com/api/Productos/DeletePrecio/${product.id}`
       );
 
       setProduct((prev) =>
@@ -120,7 +124,10 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
               ...prev,
               precios: prev.precios.filter(
                 (p) =>
-                  !(p.idUnidad === price.idUnidad && p.idPrecio === price.idPrecio)
+                  !(
+                    p.idUnidad === price.idUnidad &&
+                    p.idPrecio === price.idPrecio
+                  )
               ),
             }
           : null
@@ -178,7 +185,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
     {
       title: "Acción",
       key: "accion",
-      render: (_, record: Price) => (
+      render: (record: Price) => (
         <Space>
           <Button
             type="primary"
@@ -210,7 +217,9 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
       ) : (
         product && (
           <>
-            <p style={{ fontSize: "25px", fontWeight: "600" }}>Detalles del Producto</p>
+            <p style={{ fontSize: "25px", fontWeight: "600" }}>
+              Detalles del Producto
+            </p>
             <Row>
               <Col span={12}>
                 <p className="Titulos">Nombre:</p> {product.nombre}
@@ -242,7 +251,11 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
               </Col>
               <Col span={12}>
                 <p className="Titulos">Con Impuesto:</p>
-                {product.conImpuesto ? <Tag color="#87d068">Sí</Tag> : <Tag color="#f50">No</Tag>}
+                {product.conImpuesto ? (
+                  <Tag color="#87d068">Sí</Tag>
+                ) : (
+                  <Tag color="#f50">No</Tag>
+                )}
               </Col>
             </Row>
             <Divider />
@@ -250,7 +263,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
             <Table
               columns={columns}
               dataSource={product.precios}
-              rowKey={(record, index) => index.toString()}
+              rowKey={(_, index) => (index ?? 0).toString()}
               pagination={false}
             />
             <Modal
@@ -265,7 +278,9 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
                   value={editingPrice?.monto}
                   onChange={(e) =>
                     setEditingPrice((prev) =>
-                      prev ? { ...prev, monto: parseFloat(e.target.value) || 0 } : null
+                      prev
+                        ? { ...prev, monto: parseFloat(e.target.value) || 0 }
+                        : null
                     )
                   }
                 />
@@ -276,7 +291,9 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
                   value={editingPrice?.fraccion}
                   onChange={(e) =>
                     setEditingPrice((prev) =>
-                      prev ? { ...prev, fraccion: parseFloat(e.target.value) || 0 } : null
+                      prev
+                        ? { ...prev, fraccion: parseFloat(e.target.value) || 0 }
+                        : null
                     )
                   }
                 />
