@@ -8,13 +8,23 @@ import {
   Table,
   Button,
   Modal,
-  Input,
-  Space,
+  Select,
+  InputNumber,
+  Form,
   Tag,
+  Space,
+  Popconfirm,
 } from "antd";
 import Barcode from "react-barcode";
 import api from "../../Api/VendifyApi";
+import { useSelector } from "react-redux";
+import { selectUnidades } from "../../Redux/UnidadesSlice";
+import { selectPrices } from "../../Redux/Price";
+import { AxiosHeaders } from "axios";
+
 import "./VerProducto.css";
+
+const { Option } = Select;
 
 interface Product {
   id: number;
@@ -54,8 +64,19 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [product, setProduct] = useState<Product | null>(null);
+  const [priceEntries, setPriceEntries] = useState<Price[]>([]);
+  const [isAddPriceModalVisible, setIsAddPriceModalVisible] = useState(false);
+  const [isEditPriceModalVisible, setIsEditPriceModalVisible] = useState(false);
   const [editingPrice, setEditingPrice] = useState<Price | null>(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [newPrice, setNewPrice] = useState<Price>({
+    idUnidad: 0,
+    idPrecio: 0,
+    monto: 0,
+    fraccion: 0,
+  });
+
+  const unidades = useSelector(selectUnidades);
+  const precios = useSelector(selectPrices);
 
   useEffect(() => {
     if (productId && visible) {
@@ -70,6 +91,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
         `https://vendify_api.wxbolab.com/api/Productos/${id}`
       );
       setProduct(response.data);
+      setPriceEntries(response.data.precios || []);
     } catch (error) {
       console.error("Error fetching product details:", error);
     } finally {
@@ -77,100 +99,87 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
     }
   };
 
-  const updatePrice = async (price: Price) => {
+  const addPrice = async () => {
     if (!product) return;
-
     try {
-      await api.put(
-        `https://vendify_api.wxbolab.com/api/Productos/UpdatePrecio/${product.id}`,
+      const response = await api.post(
+        `https://vendify_api.wxbolab.com/api/Productos/AddPrecio/${product.id}`,
         {
-          idUnidad: price.idUnidad,
-          idPrecio: price.idPrecio,
-          idProducto: product.id,
-          monto: price.monto,
-          fraccion: price.fraccion,
+          idUnidad: newPrice.idUnidad,
+          idPrecio: newPrice.idPrecio,
+          monto: newPrice.monto,
+          fraccion: newPrice.fraccion,
         }
       );
-
-      setProduct((prev) =>
-        prev
-          ? {
-              ...prev,
-              precios: prev.precios.map((p) =>
-                p.idUnidad === price.idUnidad && p.idPrecio === price.idPrecio
-                  ? { ...p, monto: price.monto, fraccion: price.fraccion }
-                  : p
-              ),
-            }
-          : null
-      );
-      setIsModalVisible(false);
+      setPriceEntries((prev) => [...prev, response.data as Price]);
+      setIsAddPriceModalVisible(false);
+      setNewPrice({ idUnidad: 0, idPrecio: 0, monto: 0, fraccion: 0 });
     } catch (error) {
-      console.error("Error updating price:", error);
+      console.error("Error adding price:", error);
     }
   };
 
-  const deletePrice = async (price: Price) => {
-    if (!product) return;
+  const editPrice = async () => {
+    if (!product || !editingPrice) return;
+    try {
+      await api.put(
+        `https://vendify_api.wxbolab.com/api/Productos/UpdatePrecio/${product.id}`,
+        editingPrice
+      );
+      setPriceEntries((prev) =>
+        prev.map((price) =>
+          price.idUnidad === editingPrice.idUnidad &&
+          price.idPrecio === editingPrice.idPrecio
+            ? editingPrice
+            : price
+        )
+      );
+      setIsEditPriceModalVisible(false);
+      setEditingPrice(null);
+    } catch (error) {
+      console.error("Error editing price:", error);
+    }
+  };
 
+  const deletePrice = async (priceToDelete: Price) => {
+    if (!product) return;
     try {
       await api.delete(
-        `https://vendify_api.wxbolab.com/api/Productos/DeletePrecio/${product.id}`
+        `https://vendify_api.wxbolab.com/api/Productos/DeletePrecio/${product.id}`,
+        {
+          headers: new AxiosHeaders({ "Content-Type": "application/json" }),
+          data: priceToDelete,
+        }
       );
 
-      setProduct((prev) =>
-        prev
-          ? {
-              ...prev,
-              precios: prev.precios.filter(
-                (p) =>
-                  !(
-                    p.idUnidad === price.idUnidad &&
-                    p.idPrecio === price.idPrecio
-                  )
-              ),
-            }
-          : null
+      setPriceEntries((prev) =>
+        prev.filter(
+          (price) =>
+            !(
+              price.idUnidad === priceToDelete.idUnidad &&
+              price.idPrecio === priceToDelete.idPrecio
+            )
+        )
       );
     } catch (error) {
       console.error("Error deleting price:", error);
     }
   };
 
-  const handleSave = () => {
-    if (editingPrice) {
-      updatePrice(editingPrice);
-    }
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-    setEditingPrice(null);
-  };
-
-  const handleDelete = (price: Price) => {
-    Modal.confirm({
-      title: "¿Estás seguro de eliminar este precio?",
-      content: "Esta acción no se puede deshacer.",
-      okText: "Sí",
-      okType: "danger",
-      cancelText: "No",
-      onOk: () => deletePrice(price),
-    });
-  };
-
   const columns = [
     {
       title: "Unidad",
-      dataIndex: ["unidad", "descripcion"],
-      key: "unidad",
-      render: (text: string) => text || "N/A",
+      dataIndex: "idUnidad",
+      key: "idUnidad",
+      render: (idUnidad: number) =>
+        unidades.find((unidad) => unidad.id === idUnidad)?.descripcion || "N/A",
     },
     {
       title: "Precio",
-      dataIndex: ["precio", "descripcion"],
-      key: "precio",
-      render: (text: string) => text || "N/A",
+      dataIndex: "idPrecio",
+      key: "idPrecio",
+      render: (idPrecio: number) =>
+        precios.find((price) => price.id === idPrecio)?.descripcion || "N/A",
     },
     {
       title: "Monto",
@@ -183,22 +192,29 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
       key: "fraccion",
     },
     {
-      title: "Acción",
-      key: "accion",
-      render: (record: Price) => (
-        <Space>
+      title: "Acciones",
+      key: "actions",
+      render: (_: any, record: Price) => (
+        <Space size="middle">
           <Button
             type="primary"
             onClick={() => {
               setEditingPrice(record);
-              setIsModalVisible(true);
+              setIsEditPriceModalVisible(true);
             }}
           >
             Editar
           </Button>
-          <Button danger onClick={() => handleDelete(record)}>
-            Eliminar
-          </Button>
+          <Popconfirm
+            title="¿Estás seguro de eliminar este precio?"
+            onConfirm={() => deletePrice(record)} // Execute delete function on confirm
+            okText="Sí"
+            cancelText="No"
+          >
+            <Button type="primary" danger>
+              Eliminar
+            </Button>
+          </Popconfirm>
         </Space>
       ),
     },
@@ -218,7 +234,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
         product && (
           <>
             <p style={{ fontSize: "25px", fontWeight: "600" }}>
-              Detalles del Producto
+              {product.nombre}
             </p>
             <Row>
               <Col span={12}>
@@ -245,7 +261,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
               </Col>
             </Row>
             <Row>
-              <Col span={24}>
+              <Col span={12}>
                 <p className="Titulos">Código de Barras:</p>
                 <Barcode value={product.barCode || "-"} />
               </Col>
@@ -260,48 +276,128 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
             </Row>
             <Divider />
             <p style={{ fontSize: "25px", fontWeight: "600" }}>Precios</p>
+            <Button
+              type="primary"
+              onClick={() => setIsAddPriceModalVisible(true)}
+              style={{ marginBottom: "16px" }}
+            >
+              Agregar Precio
+            </Button>
             <Table
               columns={columns}
-              dataSource={product.precios}
-              rowKey={(_, index) => (index ?? 0).toString()}
+              dataSource={priceEntries}
+              rowKey={(record) => `${record.idUnidad}-${record.idPrecio}`}
               pagination={false}
             />
-            <Modal
-              title="Editar Precio"
-              visible={isModalVisible}
-              onOk={handleSave}
-              onCancel={handleCancel}
-            >
-              <div>
-                <p>Monto:</p>
-                <Input
-                  value={editingPrice?.monto}
-                  onChange={(e) =>
-                    setEditingPrice((prev) =>
-                      prev
-                        ? { ...prev, monto: parseFloat(e.target.value) || 0 }
-                        : null
-                    )
-                  }
-                />
-              </div>
-              <div>
-                <p>Fracción:</p>
-                <Input
-                  value={editingPrice?.fraccion}
-                  onChange={(e) =>
-                    setEditingPrice((prev) =>
-                      prev
-                        ? { ...prev, fraccion: parseFloat(e.target.value) || 0 }
-                        : null
-                    )
-                  }
-                />
-              </div>
-            </Modal>
           </>
         )
       )}
+
+      {/* Add Price Modal */}
+      <Modal
+        title="Agregar Precio"
+        visible={isAddPriceModalVisible}
+        onOk={addPrice}
+        onCancel={() => setIsAddPriceModalVisible(false)}
+      >
+        <Form layout="vertical">
+          <Form.Item
+            label="Unidad"
+            rules={[
+              { required: true, message: "Por favor selecciona una unidad" },
+            ]}
+          >
+            <Select
+              placeholder="Selecciona una unidad"
+              onChange={(value) =>
+                setNewPrice((prev) => ({ ...prev, idUnidad: value }))
+              }
+              value={newPrice.idUnidad || undefined}
+            >
+              {unidades.map((unidad) => (
+                <Option key={unidad.id} value={unidad.id}>
+                  {unidad.descripcion}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label="Precio"
+            rules={[
+              { required: true, message: "Por favor selecciona un precio" },
+            ]}
+          >
+            <Select
+              placeholder="Selecciona un precio"
+              onChange={(value) =>
+                setNewPrice((prev) => ({ ...prev, idPrecio: value }))
+              }
+              value={newPrice.idPrecio || undefined}
+            >
+              {precios.map((price) => (
+                <Option key={price.id} value={price.id}>
+                  {price.descripcion}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item label="Monto">
+            <InputNumber
+              placeholder="Monto"
+              style={{ width: "100%" }}
+              onChange={(value) =>
+                setNewPrice((prev) => ({ ...prev, monto: value || 0 }))
+              }
+              value={newPrice.monto || undefined}
+            />
+          </Form.Item>
+          <Form.Item label="Fracción">
+            <InputNumber
+              placeholder="Fracción"
+              style={{ width: "100%" }}
+              onChange={(value) =>
+                setNewPrice((prev) => ({ ...prev, fraccion: value || 0 }))
+              }
+              value={newPrice.fraccion || undefined}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Edit Price Modal */}
+      <Modal
+        title="Editar Precio"
+        visible={isEditPriceModalVisible}
+        onOk={editPrice}
+        onCancel={() => setIsEditPriceModalVisible(false)}
+      >
+        <Form layout="vertical">
+          <Form.Item label="Monto">
+            <InputNumber
+              placeholder="Monto"
+              style={{ width: "100%" }}
+              value={editingPrice?.monto}
+              onChange={(value) =>
+                setEditingPrice((prev) =>
+                  prev ? { ...prev, monto: value || 0 } : null
+                )
+              }
+            />
+          </Form.Item>
+          <Form.Item label="Fracción">
+            <InputNumber
+              placeholder="Fracción"
+              style={{ width: "100%" }}
+              value={editingPrice?.fraccion}
+              onChange={(value) =>
+                setEditingPrice((prev) =>
+                  prev ? { ...prev, fraccion: value || 0 } : null
+                )
+              }
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
     </Drawer>
   );
 };

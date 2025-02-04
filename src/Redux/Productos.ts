@@ -4,19 +4,19 @@ import { AxiosError } from "axios";
 import { RootState } from "./Store";
 
 export interface Precio {
-  id?: number; 
+  id?: number;
   descripcion: string;
   valor: number;
-  idProducto?: number; 
+  idProducto?: number;
 }
 
 interface Product {
   id: number;
   nombre: string;
-  categoria:string;
-  marca:string;
-  subcategoria:string;
-  unidad:string
+  categoria: string;
+  marca: string;
+  subcategoria: string;
+  unidad: string;
   idMarca: number;
   idCategoria: number;
   idSubcategoria: number;
@@ -39,20 +39,21 @@ const initialState: ProductState = {
 };
 
 // Fetch Products
-export const fetchProducts = createAsyncThunk<Product[], void, { rejectValue: string }>(
-  "products/fetchProducts",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await api.get<Product[]>("/Productos");
-      return response.data;
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        return rejectWithValue("Error al obtener los productos");
-      }
-      return rejectWithValue("Error inesperado");
+export const fetchProducts = createAsyncThunk<
+  Product[],
+  void,
+  { rejectValue: string }
+>("products/fetchProducts", async (_, { rejectWithValue }) => {
+  try {
+    const response = await api.get<Product[]>("/Productos");
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      return rejectWithValue("Error al obtener los productos");
     }
+    return rejectWithValue("Error inesperado");
   }
-);
+});
 
 // Create Product
 export const createProduct = createAsyncThunk<
@@ -60,6 +61,7 @@ export const createProduct = createAsyncThunk<
   Omit<Product, "id">,
   { rejectValue: string }
 >("products/createProduct", async (productData, { rejectWithValue }) => {
+  console.log(productData);
   try {
     const response = await api.post<Product, any>("/Productos", productData);
     return response.data;
@@ -76,17 +78,23 @@ export const updateProduct = createAsyncThunk<
   Product,
   { id: number; productData: Partial<Product> },
   { rejectValue: string }
->("products/updateProduct", async ({ id, productData }, { rejectWithValue }) => {
-  try {
-    const response = await api.put<Product,any>(`/Productos/${id}`, productData);
-    return response.data;
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      return rejectWithValue("Error al actualizar el producto");
+>(
+  "products/updateProduct",
+  async ({ id, productData }, { rejectWithValue }) => {
+    try {
+      const response = await api.put<Product, any>(
+        `/Productos/${id}`,
+        productData
+      );
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return rejectWithValue("Error al actualizar el producto");
+      }
+      return rejectWithValue("Error inesperado");
     }
-    return rejectWithValue("Error inesperado");
   }
-});
+);
 
 const productSlice = createSlice({
   name: "products",
@@ -108,7 +116,9 @@ const productSlice = createSlice({
         state.products.push(action.payload);
       })
       .addCase(updateProduct.fulfilled, (state, action) => {
-        const index = state.products.findIndex((product) => product.id === action.payload.id);
+        const index = state.products.findIndex(
+          (product) => product.id === action.payload.id
+        );
         if (index !== -1) {
           state.products[index] = action.payload;
         }

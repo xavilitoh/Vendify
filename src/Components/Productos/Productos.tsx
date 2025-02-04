@@ -19,8 +19,7 @@ import EditProductModal from "./EditarProducto";
 import TableProducts from "./TablaProductos";
 import { AppDispatch } from "../../Redux/Store"; // Import the AppDispatch type
 import { Subcategoria } from "../../Redux/SubCategoriaSlice"; // Assuming you have a type defined for Subcategoria
-
-
+import { PlusOutlined } from "@ant-design/icons";
 
 const Products: React.FC = () => {
   const dispatch: AppDispatch = useDispatch(); // Cast useDispatch to AppDispatch
@@ -31,8 +30,9 @@ const Products: React.FC = () => {
   const [isCreateModalVisible, setCreateModalVisible] = useState(false);
   const [isEditModalVisible, setEditModalVisible] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
-  const [filteredSubcategories, setFilteredSubcategories] = useState<Subcategoria[]>([]); // Explicit type
-
+  const [filteredSubcategories, setFilteredSubcategories] = useState<
+    Subcategoria[]
+  >([]); // Explicit type
 
   useEffect(() => {
     dispatch(fetchProducts());
@@ -58,7 +58,11 @@ const Products: React.FC = () => {
   return (
     <div>
       <div style={{ marginBottom: 16 }}>
-        <Button type="primary" onClick={() => setCreateModalVisible(true)}>
+        <Button
+          type="primary"
+          onClick={() => setCreateModalVisible(true)}
+          icon={<PlusOutlined />}
+        >
           Crear Producto
         </Button>
       </div>
@@ -94,6 +98,5 @@ const Products: React.FC = () => {
     </div>
   );
 };
-
 
 export default Products;

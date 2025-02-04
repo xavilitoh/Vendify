@@ -3,6 +3,8 @@ import { RootState } from "./Store";
 import api from "../Api/VendifyApi";
 import { AxiosError } from "axios";
 
+
+
 // Entidad Interface
 export interface Entidad {
   id: number;

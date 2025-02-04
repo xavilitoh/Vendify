@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Form, Input, InputNumber, Checkbox, Button, Select, Steps, Table } from "antd";
+import {
+  Modal,
+  Form,
+  Input,
+  InputNumber,
+  Checkbox,
+  Button,
+  Select,
+  Steps,
+  Table,
+} from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { createProduct } from "../../Redux/Productos";
 import { selectCategories } from "../../Redux/CategorySlice";
@@ -20,7 +30,10 @@ interface CreateProductModalProps {
 const { Option } = Select;
 const { Step } = Steps;
 
-const CreateProductModal: React.FC<CreateProductModalProps> = ({ visible, onClose }) => {
+const CreateProductModal: React.FC<CreateProductModalProps> = ({
+  visible,
+  onClose,
+}) => {
   const dispatch: AppDispatch = useDispatch();
   const [form] = Form.useForm();
   const [currentStep, setCurrentStep] = useState(0);
@@ -33,10 +46,11 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ visible, onClos
   const prices = useSelector(selectPrices);
   const unidades = useSelector(selectUnidades);
 
-  const [filteredSubcategories, setFilteredSubcategories] = useState<Subcategoria[]>([]);
+  const [filteredSubcategories, setFilteredSubcategories] = useState<
+    Subcategoria[]
+  >([]);
 
-  useEffect(() => {
-  }, [dispatch]);
+  useEffect(() => {}, [dispatch]);
 
   const handleCategoryChange = (categoryId: number) => {
     const filtered = allSubcategories.filter(
@@ -93,7 +107,11 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ visible, onClos
         throw new Error("Debe agregar al menos un precio.");
       }
 
-      const finalData = { ...productData, ...productValues, precios: priceEntries };
+      const finalData = {
+        ...productData,
+        ...productValues,
+        precios: priceEntries,
+      };
 
       await dispatch(createProduct(finalData)).unwrap();
       form.resetFields();
@@ -136,7 +154,9 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ visible, onClos
             <Form.Item
               name="idMarca"
               label="Marca"
-              rules={[{ required: true, message: "Por favor selecciona una marca" }]}
+              rules={[
+                { required: true, message: "Por favor selecciona una marca" },
+              ]}
             >
               <Select placeholder="Selecciona una marca">
                 {marcas.map((marca) => (
@@ -149,7 +169,12 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ visible, onClos
             <Form.Item
               name="idCategoria"
               label="Categoría"
-              rules={[{ required: true, message: "Por favor selecciona una categoría" }]}
+              rules={[
+                {
+                  required: true,
+                  message: "Por favor selecciona una categoría",
+                },
+              ]}
             >
               <Select
                 placeholder="Selecciona una categoría"
@@ -165,7 +190,12 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ visible, onClos
             <Form.Item
               name="idSubcategoria"
               label="Subcategoría"
-              rules={[{ required: true, message: "Por favor selecciona una subcategoría" }]}
+              rules={[
+                {
+                  required: true,
+                  message: "Por favor selecciona una subcategoría",
+                },
+              ]}
             >
               <Select placeholder="Selecciona una subcategoría">
                 {filteredSubcategories.map((subcategory) => (
@@ -178,7 +208,9 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ visible, onClos
             <Form.Item
               name="idUnidad"
               label="Unidad"
-              rules={[{ required: true, message: "Por favor selecciona una unidad" }]}
+              rules={[
+                { required: true, message: "Por favor selecciona una unidad" },
+              ]}
             >
               <Select placeholder="Selecciona una unidad">
                 {unidades.map((unidad) => (
@@ -196,21 +228,33 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ visible, onClos
             <Form.Item
               name="descripcion"
               label="Descripción"
-              rules={[{ required: true, message: "Por favor ingresa la descripción" }]}
+              rules={[
+                { required: true, message: "Por favor ingresa la descripción" },
+              ]}
             >
               <Input />
             </Form.Item>
             <Form.Item
               name="stockMinimo"
               label="Stock Mínimo"
-              rules={[{ required: true, message: "Por favor ingresa el stock mínimo" }]}
+              rules={[
+                {
+                  required: true,
+                  message: "Por favor ingresa el stock mínimo",
+                },
+              ]}
             >
               <InputNumber style={{ width: "100%" }} />
             </Form.Item>
             <Form.Item
               name="barCode"
               label="Código de Barras"
-              rules={[{ required: true, message: "Por favor ingresa el código de barras" }]}
+              rules={[
+                {
+                  required: true,
+                  message: "Por favor ingresa el código de barras",
+                },
+              ]}
             >
               <Input />
             </Form.Item>
@@ -229,7 +273,9 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ visible, onClos
             <Form.Item
               name="IdUnidad"
               label="Unidad"
-              rules={[{ required: true, message: "Por favor selecciona una unidad" }]}
+              rules={[
+                { required: true, message: "Por favor selecciona una unidad" },
+              ]}
             >
               <Select placeholder="Selecciona una unidad">
                 {unidades.map((unidad) => (
@@ -242,7 +288,9 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ visible, onClos
             <Form.Item
               name="IdPrecio"
               label="Precio"
-              rules={[{ required: true, message: "Por favor selecciona un precio" }]}
+              rules={[
+                { required: true, message: "Por favor selecciona un precio" },
+              ]}
             >
               <Select placeholder="Selecciona un precio">
                 {prices.map((price) => (
@@ -255,21 +303,22 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ visible, onClos
             <Form.Item
               name="Monto"
               label="Monto"
-              rules={[{ required: true, message: "Por favor ingresa el monto" }]}
+              rules={[
+                { required: true, message: "Por favor ingresa el monto" },
+              ]}
             >
               <InputNumber style={{ width: "100%" }} />
             </Form.Item>
             <Form.Item
               name="Fraccion"
               label="Fracción"
-              rules={[{ required: true, message: "Por favor ingresa la fracción" }]}
+              rules={[
+                { required: true, message: "Por favor ingresa la fracción" },
+              ]}
             >
               <InputNumber style={{ width: "100%" }} />
             </Form.Item>
-            <Button
-              type="primary"
-              onClick={handleAddPrice}
-            >
+            <Button type="primary" onClick={handleAddPrice}>
               Agregar Precio
             </Button>
             <Table
@@ -287,10 +336,24 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ visible, onClos
         )}
       </Form>
 
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 24 }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginTop: 24,
+        }}
+      >
         {currentStep > 0 && <Button onClick={handlePrevious}>Anterior</Button>}
-        {currentStep < 2 && <Button type="primary" onClick={handleNext}>Siguiente</Button>}
-        {currentStep === 2 && <Button type="primary" onClick={handleSubmit}>Crear</Button>}
+        {currentStep < 2 && (
+          <Button type="primary" onClick={handleNext}>
+            Siguiente
+          </Button>
+        )}
+        {currentStep === 2 && (
+          <Button type="primary" onClick={handleSubmit}>
+            Crear
+          </Button>
+        )}
       </div>
     </Modal>
   );

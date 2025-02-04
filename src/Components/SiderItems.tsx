@@ -8,7 +8,9 @@ import {
   UserOutlined,
   WindowsOutlined,
   SubnodeOutlined,
-  EuroOutlined  
+  EuroOutlined,
+  ShopOutlined,
+  WalletOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 
@@ -42,5 +44,15 @@ export const ItemSider: MenuProps["items"] = [
     key: 6,
     icon: React.createElement(NotificationOutlined),
     label: <Link to="Unidades"> Unidades</Link>,
-  }
+  },
+  {
+    key: 7,
+    icon: React.createElement(ShopOutlined),
+    label: <Link to="Sucursales"> Sucursales</Link>,
+  },
+  {
+    key: 8,
+    icon: React.createElement(WalletOutlined),
+    label: <Link to="almacenes"> Almacenes</Link>,
+  },
 ];

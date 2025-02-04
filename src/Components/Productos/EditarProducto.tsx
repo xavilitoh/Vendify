@@ -1,9 +1,11 @@
-import React from "react";
-import { Modal, Form, Input, InputNumber, Checkbox, Button } from "antd";
+import React, { useEffect, useState } from "react";
+import { Modal, Form, Input, Select, Checkbox, Button } from "antd";
 import { useDispatch } from "react-redux";
 import { updateProduct } from "../../Redux/Productos";
 import { AppDispatch } from "../../Redux/Store";
+import api from "../../Api/VendifyApi";
 
+const { Option } = Select;
 
 interface EditProductModalProps {
   visible: boolean;
@@ -11,11 +13,66 @@ interface EditProductModalProps {
   onClose: () => void;
 }
 
-const EditProductModal: React.FC<EditProductModalProps> = ({ visible, product, onClose }) => {
+interface Marca {
+  id: number;
+  descripcion: string;
+}
+
+interface Categorias {
+  id: number;
+  descripcion: string;
+}
+
+interface subCategorias {
+  id: number;
+  descripcion: string;
+}
+
+interface subCategorias {
+  id: number;
+  descripcion: string;
+}
+
+interface unidades {
+  id: number;
+  descripcion: string;
+}
+const EditProductModal: React.FC<EditProductModalProps> = ({
+  visible,
+  product,
+  onClose,
+}) => {
   const dispatch: AppDispatch = useDispatch();
   const [form] = Form.useForm();
+  const [marcas, setMarcas] = useState<Marca[]>([]);
+  const [categorias, setCategorias] = useState<Categorias[]>([]);
+  const [subcategorias, setSubcategorias] = useState<subCategorias[]>([]);
+  const [unidades, setUnidades] = useState<unidades[]>([]);
 
-  React.useEffect(() => {
+  // Fetch options for the dropdowns
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [marcasRes, categoriasRes, subcategoriasRes, unidadesRes] =
+          await Promise.all([
+            api.get<Marca[]>("/Marcas"), // Replace with your API endpoint
+            api.get<Categorias[]>("/Categorias"),
+            api.get<subCategorias[]>("/Subcategorias"),
+            api.get<unidades[]>("/Unidades"),
+          ]);
+        setMarcas(marcasRes.data);
+        setCategorias(categoriasRes.data);
+        setSubcategorias(subcategoriasRes.data);
+        setUnidades(unidadesRes.data);
+      } catch (error) {
+        console.error("Error fetching options for dropdowns:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  // Populate form when the product data changes
+  useEffect(() => {
     if (product) {
       form.setFieldsValue(product);
     }
@@ -23,7 +80,9 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ visible, product, o
 
   const handleSubmit = async (values: any) => {
     try {
-      await dispatch(updateProduct({ id: product.id, productData: values })).unwrap();
+      await dispatch(
+        updateProduct({ id: product.id, productData: values })
+      ).unwrap();
       form.resetFields();
       onClose();
     } catch (error) {
@@ -42,49 +101,93 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ visible, product, o
         <Form.Item
           name="descripcion"
           label="Descripción"
-          rules={[{ required: true, message: "Por favor ingresa la descripción" }]}
+          rules={[
+            { required: true, message: "Por favor ingresa la descripción" },
+          ]}
         >
           <Input />
         </Form.Item>
         <Form.Item
           name="idMarca"
           label="Marca"
-          rules={[{ required: true, message: "Por favor selecciona una marca" }]}
+          rules={[
+            { required: true, message: "Por favor selecciona una marca" },
+          ]}
         >
-          <InputNumber style={{ width: "100%" }} />
+          <Select placeholder="Selecciona una marca">
+            {marcas.map((marca: any) => (
+              <Option key={marca.id} value={marca.id}>
+                {marca.descripcion} {/* Display the description */}
+              </Option>
+            ))}
+          </Select>
         </Form.Item>
         <Form.Item
           name="idCategoria"
           label="Categoría"
-          rules={[{ required: true, message: "Por favor selecciona una categoría" }]}
+          rules={[
+            { required: true, message: "Por favor selecciona una categoría" },
+          ]}
         >
-          <InputNumber style={{ width: "100%" }} />
+          <Select placeholder="Selecciona una categoría">
+            {categorias.map((categoria: any) => (
+              <Option key={categoria.id} value={categoria.id}>
+                {categoria.descripcion} {/* Display the description */}
+              </Option>
+            ))}
+          </Select>
         </Form.Item>
         <Form.Item
           name="idSubcategoria"
           label="Subcategoría"
-          rules={[{ required: true, message: "Por favor selecciona una subcategoría" }]}
+          rules={[
+            {
+              required: true,
+              message: "Por favor selecciona una subcategoría",
+            },
+          ]}
         >
-          <InputNumber style={{ width: "100%" }} />
+          <Select placeholder="Selecciona una subcategoría">
+            {subcategorias.map((subcategoria: any) => (
+              <Option key={subcategoria.id} value={subcategoria.id}>
+                {subcategoria.descripcion} {/* Display the description */}
+              </Option>
+            ))}
+          </Select>
         </Form.Item>
         <Form.Item
           name="idUnidad"
           label="Unidad"
-          rules={[{ required: true, message: "Por favor selecciona una unidad" }]}
+          rules={[
+            { required: true, message: "Por favor selecciona una unidad" },
+          ]}
         >
-          <InputNumber style={{ width: "100%" }} />
+          <Select placeholder="Selecciona una unidad">
+            {unidades.map((unidad: any) => (
+              <Option key={unidad.id} value={unidad.id}>
+                {unidad.descripcion} {/* Display the description */}
+              </Option>
+            ))}
+          </Select>
         </Form.Item>
         <Form.Item
           name="stockMinimo"
           label="Stock Mínimo"
-          rules={[{ required: true, message: "Por favor ingresa el stock mínimo" }]}
+          rules={[
+            { required: true, message: "Por favor ingresa el stock mínimo" },
+          ]}
         >
-          <InputNumber style={{ width: "100%" }} />
+          <Input />
         </Form.Item>
         <Form.Item
           name="barCode"
           label="Código de Barras"
-          rules={[{ required: true, message: "Por favor ingresa el código de barras" }]}
+          rules={[
+            {
+              required: true,
+              message: "Por favor ingresa el código de barras",
+            },
+          ]}
         >
           <Input />
         </Form.Item>

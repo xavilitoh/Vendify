@@ -8,3 +8,9 @@
   margin: 16px;
   background: rgba(255, 255, 255, 0.3);
 }
+
+.dark-notification {
+  background-color: #1f1f1f !important; /* Dark background */
+  color: #ffffff !important; /* White text */
+  border: 1px solid #333333 !important; /* Subtle border */
+}

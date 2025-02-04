@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import { Layout, ConfigProvider, theme, Button } from "antd";
-import Cookies from "js-cookie"; // For 
+import Cookies from "js-cookie"; // For
 import { useNavigate } from "react-router-dom";
 import SiderComponent from "./Pages/Sider";
 import HeaderComponent from "./Pages/Header";
@@ -19,6 +19,9 @@ import Registrarse from "./Pages/Registrarse";
 import Marcas from "./Components/Marcas/Marcas";
 import Precios from "./Components/Precios/Precios";
 import Unidades from "./Components/Unidades/Unidades";
+import Sucursales from "./Components/Sucursales/Sucursales";
+import Almacenes from "./Components/Almacenes/Alamacenes";
+
 const { Content } = Layout;
 
 const lightTheme = {
@@ -176,6 +179,22 @@ const App: React.FC = () => {
                   element={
                     <ProtectedRoute>
                       <Unidades />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/sucursales"
+                  element={
+                    <ProtectedRoute>
+                      <Sucursales />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/Almacenes"
+                  element={
+                    <ProtectedRoute>
+                      <Almacenes />
                     </ProtectedRoute>
                   }
                 />
