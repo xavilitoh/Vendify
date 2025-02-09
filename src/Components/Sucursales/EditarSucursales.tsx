@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Modal, Form, Input, Switch, Button, notification } from "antd";
+import { formatPhoneNumber } from "../Utils/Validators";
 
 interface EditSucursalModalProps {
   visible: boolean;
@@ -16,6 +17,11 @@ const EditSucursalModal: React.FC<EditSucursalModalProps> = ({
 }) => {
   const [form] = Form.useForm();
 
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formattedValue = formatPhoneNumber(e.target.value);
+    form.setFieldsValue({ telefono: formattedValue });
+  };
+
   useEffect(() => {
     if (visible && sucursal) {
       form.setFieldsValue(sucursal);
@@ -28,7 +34,7 @@ const EditSucursalModal: React.FC<EditSucursalModalProps> = ({
       const updatedValues = { ...values, id: sucursal.id }; // Add ID
 
       // Wait for the Redux response (onUpdate returns a promise)
-     await onUpdate(sucursal.id, updatedValues)
+      await onUpdate(sucursal.id, updatedValues);
 
       // Show success notification only if the update succeeds
       notification.success({
@@ -91,9 +97,15 @@ const EditSucursalModal: React.FC<EditSucursalModalProps> = ({
         <Form.Item
           name="telefono"
           label="Teléfono"
-          rules={[{ required: true, message: "Por favor ingresa el teléfono" }]}
+          rules={[
+            { required: true, message: "Por favor ingresa el teléfono" },
+            {
+              pattern: /^\d{3}-\d{3}-\d{4}$/,
+              message: "El teléfono debe estar en formato 809-430-5241",
+            },
+          ]}
         >
-          <Input />
+          <Input onChange={handlePhoneChange} />
         </Form.Item>
         <Form.Item label="Habilitado" name="enable" valuePropName="checked">
           <Switch />

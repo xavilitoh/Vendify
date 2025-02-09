@@ -1,11 +1,20 @@
 import React, { useState } from "react";
-import { Steps, Form, Input, Button, message, Radio, DatePicker,Upload } from "antd";
+import {
+  Steps,
+  Form,
+  Input,
+  Button,
+  message,
+  Radio,
+  DatePicker,
+  Upload,
+} from "antd";
 import type { RadioChangeEvent } from "antd";
 import "./Registrarse.css";
 import moment from "moment";
 import apiClient from "../Api/VendifyApi";
-import { useNavigate  } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
+import { formatPhoneNumber } from "../Components/Utils/Validators";
 
 const { Step } = Steps;
 
@@ -35,7 +44,6 @@ interface RegistrarseProps {
   isDarkMode: boolean;
 }
 
-
 interface FormValues {
   usuario: Usuario;
   empresa: Empresa;
@@ -45,14 +53,13 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
   const [current, setCurrent] = useState<number>(0);
   const [form] = Form.useForm<FormValues>(); // No necesitas FormInstance<FormValues>
   const [sexo, setSexo] = useState<boolean>(true);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handlePhotoChange = (info: any) => {
-    console.log(info); 
-    
+    console.log(info);
 
     const file = info.file.originFileObj || info.file;
-    
+
     if (file instanceof File) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -65,13 +72,48 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
           },
         }));
       };
-      reader.readAsDataURL(file); 
+      reader.readAsDataURL(file);
     } else {
       console.error("Error subiendo la Imagen");
     }
   };
-  
-  
+
+  const handleCompanyPhoneChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: string
+  ) => {
+    const formattedValue = formatPhoneNumber(e.target.value);
+
+    form.setFieldsValue({
+      empresa: {
+        ...form.getFieldValue("empresa"), // Keep other company fields unchanged
+        [field]: formattedValue, // Update the correct field (telefono1 or telefono2)
+      },
+    });
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formattedValue = formatPhoneNumber(e.target.value);
+    console.log(formattedValue);
+    console.log(e.target.id);
+    if (e.target.id === "empresa_telefono1") {
+      console.log("fff");
+      form.setFieldsValue({
+        usuario: {
+          ...form.getFieldValue("empresa"),
+          telefono1: formattedValue,
+        },
+      });
+    }
+
+    form.setFieldsValue({
+      usuario: {
+        ...form.getFieldValue("usuario"), // Keep existing values
+        telefono: formattedValue, // Update only telefono
+      },
+    });
+  };
+
   const [formData, setFormData] = useState<FormValues>({
     usuario: {
       email: "",
@@ -83,7 +125,6 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
       fecaNac: "",
       noDocumento: "",
       sexo: true,
-
     },
     empresa: {
       nombre: "",
@@ -92,7 +133,7 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
       direccion: "",
       telefono1: "",
       telefono2: "",
-      email: ""
+      email: "",
     },
   });
 
@@ -123,21 +164,22 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
   };
 
   const onFinish = async (values: FormValues) => {
-
     const finalValues = { ...formData, ...values };
 
-  if (finalValues.usuario.fecaNac) {
-    finalValues.usuario.fecaNac = moment(finalValues.usuario.fecaNac).format("YYYY-MM-DD");
-    finalValues.empresa.foto = 'string'
-  }
-  
+    if (finalValues.usuario.fecaNac) {
+      finalValues.usuario.fecaNac = moment(finalValues.usuario.fecaNac).format(
+        "YYYY-MM-DD"
+      );
+      finalValues.empresa.foto = "string";
+    }
+
     try {
       const response = await apiClient.post("/Account/Register", finalValues);
-      console.log(response)  
-      message.success("Usuario Registrado con exito",3);
-      navigate('/usuarios')
+      console.log(response);
+      message.success("Usuario Registrado con exito", 3);
+      navigate("/usuarios");
     } catch (error) {
-      console.log(error)
+      console.log(error);
       message.error("Registration Failed");
     }
   };
@@ -159,7 +201,10 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
           <Form.Item
             label="Email"
             name={["usuario", "email"]}
-            rules={[{ required: true, message: "Por favor agrega un correo" }]}
+            rules={[
+              { required: true, message: "Por favor agrega un correo" },
+              { type: "email", message: "Por favor ingresa un correo válido" },
+            ]}
           >
             <Input />
           </Form.Item>
@@ -189,7 +234,7 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
             name={["usuario", "nombres"]}
             rules={[{ required: true, message: "Por favor agrega tu nombre" }]}
           >
-            <Input />
+            <Input min={2} />
           </Form.Item>
           <Form.Item
             label="Apellido"
@@ -198,24 +243,22 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
               { required: true, message: "Por favor agrega tu apellido" },
             ]}
           >
-            <Input />
+            <Input min={2} />
           </Form.Item>
           <Form.Item
             label="Telefono"
             name={["usuario", "telefono"]}
             rules={[
               { required: true, message: "Por favor agrega tu teléfono" },
+              {
+                pattern: /^\d{3}-\d{3}-\d{4}$/,
+                message: "El teléfono debe estar en formato 809-430-5241",
+              },
             ]}
           >
-            <Input />
+            <Input onChange={handlePhoneChange} maxLength={12} />
           </Form.Item>
-          <Form.Item
-            label="Dirección"
-            name={["usuario", "address"]}
-            rules={[
-              { required: true, message: "Por favor agrega tu dirección" },
-            ]}
-          >
+          <Form.Item label="Dirección" name={["usuario", "address"]}>
             <Input />
           </Form.Item>
           <Form.Item
@@ -320,9 +363,16 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
                 required: true,
                 message: "Por favor agrega el teléfono de la compañía",
               },
+              {
+                pattern: /^\d{3}-\d{3}-\d{4}$/,
+                message: "El teléfono debe estar en formato 809-430-5241",
+              },
             ]}
           >
-            <Input />
+            <Input
+              onChange={(e) => handleCompanyPhoneChange(e, "telefono1")}
+              maxLength={12}
+            />
           </Form.Item>
           <Form.Item
             label="Teléfono de la Compañía 2"
@@ -337,18 +387,23 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
             <Input />
           </Form.Item>
           <Form.Item
-          label="Foto de la Compañía"
-          name={["empresa", "foto"]}
-          rules={[{ required: true, message: "Por favor agrega la foto de la compañía" }]}
-        >
-          <Upload
-            showUploadList={false}
-            onChange={handlePhotoChange}
-            beforeUpload={() => false} 
+            label="Foto de la Compañía"
+            name={["empresa", "foto"]}
+            rules={[
+              {
+                required: true,
+                message: "Por favor agrega la foto de la compañía",
+              },
+            ]}
           >
-            <Button>Subir Photo</Button>
-          </Upload>
-        </Form.Item>
+            <Upload
+              showUploadList={false}
+              onChange={handlePhotoChange}
+              beforeUpload={() => false}
+            >
+              <Button>Subir Photo</Button>
+            </Upload>
+          </Form.Item>
         </Form>
       ),
     },

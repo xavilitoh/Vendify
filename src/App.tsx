@@ -1,7 +1,7 @@
 // src/App.tsx
 import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import { Layout, ConfigProvider, theme, Button } from "antd";
+import { Layout, ConfigProvider, theme, Button, Switch } from "antd";
 import Cookies from "js-cookie"; // For
 import { useNavigate } from "react-router-dom";
 import SiderComponent from "./Pages/Sider";
@@ -11,7 +11,6 @@ import Login from "./Pages/Login";
 import Productos from "./Components/Productos/Productos";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import BreadcrumbComponent from "./Components/BreadCrumb";
-import ThemeSwitcher from "./Components/ThemeSwitcher";
 import { ItemSider } from "./Components/SiderItems";
 import Usuarios from "./Components/Usuarios/Usuarios";
 import Categorias from "./Components/Categorias/Categorias";
@@ -73,9 +72,12 @@ const App: React.FC = () => {
     {
       key: "switch",
       label: (
-        <ThemeSwitcher
-          isDarkMode={isDarkMode}
-          toggleDarkMode={toggleDarkMode}
+        <Switch
+          checked={isDarkMode}
+          onChange={toggleDarkMode}
+          checkedChildren="🌙"
+          unCheckedChildren="☀️"
+          style={{ background: isDarkMode ? "#1890ff" : "#f0f0f0" }}
         />
       ),
     },
@@ -92,7 +94,12 @@ const App: React.FC = () => {
     >
       <Layout>
         {isAuthenticated && (
-          <HeaderComponent isDarkMode={isDarkMode} items={ItemsMenu} />
+          <HeaderComponent
+            isDarkMode={isDarkMode}
+            toggleDarkMode={toggleDarkMode} // Pass the function
+            items={ItemsMenu}
+            handleLogout={handleLogout}
+          />
         )}
         <Layout>
           {isAuthenticated && (
