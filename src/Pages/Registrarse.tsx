@@ -14,7 +14,10 @@ import "./Registrarse.css";
 import moment from "moment";
 import apiClient from "../Api/VendifyApi";
 import { useNavigate } from "react-router-dom";
-import { formatPhoneNumber } from "../Components/Utils/Validators";
+import {
+  formatPhoneNumber,
+  formatNoDocumento,
+} from "../Components/Utils/Validators";
 
 const { Step } = Steps;
 
@@ -78,6 +81,17 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
     }
   };
 
+  const handleNoDocumentoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formattedValue = formatNoDocumento(e.target.value);
+
+    form.setFieldsValue({
+      usuario: {
+        ...form.getFieldValue("usuario"), // Keep existing values
+        noDocumento: formattedValue, // Update formatted value
+      },
+    });
+  };
+
   const handleCompanyPhoneChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     field: string
@@ -92,12 +106,31 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
     });
   };
 
+  const validateAge = (_: any, value: moment.Moment | null) => {
+    if (!value) {
+      return Promise.reject("Por favor selecciona una fecha válida");
+    }
+
+    const birthDate = new Date(value.toISOString()); // Convert to JS Date
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+
+    // Adjust age if birthday hasn't happened yet this year
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+    return age >= 18
+      ? Promise.resolve()
+      : Promise.reject("Debes tener al menos 18 años de edad");
+  };
+
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formattedValue = formatPhoneNumber(e.target.value);
-    console.log(formattedValue);
-    console.log(e.target.id);
     if (e.target.id === "empresa_telefono1") {
-      console.log("fff");
       form.setFieldsValue({
         usuario: {
           ...form.getFieldValue("empresa"),
@@ -174,13 +207,14 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
     }
 
     try {
+      console.log(finalValues);
       const response = await apiClient.post("/Account/Register", finalValues);
       console.log(response);
       message.success("Usuario Registrado con exito", 3);
       navigate("/usuarios");
     } catch (error) {
       console.log(error);
-      message.error("Registration Failed");
+      message.error(error.response.data || "Error al registrar el usuario", 3);
     }
   };
 
@@ -213,6 +247,15 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
             name={["usuario", "pass"]}
             rules={[
               { required: true, message: "Por favor agrega una contraseña" },
+              {
+                min: 8,
+                message: "La contraseña debe tener al menos 8 caracteres",
+              },
+              {
+                pattern: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/,
+                message:
+                  "Debe contener al menos una letra, un número y un carácter especial",
+              },
             ]}
           >
             <Input.Password />
@@ -269,24 +312,24 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
                 required: true,
                 message: "Por favor agrega tu fecha de nacimiento",
               },
+              {
+                validator: validateAge, // Custom validator function
+              },
             ]}
           >
-            <DatePicker
-              style={{ width: "100%" }}
-              format="YYYY-MM-DD"
-              disabledDate={(current) =>
-                current && current > moment().endOf("day")
-              }
-            />
+            <DatePicker style={{ width: "100%" }} format="YYYY-MM-DD" />
           </Form.Item>
           <Form.Item
             label="Documento"
             name={["usuario", "noDocumento"]}
             rules={[
               { required: true, message: "Por favor agrega tu documento" },
+              {
+                message: "El documento debe estar en formato 000-000000-0",
+              },
             ]}
           >
-            <Input />
+            <Input maxLength={13} onChange={handleNoDocumentoChange} />
           </Form.Item>
           <Form.Item
             label="Sexo"
@@ -377,14 +420,35 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
           <Form.Item
             label="Teléfono de la Compañía 2"
             name={["empresa", "telefono2"]}
+            dependencies={["empresa", "telefono1"]} // Ensure this field depends on telefono1
             rules={[
               {
                 required: true,
                 message: "Por favor agrega el teléfono de la compañía",
               },
+              {
+                pattern: /^\d{3}-\d{3}-\d{4}$/,
+                message: "El teléfono debe estar en formato 809-430-5241",
+              },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (
+                    value &&
+                    value === getFieldValue(["empresa", "telefono1"])
+                  ) {
+                    return Promise.reject(
+                      "Los teléfonos no pueden ser iguales"
+                    );
+                  }
+                  return Promise.resolve();
+                },
+              }),
             ]}
           >
-            <Input />
+            <Input
+              onChange={(e) => handleCompanyPhoneChange(e, "telefono2")}
+              maxLength={12}
+            />
           </Form.Item>
           <Form.Item
             label="Foto de la Compañía"

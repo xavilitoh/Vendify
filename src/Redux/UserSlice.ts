@@ -35,50 +35,49 @@ export const createUser = createAsyncThunk<
   CreateUserFormValues, // Return type
   CreateUserFormValues, // Argument type
   { rejectValue: string } // Reject value type
->(
-  "user/createUser",
-  async (userData, { rejectWithValue }) => {
-    try {
-      const response = await apiClient.post<CreateUserFormValues,any>("/Users/Create", userData);
-      return response.data;
-    } catch (error) {
-      if (error instanceof AxiosError && error.response) {
-        return rejectWithValue(error.response.data as string);
-      } else {
-        return rejectWithValue("Something went wrong");
-      }
+>("user/createUser", async (userData, { rejectWithValue }) => {
+  console.log(userData);
+  try {
+    console.log(userData);
+    const response = await apiClient.post<CreateUserFormValues, any>(
+      "/Users/Create",
+      userData
+    );
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error.response) {
+      return rejectWithValue(error.response.data as string);
+    } else {
+      return rejectWithValue("Something went wrong");
     }
   }
-);
+});
 
 // Fetch Users Thunk
 export const fetchUsers = createAsyncThunk<
   CreateUserFormValues[], // Return type
   void, // Argument type
   { rejectValue: string } // Reject value type
->(
-  "user/fetchUsers",
-  async (_, { rejectWithValue }) => {
-    try {
-      const token = Cookies.get("token");
+>("user/fetchUsers", async (_, { rejectWithValue }) => {
+  try {
+    const token = Cookies.get("token");
 
-      const headers = new AxiosHeaders();
-      headers.set("Authorization", `Bearer ${token}`); // Use the set method for AxiosHeaders
+    const headers = new AxiosHeaders();
+    headers.set("Authorization", `Bearer ${token}`); // Use the set method for AxiosHeaders
 
-      const response = await apiClient.get<CreateUserFormValues[]>("/Users", {
-        headers, // Pass the AxiosHeaders instance
-      });
+    const response = await apiClient.get<CreateUserFormValues[]>("/Users", {
+      headers, // Pass the AxiosHeaders instance
+    });
 
-      return response.data;
-    } catch (error) {
-      if (error instanceof AxiosError && error.response) {
-        return rejectWithValue(error.response.data as string);
-      } else {
-        return rejectWithValue("Something went wrong");
-      }
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error.response) {
+      return rejectWithValue(error.response.data as string);
+    } else {
+      return rejectWithValue("Something went wrong");
     }
   }
-);
+});
 
 // User Slice
 const userSlice = createSlice({
