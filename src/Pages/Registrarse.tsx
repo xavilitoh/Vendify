@@ -255,7 +255,7 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
               { type: "email", message: "Por favor ingresa un correo válido" },
             ]}
           >
-            <Input />
+            <Input maxLength={40} />
           </Form.Item>
           <Form.Item
             label="Password"
@@ -273,7 +273,7 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
               },
             ]}
           >
-            <Input.Password />
+            <Input.Password maxLength={40}/>
           </Form.Item>
         </Form>
       ),
@@ -292,7 +292,7 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
             name={["usuario", "nombres"]}
             rules={[{ required: true, message: "Por favor agrega tu nombre" }]}
           >
-            <Input min={2} />
+            <Input min={2} maxLength={40} />
           </Form.Item>
           <Form.Item
             label="Apellido"
@@ -301,7 +301,7 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
               { required: true, message: "Por favor agrega tu apellido" },
             ]}
           >
-            <Input min={2} />
+            <Input min={2}  maxLength={40}/>
           </Form.Item>
           <Form.Item
             label="Telefono"
@@ -317,7 +317,7 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
             <Input onChange={handlePhoneChange} maxLength={12} />
           </Form.Item>
           <Form.Item label="Dirección" name={["usuario", "address"]}>
-            <Input />
+            <Input maxLength={70}/>
           </Form.Item>
           <Form.Item
             label="Fecha de Nacimiento"
@@ -380,14 +380,14 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
               },
             ]}
           >
-            <Input />
+            <Input maxLength={40}/>
           </Form.Item>
           <Form.Item
             label="RNC"
             name={["empresa", "rnc"]}
             rules={[{ required: true, message: "Por favor agrega el RNC" }]}
           >
-            <Input />
+            <Input maxLength={40}/>
           </Form.Item>
           <Form.Item
             label="Correo de la Compañía"
@@ -411,7 +411,7 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
               },
             ]}
           >
-            <Input />
+            <Input maxLength={40}/>
           </Form.Item>
           <Form.Item
             label="Teléfono de la Compañía"
