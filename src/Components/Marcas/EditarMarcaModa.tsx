@@ -56,15 +56,13 @@ const EditMarcaModal: React.FC<EditMarcaModalProps> = ({
         <Form.Item
           label="Descripción"
           name="descripcion"
-          rules={[{ required: true, message: "Por favor ingrese una descripción" }]}
+          rules={[
+            { required: true, message: "Por favor ingrese una descripción" },
+          ]}
         >
-          <Input placeholder="Ingrese la descripción" />
+          <Input placeholder="Ingrese la descripción" maxLength={50} />
         </Form.Item>
-        <Form.Item
-          label="Habilitado"
-          name="enable"
-          valuePropName="checked"
-        >
+        <Form.Item label="Habilitado" name="enable" valuePropName="checked">
           <Switch />
         </Form.Item>
       </Form>

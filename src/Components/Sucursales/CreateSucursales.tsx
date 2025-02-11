@@ -58,7 +58,7 @@ const CreateSucursalModal: React.FC<CreateSucursalModalProps> = ({
             { required: true, message: "Por favor ingresa la descripción" },
           ]}
         >
-          <Input />
+          <Input placeholder="Bonao" maxLength={50}/>
         </Form.Item>
         <Form.Item
           name="direccion"
@@ -67,7 +67,7 @@ const CreateSucursalModal: React.FC<CreateSucursalModalProps> = ({
             { required: true, message: "Por favor ingresa la dirección" },
           ]}
         >
-          <Input />
+          <Input placeholder="Calle Dominicana #36, Bonao" maxLength={150} />
         </Form.Item>
         <Form.Item
           name="telefono"

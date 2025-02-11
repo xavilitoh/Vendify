@@ -18,7 +18,7 @@ import {
   formatPhoneNumber,
   formatNoDocumento,
 } from "../Components/Utils/Validators";
-
+import axios from "axios";
 const { Step } = Steps;
 
 interface Usuario {
@@ -209,12 +209,27 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
     try {
       console.log(finalValues);
       const response = await apiClient.post("/Account/Register", finalValues);
-      console.log(response);
-      message.success("Usuario Registrado con exito", 3);
+      console.log("Success Response:", response);
+
+      message.success("Usuario Registrado con éxito", 3);
       navigate("/usuarios");
     } catch (error) {
-      console.log(error);
-      message.error(error.response.data || "Error al registrar el usuario", 3);
+      console.error("Caught Error:", error);
+
+      if (axios.isAxiosError(error)) {
+        console.error("Axios Error Details:", error.response); // Debugging
+
+        message.error(
+          error.response?.data?.message || "Error al registrar el usuario",
+          3
+        );
+      } else if (error instanceof Error) {
+        console.error("JavaScript Error:", error.message);
+        message.error(error.message || "Ocurrió un error desconocido", 3);
+      } else {
+        console.error("Unexpected Error Type:", error);
+        message.error("Error inesperado", 3);
+      }
     }
   };
 

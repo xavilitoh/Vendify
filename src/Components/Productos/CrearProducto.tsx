@@ -132,6 +132,7 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
   return (
     <Modal
       title="Crear Producto"
+      width={600}
       visible={visible}
       onCancel={() => {
         setCurrentStep(0);
@@ -232,7 +233,7 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
                 { required: true, message: "Por favor ingresa la descripción" },
               ]}
             >
-              <Input />
+              <Input placeholder="Ingrese la descripción" />
             </Form.Item>
             <Form.Item
               name="stockMinimo"
@@ -244,7 +245,10 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
                 },
               ]}
             >
-              <InputNumber style={{ width: "100%" }} />
+              <InputNumber
+                style={{ width: "100%" }}
+                placeholder="Ingrese la cantidad"
+              />
             </Form.Item>
             <Form.Item
               name="barCode"

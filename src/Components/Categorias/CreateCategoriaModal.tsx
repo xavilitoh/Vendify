@@ -21,7 +21,7 @@ const CreateCategoryModal: React.FC<CreateCategoryModalProps> = ({
 
   return (
     <Modal
-      title="Crear Categoria t"
+      title="Crear Categoria"
       visible={visible}
       onCancel={() => {
         onCancel();
@@ -36,7 +36,6 @@ const CreateCategoryModal: React.FC<CreateCategoryModalProps> = ({
         </Button>,
       ]}
     >
-
       <Form
         form={form}
         layout="vertical"
@@ -53,7 +52,7 @@ const CreateCategoryModal: React.FC<CreateCategoryModalProps> = ({
             { required: true, message: "Por favor ingrese una descripción" },
           ]}
         >
-          <Input placeholder="Ingrese la descripción" />
+          <Input placeholder="Ingrese la descripción" maxLength={50} />
         </Form.Item>
       </Form>
     </Modal>

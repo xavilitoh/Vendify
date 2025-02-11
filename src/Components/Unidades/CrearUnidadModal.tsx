@@ -47,16 +47,20 @@ const CreateUnidadModal: React.FC<CreateUnidadModalProps> = ({
         <Form.Item
           label="Descripción"
           name="descripcion"
-          rules={[{ required: true, message: "Por favor ingrese una descripción" }]}
+          rules={[
+            { required: true, message: "Por favor ingrese una descripción" },
+          ]}
         >
-          <Input placeholder="Ingrese la descripción" />
+          <Input placeholder="DOLARES" maxLength={15} />
         </Form.Item>
         <Form.Item
           label="Abreviatura"
           name="abreviatura"
-          rules={[{ required: true, message: "Por favor ingrese una abreviatura" }]}
+          rules={[
+            { required: true, message: "Por favor ingrese una abreviatura" },
+          ]}
         >
-          <Input placeholder="Ingrese la abreviatura" />
+          <Input placeholder="USD" maxLength={3} />
         </Form.Item>
       </Form>
     </Modal>

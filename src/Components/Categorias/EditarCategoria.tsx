@@ -56,7 +56,7 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
             { required: true, message: "Por favor ingrese una descripción" },
           ]}
         >
-          <Input placeholder="Ingrese la descripción" />
+          <Input placeholder="Ingrese la descripción" maxLength={50} />
         </Form.Item>
 
         <Form.Item

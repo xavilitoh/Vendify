@@ -71,7 +71,7 @@ const CreateAlmacenModal: React.FC<CreateAlmacenModalProps> = ({
           label="Descripción"
           rules={[{ required: true, message: "Ingrese la descripción" }]}
         >
-          <Input />
+          <Input placeholder="Almacen Duarte " maxLength={150} />
         </Form.Item>
 
         <Form.Item
@@ -79,7 +79,7 @@ const CreateAlmacenModal: React.FC<CreateAlmacenModalProps> = ({
           label="Dirección"
           rules={[{ required: true, message: "Ingrese la dirección" }]}
         >
-          <Input />
+          <Input placeholder="Calle Duarte #8" maxLength={150} />
         </Form.Item>
 
         <Form.Item>

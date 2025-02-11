@@ -24,10 +24,10 @@ const CreateMarcaModal: React.FC<CreateMarcaModalProps> = ({
     if (visible) {
       // Get user data from cookies
       const userCookie = Cookies.get("usuario");
-   
+
       if (userCookie) {
         const user = JSON.parse(userCookie);
-        console.log(user?.empresa?.id)
+        console.log(user?.empresa?.id);
 
         // Set the 'idEntidad' field if available
         if (user?.empresa?.id) {
@@ -58,7 +58,7 @@ const CreateMarcaModal: React.FC<CreateMarcaModalProps> = ({
         form={form}
         layout="vertical"
         onFinish={(values) => {
-          console.log(values)
+          console.log(values);
           onSubmit(values as CreateMarcaFormValues);
           form.resetFields();
         }}
@@ -66,17 +66,12 @@ const CreateMarcaModal: React.FC<CreateMarcaModalProps> = ({
         <Form.Item
           label="Descripción"
           name="descripcion"
-          rules={[{ required: true, message: "Por favor ingrese una descripción" }]}
+          rules={[
+            { required: true, message: "Por favor ingrese una descripción" },
+          ]}
         >
-          <Input placeholder="Ingrese la descripción" />
+          <Input placeholder="Ingrese la descripción" maxLength={50} />
         </Form.Item>
-   {/*      <Form.Item
-          label="Entidad (ID automático)"
-          name="idEntidad"
-          rules={[{ required: true, message: "Entidad no encontrada" }]}
-        >
-          <Input type="number" placeholder="ID de la Entidad" disabled />
-        </Form.Item> */}
       </Form>
     </Modal>
   );

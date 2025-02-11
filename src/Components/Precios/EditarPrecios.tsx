@@ -59,7 +59,7 @@ const EditPriceModal: React.FC<EditPriceModalProps> = ({
             { required: true, message: "Por favor ingrese una descripción" },
           ]}
         >
-          <Input placeholder="Ingrese la descripción" />
+          <Input placeholder="Ingrese la descripción" maxLength={50} />
         </Form.Item>
         <Form.Item label="Habilitado" name="enable" valuePropName="checked">
           <Switch />
