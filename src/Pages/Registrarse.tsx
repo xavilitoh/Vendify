@@ -217,10 +217,8 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
       console.error("Caught Error:", error);
 
       if (axios.isAxiosError(error)) {
-        console.error("Axios Error Details:", error.response); // Debugging
-
         message.error(
-          error.response?.data?.message || "Error al registrar el usuario",
+          error.response?.data || "Error al registrar el usuario",
           3
         );
       } else if (error instanceof Error) {
@@ -328,7 +326,7 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
                 message: "Por favor agrega tu fecha de nacimiento",
               },
               {
-                validator: validateAge, // Custom validator function
+                validator: validateAge, 
               },
             ]}
           >
@@ -397,6 +395,8 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
                 required: true,
                 message: "Por favor agrega el correo de la compañía",
               },
+              { type: "email", message: "Por favor ingresa un correo válido" },
+
             ]}
           >
             <Input />

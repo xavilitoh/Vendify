@@ -108,7 +108,10 @@ const App: React.FC = () => {
               backgroundColor={colorBgContainer}
             />
           )}
-          <Layout style={{ padding: "0 24px 24px" }}>
+          <Layout style={{ padding: "0 24px 24px",    
+                  backgroundColor: isDarkMode
+                  ? "#303030"
+                  : "",}}>
             {isAuthenticated && <BreadcrumbComponent />}
             <Content
               style={{
@@ -116,7 +119,7 @@ const App: React.FC = () => {
                 margin: 0,
                 minHeight: 280,
                 backgroundColor: isDarkMode
-                  ? "#1f1f1f"
+                  ? "#000000"
                   : lightTheme.colorBgContainer,
                 borderRadius: lightTheme.borderRadius,
                 height: "100vh",
