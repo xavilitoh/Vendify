@@ -1,8 +1,7 @@
-// src/App.tsx
-import React, { useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { Layout, ConfigProvider, theme, Button, Switch } from "antd";
-import Cookies from "js-cookie"; // For
+import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import SiderComponent from "./Pages/Sider";
 import HeaderComponent from "./Pages/Header";
@@ -36,25 +35,35 @@ const darkTheme = {
 };
 
 const App: React.FC = () => {
-  // Leer el tema guardado en localStorage o usar el valor por defecto (modo claro)
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    const savedTheme = localStorage.getItem("isDarkMode");
-    return savedTheme ? JSON.parse(savedTheme) : false;
-  });
-
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
-
-  // Función para cambiar el tema y guardar la preferencia en localStorage
-  const toggleDarkMode = (checked: boolean) => {
-    setIsDarkMode(checked);
-    localStorage.setItem("isDarkMode", JSON.stringify(checked)); // Guardar el tema en localStorage
-  };
-
   const navigate = useNavigate();
 
-  // Logout function
+  const getSystemDarkMode = () =>
+    window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem("isDarkMode");
+    return savedTheme !== null ? JSON.parse(savedTheme) : getSystemDarkMode();
+  });
+
+  useEffect(() => {
+    // Sync with system dark mode changes
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (localStorage.getItem("isDarkMode") === null) {
+        setIsDarkMode(e.matches);
+      }
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
+  // Toggle dark mode and save user preference
+  const toggleDarkMode = (checked: boolean) => {
+    setIsDarkMode(checked);
+    localStorage.setItem("isDarkMode", JSON.stringify(checked));
+  };
+
   const handleLogout = () => {
     Cookies.remove("token");
     navigate("/login");
@@ -96,7 +105,7 @@ const App: React.FC = () => {
         {isAuthenticated && (
           <HeaderComponent
             isDarkMode={isDarkMode}
-            toggleDarkMode={toggleDarkMode} // Pass the function
+            toggleDarkMode={toggleDarkMode}
             items={ItemsMenu}
             handleLogout={handleLogout}
           />
@@ -105,13 +114,17 @@ const App: React.FC = () => {
           {isAuthenticated && (
             <SiderComponent
               items={ItemSider}
-              backgroundColor={colorBgContainer}
+              backgroundColor={
+                isDarkMode ? "#303030" : lightTheme.colorBgContainer
+              }
             />
           )}
-          <Layout style={{ padding: "0 24px 24px",    
-                  backgroundColor: isDarkMode
-                  ? "#303030"
-                  : "",}}>
+          <Layout
+            style={{
+              padding: "0 24px 24px",
+              backgroundColor: isDarkMode ? "#303030" : "",
+            }}
+          >
             {isAuthenticated && <BreadcrumbComponent />}
             <Content
               style={{
@@ -126,12 +139,22 @@ const App: React.FC = () => {
               }}
             >
               <Routes>
-                <Route path="/login" element={<Login />} />
+                <Route
+                  path="/login"
+                  element={
+                    isAuthenticated ? <Navigate to="/" replace /> : <Login />
+                  }
+                />
                 <Route
                   path="/registrarse"
-                  element={<Registrarse isDarkMode={isDarkMode} />}
+                  element={
+                    isAuthenticated ? (
+                      <Navigate to="/" replace />
+                    ) : (
+                      <Registrarse isDarkMode={isDarkMode} />
+                    )
+                  }
                 />
-
                 <Route
                   path="/"
                   element={
@@ -140,7 +163,6 @@ const App: React.FC = () => {
                     </ProtectedRoute>
                   }
                 />
-
                 <Route
                   path="/usuarios"
                   element={
@@ -149,7 +171,6 @@ const App: React.FC = () => {
                     </ProtectedRoute>
                   }
                 />
-
                 <Route
                   path="/categorias"
                   element={
@@ -158,7 +179,6 @@ const App: React.FC = () => {
                     </ProtectedRoute>
                   }
                 />
-
                 <Route
                   path="/productos"
                   element={
@@ -167,7 +187,6 @@ const App: React.FC = () => {
                     </ProtectedRoute>
                   }
                 />
-
                 <Route
                   path="/marcas"
                   element={
@@ -201,7 +220,7 @@ const App: React.FC = () => {
                   }
                 />
                 <Route
-                  path="/Almacenes"
+                  path="/almacenes"
                   element={
                     <ProtectedRoute>
                       <Almacenes />

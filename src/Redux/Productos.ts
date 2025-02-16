@@ -31,23 +31,35 @@ interface Product {
 interface ProductState {
   products: Product[];
   loading: boolean;
+  total: number;
+  page: number;
+  pageSize: number;
 }
 
 const initialState: ProductState = {
   products: [],
   loading: false,
+  total: 0,
+  page: 1,
+  pageSize: 8,
 };
 
-// Fetch Products
 export const fetchProducts = createAsyncThunk<
-  Product[],
-  void,
+  { products: Product[]; total: number },
+  { page: number; pageSize: number },
   { rejectValue: string }
->("products/fetchProducts", async (_, { rejectWithValue }) => {
+>("products/fetchProducts", async ({ page, pageSize }, { rejectWithValue }) => {
   try {
-    const response = await api.get<Product[]>("/Productos");
-    return response.data;
+    const response = await api.get<{ result: Product[]; totalRecords: number }>(
+      `/Productos/${page}/${pageSize}`
+    );
+
+    const products = response.data.result || [];
+    const total = response.data.totalRecords;
+
+    return { products, total };
   } catch (error) {
+    console.error("Error fetching products:", error);
     if (error instanceof AxiosError) {
       return rejectWithValue("Error al obtener los productos");
     }
@@ -61,9 +73,9 @@ export const createProduct = createAsyncThunk<
   Omit<Product, "id">,
   { rejectValue: string }
 >("products/createProduct", async (productData, { rejectWithValue }) => {
-  console.log(productData);
   try {
     const response = await api.post<Product, any>("/Productos", productData);
+
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -99,34 +111,35 @@ export const updateProduct = createAsyncThunk<
 const productSlice = createSlice({
   name: "products",
   initialState,
-  reducers: {},
+  reducers: {
+    setPage: (state, action) => {
+      state.page = action.payload;
+    },
+    setPageSize: (state, action) => {
+      state.pageSize = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchProducts.pending, (state) => {
         state.loading = true;
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
-        state.products = action.payload;
+        state.products = action.payload.products;
+        state.total = action.payload.total;
         state.loading = false;
       })
       .addCase(fetchProducts.rejected, (state) => {
         state.loading = false;
-      })
-      .addCase(createProduct.fulfilled, (state, action) => {
-        state.products.push(action.payload);
-      })
-      .addCase(updateProduct.fulfilled, (state, action) => {
-        const index = state.products.findIndex(
-          (product) => product.id === action.payload.id
-        );
-        if (index !== -1) {
-          state.products[index] = action.payload;
-        }
       });
   },
 });
 
+export const { setPage, setPageSize } = productSlice.actions;
 export const selectProducts = (state: RootState) => state.productos.products;
 export const selectLoading = (state: RootState) => state.productos.loading;
+export const selectTotal = (state: RootState) => state.productos.total;
+export const selectPage = (state: RootState) => state.productos.page;
+export const selectPageSize = (state: RootState) => state.productos.pageSize;
 
 export default productSlice.reducer;

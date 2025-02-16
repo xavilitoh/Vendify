@@ -5,6 +5,11 @@ import {
   fetchProducts,
   selectProducts,
   selectLoading,
+  selectTotal,
+  selectPage,
+  selectPageSize,
+  setPage,
+  setPageSize,
 } from "../../Redux/Productos";
 import { fetchCategories } from "../../Redux/CategorySlice";
 import {
@@ -26,7 +31,9 @@ const Products: React.FC = () => {
   const products = useSelector(selectProducts);
   const loading = useSelector(selectLoading);
   const subcategories = useSelector(selectSubcategorias);
-
+  const total = useSelector(selectTotal);
+  const page = useSelector(selectPage);
+  const pageSize = useSelector(selectPageSize);
   const [isCreateModalVisible, setCreateModalVisible] = useState(false);
   const [isEditModalVisible, setEditModalVisible] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
@@ -35,13 +42,13 @@ const Products: React.FC = () => {
   >([]); // Explicit type
 
   useEffect(() => {
-    dispatch(fetchProducts());
+    dispatch(fetchProducts({ page, pageSize }));
     dispatch(fetchCategories());
     dispatch(fetchSubcategorias());
     dispatch(fetchMarcas());
     dispatch(fetchPrices());
     dispatch(fetchUnidades());
-  }, [dispatch]);
+  }, [dispatch, page, pageSize]);
 
   const handleCategoryChange = (categoryId: number) => {
     const filtered = subcategories.filter(
@@ -53,6 +60,13 @@ const Products: React.FC = () => {
   const handleEdit = (product: any) => {
     setEditingProduct(product);
     setEditModalVisible(true);
+  };
+
+  const handlePageChange = (newPage: number, newPageSize?: number) => {
+    dispatch(setPage(newPage)); // ✅ Updates the page number
+    if (newPageSize && newPageSize !== pageSize) {
+      dispatch(setPageSize(newPageSize)); // ✅ Updates page size if changed
+    }
   };
 
   return (
@@ -72,6 +86,10 @@ const Products: React.FC = () => {
       ) : (
         <TableProducts
           products={products}
+          total={total} // ✅ Ensures pagination shows correct number of pages
+          currentPage={page} // ✅ Syncs with Redux state
+          pageSize={pageSize}
+          onPageChange={handlePageChange} // ✅ Function that updates Redux state
           onEdit={handleEdit}
           onCategoryChange={handleCategoryChange}
           filteredSubcategories={filteredSubcategories}

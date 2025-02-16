@@ -8,6 +8,7 @@ import {
   Radio,
   DatePicker,
   Upload,
+  ConfigProvider,
 } from "antd";
 import type { RadioChangeEvent } from "antd";
 import "./Registrarse.css";
@@ -19,6 +20,7 @@ import {
   formatNoDocumento,
 } from "../Components/Utils/Validators";
 import axios from "axios";
+import { theme } from "antd";
 const { Step } = Steps;
 
 interface Usuario {
@@ -52,7 +54,7 @@ interface FormValues {
   empresa: Empresa;
 }
 
-const RegistrationForm: React.FC<RegistrarseProps> = () => {
+const RegistrationForm: React.FC<RegistrarseProps> = ({ isDarkMode }) => {
   const [current, setCurrent] = useState<number>(0);
   const [form] = Form.useForm<FormValues>(); // No necesitas FormInstance<FormValues>
   const [sexo, setSexo] = useState<boolean>(true);
@@ -271,7 +273,7 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
               },
             ]}
           >
-            <Input.Password maxLength={40}/>
+            <Input.Password maxLength={40} />
           </Form.Item>
         </Form>
       ),
@@ -299,7 +301,7 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
               { required: true, message: "Por favor agrega tu apellido" },
             ]}
           >
-            <Input min={2}  maxLength={40}/>
+            <Input min={2} maxLength={40} />
           </Form.Item>
           <Form.Item
             label="Telefono"
@@ -315,7 +317,7 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
             <Input onChange={handlePhoneChange} maxLength={12} />
           </Form.Item>
           <Form.Item label="Dirección" name={["usuario", "address"]}>
-            <Input maxLength={70}/>
+            <Input maxLength={70} />
           </Form.Item>
           <Form.Item
             label="Fecha de Nacimiento"
@@ -326,7 +328,7 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
                 message: "Por favor agrega tu fecha de nacimiento",
               },
               {
-                validator: validateAge, 
+                validator: validateAge,
               },
             ]}
           >
@@ -378,14 +380,14 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
               },
             ]}
           >
-            <Input maxLength={40}/>
+            <Input maxLength={40} />
           </Form.Item>
           <Form.Item
             label="RNC"
             name={["empresa", "rnc"]}
             rules={[{ required: true, message: "Por favor agrega el RNC" }]}
           >
-            <Input maxLength={40}/>
+            <Input maxLength={40} />
           </Form.Item>
           <Form.Item
             label="Correo de la Compañía"
@@ -396,7 +398,6 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
                 message: "Por favor agrega el correo de la compañía",
               },
               { type: "email", message: "Por favor ingresa un correo válido" },
-
             ]}
           >
             <Input />
@@ -411,7 +412,7 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
               },
             ]}
           >
-            <Input maxLength={40}/>
+            <Input maxLength={40} />
           </Form.Item>
           <Form.Item
             label="Teléfono de la Compañía"
@@ -489,31 +490,42 @@ const RegistrationForm: React.FC<RegistrarseProps> = () => {
   ];
 
   return (
-    <div className="form-container">
-      <Steps current={current}>
-        {steps.map((step) => (
-          <Step key={step.title} title={step.title} />
-        ))}
-      </Steps>
-      <div className="steps-content">{steps[current].content}</div>
-      <div className="steps-action" style={{ marginTop: 16 }}>
-        {current < steps.length - 1 && (
-          <Button type="primary" onClick={() => next()}>
-            Siguiente
-          </Button>
-        )}
-        {current === steps.length - 1 && (
-          <Button type="primary" onClick={() => form.submit()}>
-            Cargar
-          </Button>
-        )}
-        {current > 0 && (
-          <Button style={{ marginLeft: 8 }} onClick={() => prev()}>
-            Anterior
-          </Button>
-        )}
+    <ConfigProvider
+      theme={{
+        algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
+      }}
+    >
+      <div className="form-container">
+        <Steps current={current} style={{ marginBottom: 16 }}>
+          {steps.map((step) => (
+            <Step key={step.title} title={step.title} />
+          ))}
+        </Steps>
+        <div
+          className="steps-content"
+          style={{ background: isDarkMode ? "#000000" : "#fff" }}
+        >
+          {steps[current].content}
+        </div>
+        <div className="steps-action" style={{ marginTop: 16 }}>
+          {current < steps.length - 1 && (
+            <Button type="primary" onClick={() => next()}>
+              Siguiente
+            </Button>
+          )}
+          {current === steps.length - 1 && (
+            <Button type="primary" onClick={() => form.submit()}>
+              Cargar
+            </Button>
+          )}
+          {current > 0 && (
+            <Button style={{ marginLeft: 8 }} onClick={() => prev()}>
+              Anterior
+            </Button>
+          )}
+        </div>
       </div>
-    </div>
+    </ConfigProvider>
   );
 };
 

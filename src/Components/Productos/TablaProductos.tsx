@@ -24,6 +24,10 @@ interface Subcategoria {
 
 interface TableProductsProps {
   products: Product[];
+  total: number;
+  currentPage: number;
+  pageSize: number;
+  onPageChange: (page: number, pageSize?: number) => void;
   onEdit: (product: Product) => void;
   filteredSubcategories: Subcategoria[];
   onCategoryChange: (categoryId: number) => void;
@@ -31,6 +35,10 @@ interface TableProductsProps {
 
 const TableProducts: React.FC<TableProductsProps> = ({
   products,
+  total,
+  currentPage,
+  pageSize,
+  onPageChange,
   onEdit,
   filteredSubcategories,
 }) => {
@@ -50,16 +58,8 @@ const TableProducts: React.FC<TableProductsProps> = ({
   };
 
   const columns = [
-    {
-      title: "Nombre",
-      dataIndex: "nombre",
-      key: "nombre",
-    },
-    {
-      title: "Stock",
-      dataIndex: "stockMinimo",
-      key: "stockMinimo",
-    },
+    { title: "Nombre", dataIndex: "nombre", key: "nombre" },
+    { title: "Stock", dataIndex: "stockMinimo", key: "stockMinimo" },
     {
       title: "Con Impuesto",
       dataIndex: "conImpuesto",
@@ -91,12 +91,17 @@ const TableProducts: React.FC<TableProductsProps> = ({
         columns={columns}
         rowKey="id"
         pagination={{
-          pageSize: 8,
+          current: currentPage, 
+          pageSize,
+          total,
+          onChange: (newPage, newPageSize) => {
+            onPageChange(newPage, newPageSize);
+          },
           showSizeChanger: true,
           pageSizeOptions: ["5", "10", "20"],
-          defaultCurrent: 1,
         }}
       />
+
       <ProductDetailsDrawer
         productId={selectedProductId}
         visible={drawerVisible}
