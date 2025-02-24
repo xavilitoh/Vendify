@@ -53,11 +53,19 @@ interface Category {
 interface CategoriesTableProps {
   categories: Category[] | null;
   loading: boolean;
+  total: number;
+  page: number;
+  pageSize: number;
+  onPageChange: (page: number, pageSize?: number) => void;
 }
 
 const CategoriesTable: React.FC<CategoriesTableProps> = ({
   categories,
   loading,
+  total,
+  pageSize,
+  page,
+  onPageChange
 }) => {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isSubcategoryModalVisible, setIsSubcategoryModalVisible] =
@@ -240,7 +248,12 @@ const CategoriesTable: React.FC<CategoriesTableProps> = ({
         rowKey={(record) => record.id.toString()}
         loading={loading}
         pagination={{
-          pageSize: 8,
+          current: page,
+          total: total,
+          pageSize: pageSize,
+          onChange: (newPage, newPageSize) => {
+            onPageChange(newPage, newPageSize);
+          },
           showSizeChanger: true,
           pageSizeOptions: ["5", "10", "20"],
           defaultCurrent: 1,

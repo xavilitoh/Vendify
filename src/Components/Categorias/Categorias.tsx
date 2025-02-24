@@ -5,7 +5,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { PlusOutlined } from "@ant-design/icons";
 import CreateCategoryModal from "./CreateCategoriaModal";
 import { AppDispatch, RootState } from "../../Redux/Store";
-import { createCategory, fetchCategories } from "../../Redux/CategorySlice";
+import {
+  createCategory,
+  fetchCategories,
+  setPage,
+  setPageSize,
+} from "../../Redux/CategorySlice";
 import CategoriesTable from "./CategoriasTable";
 
 interface CreateCategoryFormValues {
@@ -15,16 +20,24 @@ interface CreateCategoryFormValues {
 const Categories: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const dispatch: AppDispatch = useDispatch();
-  const { categorias, loading } = useSelector(
+  const { categorias, loading, page, pageSize, total } = useSelector(
     (state: RootState) => state.categorias
   );
 
+  console.log(total);
   useEffect(() => {
-    dispatch(fetchCategories());
-  }, [dispatch]);
+    dispatch(fetchCategories({ page, pageSize }));
+  }, [dispatch, page, pageSize]);
 
   const showModal = () => {
     setIsModalVisible(true);
+  };
+
+  const handlePageChange = (newPage: number, newPageSize?: number) => {
+    dispatch(setPage(newPage)); // ✅ Updates the page number
+    if (newPageSize && newPageSize !== pageSize) {
+      dispatch(setPageSize(newPageSize)); // ✅ Updates page size if changed
+    }
   };
 
   const handleCancel = () => {
@@ -58,7 +71,14 @@ const Categories: React.FC = () => {
         onCancel={handleCancel}
         onSubmit={handleCreateCategory}
       />
-      <CategoriesTable categories={categorias} loading={loading} />
+      <CategoriesTable
+        categories={categorias}
+        loading={loading}
+        total={total}
+        pageSize={pageSize}
+        page={page}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };

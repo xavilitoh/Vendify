@@ -43,7 +43,7 @@ const Products: React.FC = () => {
 
   useEffect(() => {
     dispatch(fetchProducts({ page, pageSize }));
-    dispatch(fetchCategories());
+    dispatch(fetchCategories({ page, pageSize }));
     dispatch(fetchSubcategorias());
     dispatch(fetchMarcas());
     dispatch(fetchPrices());
