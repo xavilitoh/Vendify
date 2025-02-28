@@ -9,9 +9,10 @@ import {
   Select,
   Steps,
   Table,
+  message,
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { createProduct } from "../../Redux/Productos";
+import { createProduct, fetchProducts } from "../../Redux/Productos";
 import { selectCategories } from "../../Redux/CategorySlice";
 import { selectSubcategorias } from "../../Redux/SubCategoriaSlice";
 import { selectMarcas } from "../../Redux/MarcasSlice";
@@ -54,8 +55,10 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
 
   const handleCategoryChange = (categoryId: number) => {
     const filtered = allSubcategories.filter(
-      (subcategory) => subcategory.iCategoria === categoryId
+      (subcategory) => subcategory.idCategoria === categoryId
     );
+    console.log(allSubcategories);
+    console.log(filtered);
     setFilteredSubcategories(filtered);
     form.setFieldsValue({ idSubcategoria: undefined });
   };
@@ -76,7 +79,6 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
 
   const handleAddPrice = async () => {
     try {
-      // Validate only fields related to adding a price
       const priceData = await form.validateFields([
         "IdUnidad",
         "IdPrecio",
@@ -114,11 +116,15 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
       };
 
       await dispatch(createProduct(finalData)).unwrap();
+
+      await dispatch(fetchProducts({ page: 1, pageSize: 10 }));
+
       form.resetFields();
       setProductData({});
       setPriceEntries([]);
       setCurrentStep(0);
       onClose();
+      message.success("Producto Creado Exitosamente");
     } catch (error) {
       if (error instanceof Error) {
         console.error("Error al crear el producto", error.message);

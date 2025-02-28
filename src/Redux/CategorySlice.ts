@@ -36,12 +36,10 @@ export const fetchCategories = createAsyncThunk<
   { page: number; pageSize: number },
   { rejectValue: string }
 >("categories/fetchCategories", async ({ page, pageSize }) => {
-  console.log(page, pageSize);
   const response = await api.get<{
     result: categorias[];
     totalRecords: number;
   }>(`/Categorias/${page}/${pageSize}`);
-  console.log(response);
   return {
     categorias: response.data.result,
     total: response.data.totalRecords,
@@ -49,16 +47,15 @@ export const fetchCategories = createAsyncThunk<
 });
 
 export const createCategory = createAsyncThunk<
-  categorias, // Return type of the thunk
-  { descripcion: string }, // Argument type for the thunk
-  { rejectValue: string } // Type for rejectWithValue
+  categorias, 
+  { descripcion: string }, 
+  { rejectValue: string } 
 >("categories/createCategory", async (category, { rejectWithValue }) => {
   try {
     const response = await api.post<categorias, any>("/Categorias", {
       descripcion: category.descripcion,
     });
 
-    console.log(response);
 
     return response.data;
   } catch (error) {

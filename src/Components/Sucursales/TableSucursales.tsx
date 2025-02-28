@@ -4,11 +4,13 @@ import { Table, Button, Space, Switch } from "antd";
 interface TableSucursalesProps {
   sucursales: any[];
   onEdit: (sucursal: any) => void;
+  loading?: boolean;
 }
 
 const TableSucursales: React.FC<TableSucursalesProps> = ({
   sucursales,
   onEdit,
+  loading,
 }) => {
   console.log(sucursales);
 
@@ -50,6 +52,7 @@ const TableSucursales: React.FC<TableSucursalesProps> = ({
   return (
     <Table
       dataSource={sucursales}
+      loading={loading}
       pagination={{
         pageSize: 8,
         showSizeChanger: true,

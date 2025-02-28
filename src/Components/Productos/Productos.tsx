@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Button, Spin } from "antd";
+import { Button } from "antd";
 import {
   fetchProducts,
   selectProducts,
@@ -22,12 +22,12 @@ import { fetchUnidades } from "../../Redux/UnidadesSlice";
 import CreateProductModal from "./CrearProducto";
 import EditProductModal from "./EditarProducto";
 import TableProducts from "./TablaProductos";
-import { AppDispatch } from "../../Redux/Store"; // Import the AppDispatch type
-import { Subcategoria } from "../../Redux/SubCategoriaSlice"; // Assuming you have a type defined for Subcategoria
+import { AppDispatch } from "../../Redux/Store";
+import { Subcategoria } from "../../Redux/SubCategoriaSlice";
 import { PlusOutlined } from "@ant-design/icons";
 
 const Products: React.FC = () => {
-  const dispatch: AppDispatch = useDispatch(); // Cast useDispatch to AppDispatch
+  const dispatch: AppDispatch = useDispatch();
   const products = useSelector(selectProducts);
   const loading = useSelector(selectLoading);
   const subcategories = useSelector(selectSubcategorias);
@@ -40,7 +40,6 @@ const Products: React.FC = () => {
   const [filteredSubcategories, setFilteredSubcategories] = useState<
     Subcategoria[]
   >([]); // Explicit type
-
   useEffect(() => {
     dispatch(fetchProducts({ page, pageSize }));
     dispatch(fetchCategories({ page, pageSize }));
@@ -52,7 +51,7 @@ const Products: React.FC = () => {
 
   const handleCategoryChange = (categoryId: number) => {
     const filtered = subcategories.filter(
-      (subcategory) => subcategory.iCategoria === categoryId
+      (subcategory) => subcategory.idCategoria === categoryId
     );
     setFilteredSubcategories(filtered); // No error here
   };
@@ -63,9 +62,9 @@ const Products: React.FC = () => {
   };
 
   const handlePageChange = (newPage: number, newPageSize?: number) => {
-    dispatch(setPage(newPage)); // ✅ Updates the page number
+    dispatch(setPage(newPage));
     if (newPageSize && newPageSize !== pageSize) {
-      dispatch(setPageSize(newPageSize)); // ✅ Updates page size if changed
+      dispatch(setPageSize(newPageSize));
     }
   };
 
@@ -81,20 +80,16 @@ const Products: React.FC = () => {
         </Button>
       </div>
 
-      {loading ? (
-        <Spin size="large" />
-      ) : (
-        <TableProducts
-          products={products}
-          total={total} // ✅ Ensures pagination shows correct number of pages
-          currentPage={page} // ✅ Syncs with Redux state
-          pageSize={pageSize}
-          onPageChange={handlePageChange} // ✅ Function that updates Redux state
-          onEdit={handleEdit}
-          onCategoryChange={handleCategoryChange}
-          filteredSubcategories={filteredSubcategories}
-        />
-      )}
+      <TableProducts
+        products={products}
+        total={total}
+        currentPage={page}
+        pageSize={pageSize}
+        onPageChange={handlePageChange}
+        onEdit={handleEdit}
+        onCategoryChange={handleCategoryChange}
+        loading={loading}
+      />
 
       <CreateProductModal
         visible={isCreateModalVisible}

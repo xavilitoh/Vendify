@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
-import { Modal, Form, Input, Switch, Button, notification } from "antd";
+import { Modal, Form, Input, Switch, Button, message } from "antd";
 import { formatPhoneNumber } from "../Utils/Validators";
 
 interface EditSucursalModalProps {
   visible: boolean;
   sucursal: any;
   onClose: () => void;
-  onUpdate: (id: number, values: any) => Promise<any>; // Ensure it returns the API response
+  onUpdate: (id: number, values: any) => Promise<any>;
 }
 
 const EditSucursalModal: React.FC<EditSucursalModalProps> = ({
@@ -33,28 +33,13 @@ const EditSucursalModal: React.FC<EditSucursalModalProps> = ({
       const values = await form.validateFields();
       const updatedValues = { ...values, id: sucursal.id }; // Add ID
 
-      // Wait for the Redux response (onUpdate returns a promise)
       await onUpdate(sucursal.id, updatedValues);
 
-      // Show success notification only if the update succeeds
-      notification.success({
-        message: "Sucursal actualizada",
-        description: `La sucursal "${values.descripcion}" ha sido actualizada con éxito.`,
-        placement: "topRight",
-      });
-
-      // Reset form and close modal
+      message.success("Sucursal actualizada correctamente");
       form.resetFields();
       onClose();
     } catch (error: any) {
-      console.error("Error updating sucursal:", error);
-
-      // Show error notification
-      notification.error({
-        message: "Error al actualizar",
-        description: "Ocurrió un error inesperado. Intente de nuevo.",
-        placement: "topRight",
-      });
+      message.error("Ocurrió un error al actualizar el la sucursal");
     }
   };
 

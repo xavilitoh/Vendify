@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Button, Spin } from "antd";
+import { Button } from "antd";
 import {
   fetchSucursales,
   createSucursal,
@@ -22,7 +22,6 @@ const Sucursales: React.FC = () => {
   const [isCreateModalVisible, setCreateModalVisible] = useState(false);
   const [isEditModalVisible, setEditModalVisible] = useState(false);
   const [editingSucursal, setEditingSucursal] = useState(null);
-  // Fetch sucursales on component mount
   useEffect(() => {
     dispatch(fetchSucursales());
   }, [dispatch]);
@@ -38,11 +37,8 @@ const Sucursales: React.FC = () => {
   };
 
   const handleUpdate = async (id: number, values: any) => {
-    const response = await dispatch(
-      updateSucursal({ id, sucursalData: values })
-    ).unwrap();
+    await dispatch(updateSucursal({ id, sucursalData: values })).unwrap();
 
-    console.log("Redux Payload (No Metadata):", response);
     setEditModalVisible(false);
     setEditingSucursal(null);
   };
@@ -50,16 +46,20 @@ const Sucursales: React.FC = () => {
   return (
     <div>
       <div style={{ marginBottom: 16 }}>
-        <Button type="primary" onClick={() => setCreateModalVisible(true)} icon={<PlusOutlined />}>
+        <Button
+          type="primary"
+          onClick={() => setCreateModalVisible(true)}
+          icon={<PlusOutlined />}
+        >
           Crear Sucursal
         </Button>
       </div>
 
-      {loading ? (
-        <Spin size="large" />
-      ) : (
-        <TableSucursales sucursales={sucursales || []} onEdit={handleEdit} />
-      )}
+      <TableSucursales
+        sucursales={sucursales || []}
+        onEdit={handleEdit}
+        loading={loading}
+      />
 
       <CreateSucursalModal
         visible={isCreateModalVisible}

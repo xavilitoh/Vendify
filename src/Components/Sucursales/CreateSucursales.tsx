@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Form, Input, Button } from "antd";
+import { Modal, Form, Input, Button, message } from "antd";
 
 interface CreateSucursalModalProps {
   visible: boolean;
@@ -14,18 +14,22 @@ const CreateSucursalModal: React.FC<CreateSucursalModalProps> = ({
 }) => {
   const [form] = Form.useForm();
 
-  const handleSubmit = () => {
-    form.validateFields().then((values) => {
+  const handleSubmit = async () => {
+    try {
+      const values = await form.validateFields();
       onCreate(values);
       form.resetFields();
-    });
+      onClose();
+      message.success("Sucursal creada correctamente");
+    } catch (error) {
+      console.error("Error al validar o enviar el formulario:", error);
+      message.error("Error al crear la sucursal");
+    }
   };
 
   const formatPhoneNumber = (value: string) => {
-    // Remove non-numeric characters
     const cleaned = value.replace(/\D/g, "");
 
-    // Format the number as XXX-XXX-XXXX
     if (cleaned.length <= 3) {
       return cleaned;
     } else if (cleaned.length <= 6) {
@@ -58,7 +62,7 @@ const CreateSucursalModal: React.FC<CreateSucursalModalProps> = ({
             { required: true, message: "Por favor ingresa la descripción" },
           ]}
         >
-          <Input placeholder="Bonao" maxLength={50}/>
+          <Input placeholder="Bonao" maxLength={50} />
         </Form.Item>
         <Form.Item
           name="direccion"

@@ -4,11 +4,13 @@ import { Table, Button, Space } from "antd";
 interface TableAlmacenesProps {
   almacenes: any[];
   onEdit: (almacen: any) => void;
+  loading?: boolean;
 }
 
 const TableAlmacenes: React.FC<TableAlmacenesProps> = ({
   almacenes,
   onEdit,
+  loading,
 }) => {
   const columns = [
     { title: "Descripción", dataIndex: "descripcion", key: "descripcion" },
@@ -32,6 +34,7 @@ const TableAlmacenes: React.FC<TableAlmacenesProps> = ({
       columns={columns}
       rowKey="id"
       style={{ marginTop: "20px" }}
+      loading={loading}
     />
   );
 };

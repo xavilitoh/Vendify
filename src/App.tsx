@@ -19,6 +19,7 @@ import Precios from "./Components/Precios/Precios";
 import Unidades from "./Components/Unidades/Unidades";
 import Sucursales from "./Components/Sucursales/Sucursales";
 import Almacenes from "./Components/Almacenes/Alamacenes";
+import Proveedores from "./Components/Proveedores/Provedores";
 
 const { Content } = Layout;
 
@@ -224,6 +225,14 @@ const App: React.FC = () => {
                   element={
                     <ProtectedRoute>
                       <Almacenes />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/proveedores"
+                  element={
+                    <ProtectedRoute>
+                      <Proveedores />
                     </ProtectedRoute>
                   }
                 />

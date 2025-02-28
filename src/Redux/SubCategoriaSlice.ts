@@ -3,8 +3,6 @@ import { RootState } from "./Store";
 import api from "../Api/VendifyApi";
 import { AxiosError } from "axios";
 
-
-
 // Entidad Interface
 export interface Entidad {
   id: number;
@@ -23,7 +21,7 @@ export interface Subcategoria {
   id: number;
   descripcion: string;
   enable: boolean;
-  iCategoria: number;
+  idCategoria: number;
   categoria: {
     id: number;
     descripcion: string;
@@ -68,7 +66,7 @@ export const createSubcategoria = createAsyncThunk<
   "subcategorias/createSubcategoria",
   async (subcategoria, { rejectWithValue }) => {
     try {
-      const response = await api.post<Subcategoria,any>(
+      const response = await api.post<Subcategoria, any>(
         "/Subcategorias",
         subcategoria
       );
@@ -91,7 +89,7 @@ export const updateSubcategoria = createAsyncThunk<
   "subcategorias/updateSubcategoria",
   async (subcategoria, { rejectWithValue }) => {
     try {
-      const response = await api.put<Subcategoria,any>(
+      const response = await api.put<Subcategoria, any>(
         `/Subcategorias?id=${subcategoria.id}`,
         subcategoria
       );
@@ -138,7 +136,8 @@ const subcategoriaSlice = createSlice({
 });
 
 // Selectors
-export const selectSubcategorias = (state: RootState) => state.subCategorias.subcategorias;
+export const selectSubcategorias = (state: RootState) =>
+  state.subCategorias.subcategorias;
 export const selectLoading = (state: RootState) => state.subCategorias.loading;
 
 // Export Reducer

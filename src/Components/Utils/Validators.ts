@@ -40,3 +40,5 @@ export const formatNoDocumento = (value: string) => {
     .replace(/^(\d{3})(\d{7})(\d?)$/, "$1-$2-$3") // Format as 402-3616656-3
     .substring(0, 13); // Ensure max length of 13 characters
 };
+
+

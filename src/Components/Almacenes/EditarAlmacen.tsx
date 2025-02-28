@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Modal, Form, Input, Button, Select, notification, Switch } from "antd";
+import { Modal, Form, Input, Button, Select, Switch, message } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import {
   fetchSucursales,
@@ -28,19 +28,17 @@ const EditAlmacenModal: React.FC<EditAlmacenModalProps> = ({
   const sucursales = useSelector(selectSucursales) || [];
   const loadingSucursales = useSelector(selectSucursalesLoading);
 
-  // Fetch active sucursales when the modal opens
   useEffect(() => {
     if (visible) {
       dispatch(fetchSucursales());
     }
   }, [dispatch, visible]);
 
-  // Set form fields when modal opens
   useEffect(() => {
     if (visible && almacen) {
       form.setFieldsValue({
         ...almacen,
-        sucursal: almacen.sucursal ? almacen.sucursal.id : null, // Set the correct sucursal ID
+        sucursal: almacen.sucursal ? almacen.sucursal.id : null,
       });
     }
   }, [almacen, visible, form]);
@@ -52,18 +50,14 @@ const EditAlmacenModal: React.FC<EditAlmacenModalProps> = ({
 
       const response = await onUpdate(almacen.id, updatedValues);
       if (response && response.id) {
-        notification.success({
-          message: "Almacén actualizado",
-          description: `El almacén "${values.descripcion}" ha sido actualizado con éxito.`,
-          placement: "topRight",
-          className: "dark-notification",
-        });
+        message.success("Almacen actualizado correctamente");
       }
 
       form.resetFields();
       onClose();
     } catch (error: any) {
       console.error("Error updating almacen:", error);
+      message.error("Error Actualiazando Almacén");
     }
   };
 

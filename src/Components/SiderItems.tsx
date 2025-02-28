@@ -55,4 +55,9 @@ export const ItemSider: MenuProps["items"] = [
     icon: React.createElement(WalletOutlined),
     label: <Link to="almacenes"> Almacenes</Link>,
   },
+  {
+    key: 9,
+    icon: React.createElement(WalletOutlined),
+    label: <Link to="proveedores"> Proveedores</Link>,
+  },
 ];

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Checkbox, message } from "antd";
+import { Form, Input, Button, Checkbox, message, Image } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import axios, { AxiosResponse } from "axios";
 import Cookies from "js-cookie";
@@ -41,7 +41,6 @@ const LoginForm: React.FC = () => {
       Cookies.set("token", token, { expires: 7 });
       Cookies.set("usuario", JSON.stringify(usuario), { expires: 7 });
 
-
       message.success(`Bienvenido, ${usuario?.nombres}`);
       navigate("/");
     } catch (error) {
@@ -53,57 +52,66 @@ const LoginForm: React.FC = () => {
 
   return (
     <div className="login">
-      <h1 className="">Entrar</h1>
-      <Form
-        name="login"
-        className="login-form"
-        initialValues={{ remember: true }}
-        onFinish={onFinish}
-      >
-        <Form.Item
-          name="email"
-          rules={[{ required: true, message: "Por favor ingresar un correo" }]}
+      <Image width={500} src="../../public/Images/2.png" preview={false} />
+      <div className="login-form-container">
+        <h1 className="">Entrar</h1>
+        <Form
+          name="login"
+          className="login-form"
+          initialValues={{ remember: true }}
+          onFinish={onFinish}
         >
-          <Input prefix={<UserOutlined />} placeholder="Correo" type="email" />
-        </Form.Item>
-
-        <Form.Item
-          name="password"
-          rules={[
-            { required: true, message: "Por favor ingresar una contraseña" },
-          ]}
-        >
-          <Input
-            prefix={<LockOutlined />}
-            type="password"
-            placeholder="Contaseña"
-          />
-        </Form.Item>
-
-        <Form.Item>
-          <Form.Item name="remember" valuePropName="checked" noStyle>
-            <Checkbox>Recuerdame</Checkbox>
+          <Form.Item
+            name="email"
+            rules={[
+              { required: true, message: "Por favor ingresar un correo" },
+            ]}
+          >
+            <Input
+              prefix={<UserOutlined />}
+              placeholder="Correo"
+              type="email"
+            />
           </Form.Item>
 
-          <a className="login-form-forgot" href="">
-            Olvidaste la contraseña
-          </a>
-        </Form.Item>
-
-        <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="login-form-button"
-            loading={loading}
+          <Form.Item
+            name="password"
+            rules={[
+              { required: true, message: "Por favor ingresar una contraseña" },
+            ]}
           >
-            Entrar
-          </Button>
-        </Form.Item>
-        <a className="login-form-forgot" href="/registrarse">
+            <Input
+              prefix={<LockOutlined />}
+              type="password"
+              placeholder="Contaseña"
+            />
+          </Form.Item>
+
+          <Form.Item>
+            <Form.Item name="remember" valuePropName="checked" noStyle>
+              <Checkbox>Recuerdame</Checkbox>
+            </Form.Item>
+
+            <a className="login-form-forgot" href="">
+              Olvidaste la contraseña
+            </a>
+          </Form.Item>
+
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="login-form-button"
+              loading={loading}
+            >
+              Entrar
+            </Button>
+          </Form.Item>
+          <a className="login-form-forgot" href="/registrarse">
             ¿No tienes Cuenta? Registrate aqui
-        </a>
-      </Form>
+          </a>
+        </Form>
+      </div>
     </div>
   );
 };

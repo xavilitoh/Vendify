@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Button, Spin, notification } from "antd";
+import { Button, message } from "antd";
 import {
   fetchAlmacenes,
   createAlmacen,
@@ -38,18 +38,10 @@ const Almacenes: React.FC = () => {
   const handleCreate = async (values: any) => {
     try {
       await dispatch(createAlmacen(values)).unwrap();
-      notification.success({
-        message: "Almacén creado",
-        description: `El almacén "${values.descripcion}" ha sido creado exitosamente.`,
-        placement: "topRight",
-      });
+      message.success("Almacén actualizado correctamente");
       setCreateModalVisible(false);
     } catch (error: any) {
-      notification.error({
-        message: "Error al crear almacén",
-        description: error.message || "Ocurrió un error inesperado.",
-        placement: "topRight",
-      });
+      message.error("Ocurrió un error al actualizar el almacén");
     }
   };
 
@@ -57,19 +49,11 @@ const Almacenes: React.FC = () => {
   const handleUpdate = async (id: number, values: any) => {
     try {
       await dispatch(updateAlmacen({ id, almacenData: values })).unwrap();
-      notification.success({
-        message: "Almacén actualizado",
-        description: `El almacén "${values.descripcion}" ha sido actualizado exitosamente.`,
-        placement: "topRight",
-      });
+      message.success("Almacén actualizado correctamente");
       setEditModalVisible(false);
       setEditingAlmacen(null);
     } catch (error: any) {
-      notification.error({
-        message: "Error al actualizar almacén",
-        description: error.message || "Ocurrió un error inesperado.",
-        placement: "topRight",
-      });
+      message.error("Ocurrió un error al actualizar el almacén");
     }
   };
 
@@ -83,11 +67,11 @@ const Almacenes: React.FC = () => {
         Crear Almacén
       </Button>
 
-      {loading ? (
-        <Spin size="large" />
-      ) : (
-        <TableAlmacenes almacenes={almacenes} onEdit={handleEdit} />
-      )}
+      <TableAlmacenes
+        almacenes={almacenes}
+        onEdit={handleEdit}
+        loading={loading}
+      />
 
       <CreateAlmacenModal
         visible={isCreateModalVisible}

@@ -29,8 +29,8 @@ interface TableProductsProps {
   pageSize: number;
   onPageChange: (page: number, pageSize?: number) => void;
   onEdit: (product: Product) => void;
-  filteredSubcategories: Subcategoria[];
   onCategoryChange: (categoryId: number) => void;
+  loading: boolean;
 }
 
 const TableProducts: React.FC<TableProductsProps> = ({
@@ -40,7 +40,7 @@ const TableProducts: React.FC<TableProductsProps> = ({
   pageSize,
   onPageChange,
   onEdit,
-  filteredSubcategories,
+  loading,
 }) => {
   const [selectedProductId, setSelectedProductId] = useState<number | null>(
     null
@@ -90,8 +90,9 @@ const TableProducts: React.FC<TableProductsProps> = ({
         dataSource={products}
         columns={columns}
         rowKey="id"
+        loading={loading}
         pagination={{
-          current: currentPage, 
+          current: currentPage,
           pageSize,
           total,
           onChange: (newPage, newPageSize) => {
@@ -107,16 +108,6 @@ const TableProducts: React.FC<TableProductsProps> = ({
         visible={drawerVisible}
         onClose={onCloseDrawer}
       />
-      {filteredSubcategories.length > 0 && (
-        <div style={{ marginTop: 16 }}>
-          <h4>Subcategorías Filtradas:</h4>
-          <ul>
-            {filteredSubcategories.map((subcategory) => (
-              <li key={subcategory.id}>{subcategory.descripcion}</li>
-            ))}
-          </ul>
-        </div>
-      )}
     </>
   );
 };
