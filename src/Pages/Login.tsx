@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Checkbox, message, Image } from "antd";
+import { Form, Input, Button, Checkbox, message } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import axios, { AxiosResponse } from "axios";
 import Cookies from "js-cookie";
@@ -20,7 +20,11 @@ interface LoginResponse {
   };
 }
 
-const LoginForm: React.FC = () => {
+interface LoginFormProps {
+  isDarkMode: boolean;
+}
+
+const LoginForm: React.FC<LoginFormProps> = ({ isDarkMode }) => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -52,7 +56,10 @@ const LoginForm: React.FC = () => {
 
   return (
     <div className="login">
-      <Image width={500} src="../../public/Images/2.png" preview={false} />
+      <img
+        className="imagen-logo"
+        src={`../../public/Images/${isDarkMode ? "2-dark" : "2"}.png`}
+      />
       <div className="login-form-container">
         <h1 className="">Entrar</h1>
         <Form

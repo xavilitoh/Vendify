@@ -20,6 +20,8 @@ import Unidades from "./Components/Unidades/Unidades";
 import Sucursales from "./Components/Sucursales/Sucursales";
 import Almacenes from "./Components/Almacenes/Alamacenes";
 import Proveedores from "./Components/Proveedores/Provedores";
+import Compras from "./Components/Compras/Compras";
+import CrearCompra from "./Components/Compras/CreateCompra";
 
 const { Content } = Layout;
 
@@ -143,7 +145,11 @@ const App: React.FC = () => {
                 <Route
                   path="/login"
                   element={
-                    isAuthenticated ? <Navigate to="/" replace /> : <Login />
+                    isAuthenticated ? (
+                      <Navigate to="/" replace />
+                    ) : (
+                      <Login isDarkMode={isDarkMode} />
+                    )
                   }
                 />
                 <Route
@@ -233,6 +239,22 @@ const App: React.FC = () => {
                   element={
                     <ProtectedRoute>
                       <Proveedores />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/compras"
+                  element={
+                    <ProtectedRoute>
+                      <Compras />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/crearcompra"
+                  element={
+                    <ProtectedRoute>
+                      <CrearCompra />
                     </ProtectedRoute>
                   }
                 />

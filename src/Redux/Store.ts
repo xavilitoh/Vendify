@@ -10,6 +10,7 @@ import ProductosLice from "./Productos";
 import Sucursal from "./Sucursales";
 import Almacenes from "./Almacenes";
 import Proveedor from "./Proveedores";
+import Compras from "./Compras";
 
 export const store = configureStore({
   reducer: {
@@ -23,6 +24,7 @@ export const store = configureStore({
     sucursales: Sucursal,
     almacenes: Almacenes,
     proveedores: Proveedor,
+    compras: Compras,
   },
 });
 
