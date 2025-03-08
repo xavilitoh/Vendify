@@ -51,6 +51,7 @@ export const fetchProveedores = createAsyncThunk<
 >(
   "proveedores/fetchProveedores",
   async ({ page, pageSize }, { rejectWithValue }) => {
+    console.log("Fetching proveedores");
     try {
       const response = await api.get<{
         result: Proveedor[];

@@ -6,12 +6,17 @@ import {
   Form,
   Input,
   Button,
-  DatePicker,
   Select,
   InputNumber,
   Collapse,
 } from "antd";
 import { fetchProducts, selectPage, selectPageSize } from "../../Redux/Productos";
+import {
+  fetchProveedores,
+  selectProveedores,
+  selectPage as selectProveedoresPage,
+  selectPageSize as selectProveedoresPageSize,
+} from "../../Redux/Proveedores";
 
 const { Option } = Select;
 const { Panel } = Collapse;
@@ -21,15 +26,22 @@ const { Panel } = Collapse;
 const CreateCompraView: React.FC = () => {
   const [form] = Form.useForm();
   const [productForm] = Form.useForm();
-  const products = useSelector((state: any) => state.productos.products);
+  const products = useSelector((state: any) => state.productos.products); 
+  const prrovedores = useSelector((state: any) => state.proveedores.proveedores);
   const [compras, setCompras] = useState<any[]>([]);
   const [detalleDeCompras, setDetalleDeCompras] = useState<any[]>([]);
   const page = useSelector(selectPage);
   const pageSize = useSelector(selectPageSize);
+  const pagePrrovedores= useSelector(selectProveedoresPage);
+  const pageSizeProovedores = useSelector(selectProveedoresPageSize);
+
   const dispatch: AppDispatch = useDispatch();
+
+  console.log(prrovedores);
 
   useEffect(() => {
     dispatch(fetchProducts({ page, pageSize }));
+    dispatch(fetchProveedores({ pagePrrovedores, pageSizeProovedores }));
   }, [dispatch,page,pageSize]);
 
 
@@ -130,10 +142,14 @@ const CreateCompraView: React.FC = () => {
             label="Proveedor"
             rules={[{ required: true, message: "Seleccione un proveedor" }]}
           >
-            <Select placeholder="Seleccione un proveedor">
-              <Option value={1011}>Proveedor 1011</Option>
-              <Option value={1012}>Proveedor 1012</Option>
-            </Select>
+            <Select placeholder="Seleccione un producto">
+                  {prrovedores.map((product: any) => (
+                    <Option key={product.id} value={product.id}>
+                      {product.nombre}
+                    </Option>
+                  ))}
+             </Select>
+          
           </Form.Item>
           <Button type="primary" htmlType="submit" style={{ width: "100%", marginTop: 16 }}>
             Crear Compra
