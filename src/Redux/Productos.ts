@@ -25,7 +25,7 @@ interface Product {
   stockMinimo: number;
   barCode: string;
   conImpuesto: boolean;
-  precios: Precio[]; // Adjusted type
+  precios: Precio[]; 
 }
 
 interface ProductState {
@@ -50,6 +50,7 @@ export const fetchProducts = createAsyncThunk<
   { rejectValue: string }
 >("products/fetchProducts", async ({ page, pageSize }, { rejectWithValue }) => {
   try {
+    console.log("Fetching products...");
     const response = await api.get<{ result: Product[]; totalRecords: number }>(
       `/Productos/${page}/${pageSize}`
     );

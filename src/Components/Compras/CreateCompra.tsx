@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
+import { AppDispatch } from "../../Redux/Store";
 import {
   Table,
   Form,
@@ -15,6 +16,8 @@ import { fetchProducts, selectPage, selectPageSize } from "../../Redux/Productos
 const { Option } = Select;
 const { Panel } = Collapse;
 
+
+
 const CreateCompraView: React.FC = () => {
   const [form] = Form.useForm();
   const [productForm] = Form.useForm();
@@ -23,10 +26,14 @@ const CreateCompraView: React.FC = () => {
   const [detalleDeCompras, setDetalleDeCompras] = useState<any[]>([]);
   const page = useSelector(selectPage);
   const pageSize = useSelector(selectPageSize);
+  const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
-    fetchProducts({ page, pageSize });
-  }, []);
+    dispatch(fetchProducts({ page, pageSize }));
+  }, [dispatch,page,pageSize]);
+
+
+
 
   const handleSubmit = () => {
     form.validateFields().then((values) => {
@@ -41,7 +48,6 @@ const CreateCompraView: React.FC = () => {
         detalleDeCompras,
       };
 
-      console.log(newCompra)
       setCompras((prev) => [...prev, newCompra]);
       setDetalleDeCompras([]);
       form.resetFields();
@@ -59,7 +65,7 @@ const CreateCompraView: React.FC = () => {
       total: values.cantidad * values.precio,
     };
     setDetalleDeCompras((prev) => [...prev, newProduct]);
-    productForm.resetFields(); // Clear product form after adding
+    productForm.resetFields(); 
   };
 
   const removeProduct = (id: number) => {
