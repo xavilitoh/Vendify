@@ -17,7 +17,7 @@ import {
   selectPage as selectProveedoresPage,
   selectPageSize as selectProveedoresPageSize,
 } from "../../Redux/Proveedores";
-
+import './CrearCompra.css'
 const { Option } = Select;
 const { Panel } = Collapse;
 
@@ -120,8 +120,8 @@ const CreateCompraView: React.FC = () => {
   return (
     <div style={{ display: "flex", gap: "20px" }}>
       {/* Left Side: Main Form (50%) */}
-      <div style={{ flex: "1 1 50%" }}>
-        <h2>Crear Compra</h2>
+      <div style={{ flex: "1 1 50%"}} className="sombra">
+        <h3>Crear Compra</h3>
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <Form.Item
             name="descripcion"
@@ -159,7 +159,7 @@ const CreateCompraView: React.FC = () => {
         <Table dataSource={compras} columns={columns} rowKey="id" pagination={false} />
       </div>
 
-      <div style={{ flex: "1 1 50%" }}>
+      <div style={{ flex: "1 1 50%" }} className="sombra">
         {/* Products Table */}
         <h3>Productos Agregados</h3>
         <Table dataSource={detalleDeCompras} columns={productColumns} rowKey="id" pagination={false} />
