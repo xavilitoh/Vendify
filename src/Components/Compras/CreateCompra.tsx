@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import {
   Table,
@@ -8,42 +8,62 @@ import {
   DatePicker,
   Select,
   InputNumber,
+  Collapse,
 } from "antd";
+import { fetchProducts, selectPage, selectPageSize } from "../../Redux/Productos";
 
 const { Option } = Select;
+const { Panel } = Collapse;
 
 const CreateCompraView: React.FC = () => {
   const [form] = Form.useForm();
+  const [productForm] = Form.useForm();
   const products = useSelector((state: any) => state.productos.products);
-  console.log(products);
   const [compras, setCompras] = useState<any[]>([]);
+  const [detalleDeCompras, setDetalleDeCompras] = useState<any[]>([]);
+  const page = useSelector(selectPage);
+  const pageSize = useSelector(selectPageSize);
+
+  useEffect(() => {
+    fetchProducts({ page, pageSize });
+  }, []);
 
   const handleSubmit = () => {
     form.validateFields().then((values) => {
       const newCompra = {
-        id: compras.length + 1,
+        id: Date.now(),
         descripcion: values.descripcion,
         factura: values.factura,
-        fechaFactura: values.fechaFactura.format("YYYY-MM-DD"),
+        fechaFactura: values.fechaFactura
+          ? values.fechaFactura.format("YYYY-MM-DD")
+          : null,
         idProveedor: values.idProveedor,
-        detalleDeCompras: values.detalleDeCompras.map((detalle: any) => {
-          const selectedProduct = products.find(
-            (p: any) => p.id === detalle.idProducto
-          );
-          return {
-            id: compras.length + 1,
-            descripcion: selectedProduct?.nombre || "",
-            idEntidad: selectedProduct?.idEntidad || 0,
-            idProducto: detalle.idProducto,
-            cantidad: detalle.cantidad,
-            precio: detalle.precio,
-            total: detalle.cantidad * detalle.precio,
-          };
-        }),
+        detalleDeCompras,
       };
-      setCompras([...compras, newCompra]);
+
+      console.log(newCompra)
+      setCompras((prev) => [...prev, newCompra]);
+      setDetalleDeCompras([]);
       form.resetFields();
     });
+  };
+
+  const handleAddProduct = (values: any) => {
+    const selectedProduct = products.find((p: any) => p.id === values.idProducto);
+    const newProduct = {
+      id: Date.now(),
+      descripcion: selectedProduct?.nombre || "Producto desconocido",
+      idProducto: values.idProducto,
+      cantidad: values.cantidad,
+      precio: values.precio,
+      total: values.cantidad * values.precio,
+    };
+    setDetalleDeCompras((prev) => [...prev, newProduct]);
+    productForm.resetFields(); // Clear product form after adding
+  };
+
+  const removeProduct = (id: number) => {
+    setDetalleDeCompras(detalleDeCompras.filter((item) => item.id !== id));
   };
 
   const columns = [
@@ -59,16 +79,30 @@ const CreateCompraView: React.FC = () => {
       title: "Total",
       key: "total",
       render: (_: any, record: any) =>
-        record.detalleDeCompras.reduce(
-          (sum: number, d: any) => sum + d.total,
-          0
-        ),
+        record.detalleDeCompras.reduce((sum: number, d: any) => sum + d.total, 0),
+    },
+  ];
+
+  const productColumns = [
+    { title: "Producto", dataIndex: "descripcion", key: "descripcion" },
+    { title: "Cantidad", dataIndex: "cantidad", key: "cantidad" },
+    { title: "Precio", dataIndex: "precio", key: "precio" },
+    { title: "Total", dataIndex: "total", key: "total" },
+    {
+      title: "Acción",
+      key: "action",
+      render: (_: any, record: any) => (
+        <Button danger onClick={() => removeProduct(record.id)}>
+          Eliminar
+        </Button>
+      ),
     },
   ];
 
   return (
     <div style={{ display: "flex", gap: "20px" }}>
-      <div style={{ flex: "1 1 33%" }}>
+      {/* Left Side: Main Form (50%) */}
+      <div style={{ flex: "1 1 50%" }}>
         <h2>Crear Compra</h2>
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <Form.Item
@@ -81,9 +115,7 @@ const CreateCompraView: React.FC = () => {
           <Form.Item
             name="factura"
             label="Factura"
-            rules={[
-              { required: true, message: "Ingrese el número de factura" },
-            ]}
+            rules={[{ required: true, message: "Ingrese el número de factura" }]}
           >
             <Input />
           </Form.Item>
@@ -97,88 +129,56 @@ const CreateCompraView: React.FC = () => {
               <Option value={1012}>Proveedor 1012</Option>
             </Select>
           </Form.Item>
-          <Form.List name="detalleDeCompras">
-            {(fields, { add, remove }) => (
-              <>
-                {fields.map(({ key, name, ...restField }) => (
-                  <div
-                    key={key}
-                    style={{
-                      marginBottom: 8,
-                      border: "1px solid #ddd",
-                      padding: 8,
-                      borderRadius: 5,
-                    }}
-                  >
-                    <Form.Item
-                      {...restField}
-                      name={[name, "idProducto"]}
-                      label="Producto"
-                      rules={[
-                        { required: true, message: "Seleccione un producto" },
-                      ]}
-                    >
-                      <Select placeholder="Seleccione un producto">
-                        {products.map((product: any) => (
-                          <Option key={product.id} value={product.id}>
-                            {product.nombre}
-                          </Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                    <Form.Item
-                      {...restField}
-                      name={[name, "cantidad"]}
-                      label="Cantidad"
-                      rules={[
-                        { required: true, message: "Ingrese la cantidad" },
-                      ]}
-                    >
-                      <InputNumber min={1} />
-                    </Form.Item>
-                    <Form.Item
-                      {...restField}
-                      name={[name, "precio"]}
-                      label="Precio"
-                      rules={[{ required: true, message: "Ingrese el precio" }]}
-                    >
-                      <InputNumber min={0} />
-                    </Form.Item>
-                    <Button danger onClick={() => remove(name)}>
-                      Eliminar
-                    </Button>
-                  </div>
-                ))}
-                <Button
-                  color="primary"
-                  variant="outlined"
-                  onClick={() => add()}
-                  block
-                >
-                  Agregar Producto
-                </Button>
-              </>
-            )}
-          </Form.List>
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              style={{ width: "100%", marginTop: 16 }}
-            >
-              Crear
-            </Button>
-          </Form.Item>
+          <Button type="primary" htmlType="submit" style={{ width: "100%", marginTop: 16 }}>
+            Crear Compra
+          </Button>
         </Form>
+        <h2 style={{ marginTop: "20px" }}>Compras Agregadas</h2>
+        <Table dataSource={compras} columns={columns} rowKey="id" pagination={false} />
       </div>
-      <div style={{ flex: "2 1 66%" }}>
-        <h2>Compras Agregadas</h2>
-        <Table
-          dataSource={compras}
-          columns={columns}
-          rowKey="id"
-          pagination={false}
-        />
+
+      <div style={{ flex: "1 1 50%" }}>
+        {/* Products Table */}
+        <h3>Productos Agregados</h3>
+        <Table dataSource={detalleDeCompras} columns={productColumns} rowKey="id" pagination={false} />
+
+        {/* Collapsible Add Product Form */}
+        <Collapse>
+          <Panel header="Agregar Producto" key="1">
+            <Form form={productForm} layout="vertical" onFinish={handleAddProduct}>
+              <Form.Item
+                name="idProducto"
+                label="Producto"
+                rules={[{ required: true, message: "Seleccione un producto" }]}
+              >
+                <Select placeholder="Seleccione un producto">
+                  {products.map((product: any) => (
+                    <Option key={product.id} value={product.id}>
+                      {product.nombre}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Form.Item
+                name="cantidad"
+                label="Cantidad"
+                rules={[{ required: true, message: "Ingrese la cantidad" }]}
+              >
+                <InputNumber min={1} />
+              </Form.Item>
+              <Form.Item
+                name="precio"
+                label="Precio"
+                rules={[{ required: true, message: "Ingrese el precio" }]}
+              >
+                <InputNumber min={0} />
+              </Form.Item>
+              <Button type="primary" htmlType="submit" style={{ marginTop: "15px" }}>
+                Agregar Producto
+              </Button>
+            </Form>
+          </Panel>
+        </Collapse>
       </div>
     </div>
   );
