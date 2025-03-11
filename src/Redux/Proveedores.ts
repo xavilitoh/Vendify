@@ -28,12 +28,19 @@ export interface ProveedorRequest {
   nombre: string;
 }
 
+interface SelectList {
+  id: number;
+  value: number;
+  label: string;
+}
+
 interface ProveedorState {
   proveedores: Proveedor[];
   loading: boolean;
   total: number;
   page: number;
   pageSize: number;
+  selectList: SelectList[];
 }
 
 const initialState: ProveedorState = {
@@ -42,6 +49,7 @@ const initialState: ProveedorState = {
   total: 0,
   page: 1,
   pageSize: 8,
+  selectList: [],
 };
 
 export const fetchProveedores = createAsyncThunk<
@@ -115,6 +123,22 @@ export const updateProveedor = createAsyncThunk<
   }
 );
 
+export const fetchProveedoresSelectList = createAsyncThunk<
+  SelectList[], // Specify expected return type
+  void,
+  { rejectValue: string }
+>("proveedores/fetchSelectList", async (_, { rejectWithValue }) => {
+  try {
+    const response = await api.get<SelectList[]>("/Proveedores/SelectList");
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      return rejectWithValue("Error al obtener la lista de proveedores");
+    }
+    return rejectWithValue("Error inesperado");
+  }
+});
+
 // Create the proveedores slice
 const proveedorSlice = createSlice({
   name: "proveedores",
@@ -152,6 +176,16 @@ const proveedorSlice = createSlice({
         if (index !== -1) {
           state.proveedores[index] = action.payload;
         }
+      })
+      .addCase(fetchProveedoresSelectList.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchProveedoresSelectList.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectList = action.payload;
+      })
+      .addCase(fetchProveedoresSelectList.rejected, (state) => {
+        state.loading = false;
       });
   },
 });
@@ -163,5 +197,7 @@ export const selectLoading = (state: RootState) => state.proveedores.loading;
 export const selectTotal = (state: RootState) => state.proveedores.total;
 export const selectPage = (state: RootState) => state.proveedores.page;
 export const selectPageSize = (state: RootState) => state.proveedores.pageSize;
+export const selectProveedoresSelectList = (state: RootState) =>
+  state.proveedores.selectList;
 
 export default proveedorSlice.reducer;

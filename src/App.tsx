@@ -139,6 +139,7 @@ const App: React.FC = () => {
                   : lightTheme.colorBgContainer,
                 borderRadius: lightTheme.borderRadius,
                 height: "100vh",
+                overflowY: "auto",
               }}
             >
               <Routes>

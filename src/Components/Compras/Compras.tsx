@@ -36,7 +36,7 @@ const Compras: React.FC = () => {
   };
 
   return (
-    <div>
+    <div style={{ overflow: "auto" }}>
       <div style={{ marginBottom: 16 }}>
         <Button type="primary" icon={<PlusOutlined />}>
           <Link to="/crearcompra">Crear Compra</Link>

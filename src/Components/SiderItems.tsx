@@ -13,6 +13,8 @@ import {
   WalletOutlined,
   PlusOutlined,
   EyeOutlined,
+  CopyOutlined,
+  DollarOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 
@@ -59,12 +61,12 @@ export const ItemSider: MenuProps["items"] = [
   },
   {
     key: 9,
-    icon: React.createElement(WalletOutlined),
+    icon: React.createElement(CopyOutlined),
     label: <Link to="proveedores"> Proveedores</Link>,
   },
   {
-    key: "10",
-    icon: React.createElement(WalletOutlined),
+      key: "10",
+    icon: React.createElement(DollarOutlined),
     label: "Compras",
     children: [
       {

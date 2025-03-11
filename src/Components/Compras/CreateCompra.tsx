@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch } from "../../Redux/Store";
 import {
   Table,
@@ -9,45 +9,42 @@ import {
   Select,
   InputNumber,
   Collapse,
+  message,
 } from "antd";
-import { fetchProducts, selectPage, selectPageSize } from "../../Redux/Productos";
 import {
-  fetchProveedores,
-  selectProveedores,
-  selectPage as selectProveedoresPage,
-  selectPageSize as selectProveedoresPageSize,
+  fetchProducts,
+  selectPage,
+  selectPageSize,
+} from "../../Redux/Productos";
+import {
+  fetchProveedoresSelectList,
+  selectProveedoresSelectList,
 } from "../../Redux/Proveedores";
-import './CrearCompra.css'
+
+import "./CrearCompra.css";
 const { Option } = Select;
 const { Panel } = Collapse;
 
-
-
 const CreateCompraView: React.FC = () => {
+  const dispatch: AppDispatch = useDispatch();
   const [form] = Form.useForm();
   const [productForm] = Form.useForm();
-  const products = useSelector((state: any) => state.productos.products); 
-  const prrovedores = useSelector((state: any) => state.proveedores.proveedores);
-  const [compras, setCompras] = useState<any[]>([]);
+  const products = useSelector((state: any) => state.productos.products);
   const [detalleDeCompras, setDetalleDeCompras] = useState<any[]>([]);
   const page = useSelector(selectPage);
   const pageSize = useSelector(selectPageSize);
-  const pagePrrovedores= useSelector(selectProveedoresPage);
-  const pageSizeProovedores = useSelector(selectProveedoresPageSize);
-
-  const dispatch: AppDispatch = useDispatch();
-
-  console.log(prrovedores);
+  const proveedores = useSelector(selectProveedoresSelectList);
 
   useEffect(() => {
     dispatch(fetchProducts({ page, pageSize }));
-    dispatch(fetchProveedores({ pagePrrovedores, pageSizeProovedores }));
-  }, [dispatch,page,pageSize]);
-
-
-
+    dispatch(fetchProveedoresSelectList());
+  }, [dispatch, page, pageSize]);
 
   const handleSubmit = () => {
+    if (detalleDeCompras.length === 0) {
+      return message.error("Debe agregar al menos un producto");
+    }
+
     form.validateFields().then((values) => {
       const newCompra = {
         id: Date.now(),
@@ -59,15 +56,16 @@ const CreateCompraView: React.FC = () => {
         idProveedor: values.idProveedor,
         detalleDeCompras,
       };
-
-      setCompras((prev) => [...prev, newCompra]);
+      console.log("New compra:", newCompra);
       setDetalleDeCompras([]);
       form.resetFields();
     });
   };
 
   const handleAddProduct = (values: any) => {
-    const selectedProduct = products.find((p: any) => p.id === values.idProducto);
+    const selectedProduct = products.find(
+      (p: any) => p.id === values.idProducto
+    );
     const newProduct = {
       id: Date.now(),
       descripcion: selectedProduct?.nombre || "Producto desconocido",
@@ -77,29 +75,12 @@ const CreateCompraView: React.FC = () => {
       total: values.cantidad * values.precio,
     };
     setDetalleDeCompras((prev) => [...prev, newProduct]);
-    productForm.resetFields(); 
+    productForm.resetFields();
   };
 
   const removeProduct = (id: number) => {
     setDetalleDeCompras(detalleDeCompras.filter((item) => item.id !== id));
   };
-
-  const columns = [
-    { title: "Descripción", dataIndex: "descripcion", key: "descripcion" },
-    { title: "Factura", dataIndex: "factura", key: "factura" },
-    {
-      title: "Fecha de Factura",
-      dataIndex: "fechaFactura",
-      key: "fechaFactura",
-    },
-    { title: "Proveedor", dataIndex: "idProveedor", key: "idProveedor" },
-    {
-      title: "Total",
-      key: "total",
-      render: (_: any, record: any) =>
-        record.detalleDeCompras.reduce((sum: number, d: any) => sum + d.total, 0),
-    },
-  ];
 
   const productColumns = [
     { title: "Producto", dataIndex: "descripcion", key: "descripcion" },
@@ -119,8 +100,7 @@ const CreateCompraView: React.FC = () => {
 
   return (
     <div style={{ display: "flex", gap: "20px" }}>
-      {/* Left Side: Main Form (50%) */}
-      <div style={{ flex: "1 1 50%"}} className="sombra">
+      <div style={{ flex: "1 1 50%" }} className="card">
         <h3>Crear Compra</h3>
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <Form.Item
@@ -133,7 +113,9 @@ const CreateCompraView: React.FC = () => {
           <Form.Item
             name="factura"
             label="Factura"
-            rules={[{ required: true, message: "Ingrese el número de factura" }]}
+            rules={[
+              { required: true, message: "Ingrese el número de factura" },
+            ]}
           >
             <Input />
           </Form.Item>
@@ -143,31 +125,40 @@ const CreateCompraView: React.FC = () => {
             rules={[{ required: true, message: "Seleccione un proveedor" }]}
           >
             <Select placeholder="Seleccione un producto">
-                  {prrovedores.map((product: any) => (
-                    <Option key={product.id} value={product.id}>
-                      {product.nombre}
-                    </Option>
-                  ))}
-             </Select>
-          
+              {proveedores.map((product: any) => (
+                <Option key={product.id} value={product.value}>
+                  {product.nombre}
+                </Option>
+              ))}
+            </Select>
           </Form.Item>
-          <Button type="primary" htmlType="submit" style={{ width: "100%", marginTop: 16 }}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            style={{ width: "100%", marginTop: 16 }}
+          >
             Crear Compra
           </Button>
         </Form>
-        <h2 style={{ marginTop: "20px" }}>Compras Agregadas</h2>
-        <Table dataSource={compras} columns={columns} rowKey="id" pagination={false} />
       </div>
 
-      <div style={{ flex: "1 1 50%" }} className="sombra">
-        {/* Products Table */}
+      <div style={{ flex: "1 1 50%" }} className="card">
         <h3>Productos Agregados</h3>
-        <Table dataSource={detalleDeCompras} columns={productColumns} rowKey="id" pagination={false} />
+        <Table
+          dataSource={detalleDeCompras}
+          columns={productColumns}
+          rowKey="id"
+          pagination={false}
+        />
 
         {/* Collapsible Add Product Form */}
         <Collapse>
           <Panel header="Agregar Producto" key="1">
-            <Form form={productForm} layout="vertical" onFinish={handleAddProduct}>
+            <Form
+              form={productForm}
+              layout="vertical"
+              onFinish={handleAddProduct}
+            >
               <Form.Item
                 name="idProducto"
                 label="Producto"
@@ -195,7 +186,11 @@ const CreateCompraView: React.FC = () => {
               >
                 <InputNumber min={0} />
               </Form.Item>
-              <Button type="primary" htmlType="submit" style={{ marginTop: "15px" }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                style={{ marginTop: "15px" }}
+              >
                 Agregar Producto
               </Button>
             </Form>

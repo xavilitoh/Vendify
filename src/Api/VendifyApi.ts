@@ -9,6 +9,8 @@ const api = axios.create({
   baseURL: "https://vendify_api.wxbolab.com/api/",
   headers: {
     "Content-Type": "application/json",
+    "X-Api-Key":
+      "kjshdfssedfsdgkkf7784399003882jfsd66s7dfsdd6d7v6d6sf6dfs7w3jb23fsdfsfgaserh",
   },
 });
 

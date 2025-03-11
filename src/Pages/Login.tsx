@@ -5,6 +5,7 @@ import axios, { AxiosResponse } from "axios";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
+import apiClient from "../Api/VendifyApi";
 
 interface LoginFormValues {
   email: string;
@@ -32,14 +33,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ isDarkMode }) => {
     setLoading(true);
 
     try {
-      const response: AxiosResponse<LoginResponse> = await axios.post(
+      const response: AxiosResponse<LoginResponse> = await apiClient.post(
         "https://vendify_api.wxbolab.com/api/Account/Login",
         {
           userName: values.email,
           pass: values.password,
         }
       );
-
+      console.log(response);
       const { token } = response.data;
       const { usuario } = response.data;
       Cookies.set("token", token, { expires: 7 });
