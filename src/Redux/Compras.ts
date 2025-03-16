@@ -39,22 +39,35 @@ export const fetchCompras = createAsyncThunk<
   { compras: Compra[]; total: number },
   { page: number; pageSize: number },
   { rejectValue: string }
->("compras/fetchCompras", async ({ page, pageSize }, { rejectWithValue }) => {
+>("compras/fetchCompras", async ({}, { rejectWithValue }) => {
   try {
-    /*     const response = await api.get<{ result: Compra[]; totalRecords: number }>(
-      `/Compras/${page}/${pageSize}`
-    ); */
-
-    const response = await api.get("Compras");
-
+    const response = await api.get<Compra[]>("Compras");
     return {
       compras: response.data || [],
-      total: /* response.data.totalRecords */ 0,
+      total: 0,
     };
   } catch (error) {
     console.error("Error fetching compras:", error);
     if (error instanceof AxiosError) {
       return rejectWithValue("Error al obtener las compras");
+    }
+    return rejectWithValue("Error inesperado");
+  }
+});
+
+export const createCompra = createAsyncThunk<
+  Compra,
+  Compra,
+  { rejectValue: string }
+>("compras/createCompra", async (newCompra, { rejectWithValue }) => {
+  try {
+    const response = await api.post<Compra, any>("Compras", newCompra);
+    console.log(response);
+    return response.data;
+  } catch (error) {
+    console.error("Error creating compra:", error);
+    if (error instanceof AxiosError) {
+      return rejectWithValue("Error al crear la compra");
     }
     return rejectWithValue("Error inesperado");
   }
@@ -82,6 +95,16 @@ const comprasSlice = createSlice({
         state.loading = false;
       })
       .addCase(fetchCompras.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(createCompra.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(createCompra.fulfilled, (state, action) => {
+        state.compras.push(action.payload);
+        state.loading = false;
+      })
+      .addCase(createCompra.rejected, (state) => {
         state.loading = false;
       });
   },

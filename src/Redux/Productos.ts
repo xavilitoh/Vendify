@@ -25,7 +25,13 @@ interface Product {
   stockMinimo: number;
   barCode: string;
   conImpuesto: boolean;
-  precios: Precio[]; 
+  precios: Precio[];
+}
+
+interface SelectList {
+  id: number;
+  value: number;
+  label: string;
 }
 
 interface ProductState {
@@ -34,6 +40,7 @@ interface ProductState {
   total: number;
   page: number;
   pageSize: number;
+  selectList: SelectList[];
 }
 
 const initialState: ProductState = {
@@ -42,6 +49,7 @@ const initialState: ProductState = {
   total: 0,
   page: 1,
   pageSize: 8,
+  selectList: [],
 };
 
 export const fetchProducts = createAsyncThunk<
@@ -67,7 +75,23 @@ export const fetchProducts = createAsyncThunk<
   }
 });
 
-// Create Product
+export const fetchProductsSelectList = createAsyncThunk<
+  SelectList[],
+  void,
+  { rejectValue: string }
+>("products/fetchSelectList", async (_, { rejectWithValue }) => {
+  try {
+    const response = await api.get<SelectList[]>("/Productos/SelectList");
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      return rejectWithValue("Error al obtener la lista de productos");
+    }
+    return rejectWithValue("Error inesperado");
+  }
+});
+
+
 export const createProduct = createAsyncThunk<
   Product,
   Omit<Product, "id">,
@@ -75,7 +99,6 @@ export const createProduct = createAsyncThunk<
 >("products/createProduct", async (productData, { rejectWithValue }) => {
   try {
     const response = await api.post<Product, any>("/Productos", productData);
-
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -85,7 +108,7 @@ export const createProduct = createAsyncThunk<
   }
 });
 
-// Update Product
+
 export const updateProduct = createAsyncThunk<
   Product,
   { id: number; productData: Partial<Product> },
@@ -131,6 +154,16 @@ const productSlice = createSlice({
       })
       .addCase(fetchProducts.rejected, (state) => {
         state.loading = false;
+      })
+      .addCase(fetchProductsSelectList.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchProductsSelectList.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectList = action.payload;
+      })
+      .addCase(fetchProductsSelectList.rejected, (state) => {
+        state.loading = false;
       });
   },
 });
@@ -141,5 +174,7 @@ export const selectLoading = (state: RootState) => state.productos.loading;
 export const selectTotal = (state: RootState) => state.productos.total;
 export const selectPage = (state: RootState) => state.productos.page;
 export const selectPageSize = (state: RootState) => state.productos.pageSize;
+export const selectProductsSelectList = (state: RootState) =>
+  state.productos.selectList;
 
 export default productSlice.reducer;

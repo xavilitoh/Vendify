@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Form, Input, Button, Checkbox, message } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import axios, { AxiosResponse } from "axios";
+import  { AxiosResponse } from "axios";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";

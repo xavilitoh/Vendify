@@ -11,7 +11,10 @@ import {
   setPage,
   setPageSize,
 } from "../../Redux/Productos";
-import { fetchCategories } from "../../Redux/CategorySlice";
+import {
+  fetchCategories,
+  fetchCategoriesSelectList,
+} from "../../Redux/CategorySlice";
 import {
   fetchSubcategorias,
   selectSubcategorias,
@@ -43,6 +46,7 @@ const Products: React.FC = () => {
   useEffect(() => {
     dispatch(fetchProducts({ page, pageSize }));
     dispatch(fetchCategories({ page, pageSize }));
+    dispatch(fetchCategoriesSelectList());
     dispatch(fetchSubcategorias());
     dispatch(fetchMarcas());
     dispatch(fetchPrices());

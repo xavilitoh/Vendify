@@ -13,13 +13,13 @@ import {
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { createProduct, fetchProducts } from "../../Redux/Productos";
-import { selectCategories } from "../../Redux/CategorySlice";
 import { selectSubcategorias } from "../../Redux/SubCategoriaSlice";
 import { selectMarcas } from "../../Redux/MarcasSlice";
 import { selectPrices } from "../../Redux/Price";
 import { selectUnidades } from "../../Redux/UnidadesSlice";
 import { AppDispatch } from "../../Redux/Store";
 import { Subcategoria } from "../../Redux/SubCategoriaSlice";
+import { selectCategoriesSelectList } from "../../Redux/CategorySlice";
 
 interface CreateProductModalProps {
   visible: boolean;
@@ -40,8 +40,7 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
   const [currentStep, setCurrentStep] = useState(0);
   const [productData, setProductData] = useState<any>({});
   const [priceEntries, setPriceEntries] = useState<any[]>([]);
-
-  const categories = useSelector(selectCategories);
+  const categories = useSelector(selectCategoriesSelectList);
   const allSubcategories = useSelector(selectSubcategorias);
   const marcas = useSelector(selectMarcas);
   const prices = useSelector(selectPrices);
@@ -189,7 +188,7 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
               >
                 {categories.map((category) => (
                   <Option key={category.id} value={category.id}>
-                    {category.descripcion}
+                    {category.value}
                   </Option>
                 ))}
               </Select>

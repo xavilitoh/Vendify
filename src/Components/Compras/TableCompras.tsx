@@ -1,7 +1,9 @@
-// TablaCompras.tsx
-import React from "react";
-import { Table, Button } from "antd";
+import React, { useState } from "react";
+import { Table, Button, Drawer } from "antd";
 import { Compra } from "../../Redux/Compras";
+import VerCompras from "./VerCompras";
+import { getFormatedCurrency } from "../Utils/CurrencyFunctinos";
+import moment from "moment";
 
 interface TableComprasProps {
   compras: Compra[];
@@ -9,7 +11,6 @@ interface TableComprasProps {
   currentPage: number;
   pageSize: number;
   onPageChange: (page: number, pageSize?: number) => void;
-  onEdit: (compra: Compra) => void;
   loading: boolean;
 }
 
@@ -19,48 +20,72 @@ const TableCompras: React.FC<TableComprasProps> = ({
   currentPage,
   pageSize,
   onPageChange,
-  onEdit,
   loading,
 }) => {
+  const [visible, setVisible] = useState(false);
+  const [selectedCompra, setSelectedCompra] = useState<Compra | null>(null);
+
+  const handleOpen = (compra: Compra) => {
+    setSelectedCompra(compra);
+    setVisible(true);
+  };
+
+  const handleClose = () => {
+    setVisible(false);
+    setSelectedCompra(null);
+  };
+
   const columns = [
     {
-      title: "Factura",
-      dataIndex: "factura",
+      title: "Descripción",
+      dataIndex: "descripcion",
       key: "factura",
     },
     {
       title: "Fecha",
       dataIndex: "fechaFactura",
       key: "fechaFactura",
+      render: (total: number) => moment(total).format("DD/MM/YYYY"),
     },
     {
       title: "Total",
       dataIndex: "total",
       key: "total",
-      render: (total: number) => `$${total.toFixed(2)}`,
+      render: (total: number) => getFormatedCurrency(total),
     },
     {
       title: "Acciones",
       key: "acciones",
       render: (_: any, record: Compra) => (
-        <Button onClick={() => onEdit(record)}>Ver</Button>
+        <Button onClick={() => handleOpen(record)}>Ver</Button>
       ),
     },
   ];
 
   return (
-    <Table
-      columns={columns}
-      dataSource={compras}
-      rowKey={(record) => record.id.toString()}
-      pagination={{
-        current: currentPage,
-        pageSize,
-        total,
-        onChange: onPageChange,
-      }}
-      loading={loading}
-    />
+    <>
+      <Table
+        columns={columns}
+        dataSource={compras}
+        rowKey={(record) => record.id.toString()}
+        pagination={{
+          current: currentPage,
+          pageSize,
+          total,
+          onChange: onPageChange,
+        }}
+        loading={loading}
+      />
+
+      <Drawer
+        title="Detalles de la Compra"
+        open={visible}
+        onClose={handleClose}
+        width={1000}
+      >
+        {selectedCompra && <VerCompras compra={selectedCompra} />}
+      </Drawer>
+    </>
   );
 };
 

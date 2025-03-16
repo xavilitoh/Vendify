@@ -15,13 +15,6 @@ interface Product {
   conImpuesto: boolean;
 }
 
-interface Subcategoria {
-  id: number;
-  descripcion: string;
-  iCategoria: number;
-  enable: boolean;
-}
-
 interface TableProductsProps {
   products: Product[];
   total: number;

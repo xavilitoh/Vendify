@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch } from "../../Redux/Store";
+import moment from "moment";
 import {
   Table,
   Form,
@@ -10,9 +11,10 @@ import {
   InputNumber,
   Collapse,
   message,
+  DatePicker,
 } from "antd";
 import {
-  fetchProducts,
+  fetchProductsSelectList,
   selectPage,
   selectPageSize,
 } from "../../Redux/Productos";
@@ -20,23 +22,39 @@ import {
   fetchProveedoresSelectList,
   selectProveedoresSelectList,
 } from "../../Redux/Proveedores";
-
+import { createCompra } from "../../Redux/Compras"; // Import createCompra
 import "./CrearCompra.css";
 const { Option } = Select;
 const { Panel } = Collapse;
+
+export interface Compra {
+  id: number;
+  factura: string;
+  fechaFactura: string;
+  idProveedor: number;
+  proveedor: any | null;
+  detalleDeCompras: any[];
+  total: number;
+  fechaCreacion: string;
+  fechaModificacion: string | null;
+  descripcion: string;
+  enable: boolean;
+  idEntidad: number;
+  entidad: any | null;
+}
 
 const CreateCompraView: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const [form] = Form.useForm();
   const [productForm] = Form.useForm();
-  const products = useSelector((state: any) => state.productos.products);
+  const products = useSelector((state: any) => state.productos.selectList);
   const [detalleDeCompras, setDetalleDeCompras] = useState<any[]>([]);
   const page = useSelector(selectPage);
   const pageSize = useSelector(selectPageSize);
   const proveedores = useSelector(selectProveedoresSelectList);
 
   useEffect(() => {
-    dispatch(fetchProducts({ page, pageSize }));
+    dispatch(fetchProductsSelectList());
     dispatch(fetchProveedoresSelectList());
   }, [dispatch, page, pageSize]);
 
@@ -46,19 +64,33 @@ const CreateCompraView: React.FC = () => {
     }
 
     form.validateFields().then((values) => {
-      const newCompra = {
-        id: Date.now(),
+      const newCompra: Compra = {
+        id: 0,
         descripcion: values.descripcion,
         factura: values.factura,
-        fechaFactura: values.fechaFactura
-          ? values.fechaFactura.format("YYYY-MM-DD")
-          : null,
         idProveedor: values.idProveedor,
+        fechaFactura: moment(values.fechaFactura).toISOString(), // Ensure it's a string
+        proveedor: null,
         detalleDeCompras,
+        enable: true,
+        idEntidad: 0,
+        entidad: null,
+        total: detalleDeCompras.reduce((acc, item) => acc + item.total, 0), // Sum of product totals
+        fechaCreacion: moment().toISOString(), // Current timestamp
+        fechaModificacion: moment().toISOString(), // Current timestamp (or null if not modified yet)
       };
-      console.log("New compra:", newCompra);
-      setDetalleDeCompras([]);
-      form.resetFields();
+
+      console.log(newCompra);
+      dispatch(createCompra(newCompra))
+        .unwrap()
+        .then(() => {
+          message.success("Compra creada exitosamente");
+          setDetalleDeCompras([]);
+          form.resetFields();
+        })
+        .catch(() => {
+          message.error("Error al crear la compra");
+        });
     });
   };
 
@@ -67,7 +99,6 @@ const CreateCompraView: React.FC = () => {
       (p: any) => p.id === values.idProducto
     );
     const newProduct = {
-      id: Date.now(),
       descripcion: selectedProduct?.nombre || "Producto desconocido",
       idProducto: values.idProducto,
       cantidad: values.cantidad,
@@ -120,15 +151,22 @@ const CreateCompraView: React.FC = () => {
             <Input />
           </Form.Item>
           <Form.Item
+            name="fechaFactura"
+            label="Fecha Factura"
+            rules={[{ required: true, message: "Ingrese la descripción" }]}
+          >
+            <DatePicker />
+          </Form.Item>
+          <Form.Item
             name="idProveedor"
             label="Proveedor"
             rules={[{ required: true, message: "Seleccione un proveedor" }]}
           >
             <Select placeholder="Seleccione un producto">
-              {proveedores.map((product: any) => (
-                <Option key={product.id} value={product.value}>
-                  {product.nombre}
-                </Option>
+              {proveedores.map((proveedor: any) => (
+                <Select.Option key={proveedor.id} value={proveedor.id}>
+                  {proveedor.value}
+                </Select.Option>
               ))}
             </Select>
           </Form.Item>
@@ -167,7 +205,7 @@ const CreateCompraView: React.FC = () => {
                 <Select placeholder="Seleccione un producto">
                   {products.map((product: any) => (
                     <Option key={product.id} value={product.id}>
-                      {product.nombre}
+                      {product.value}
                     </Option>
                   ))}
                 </Select>
