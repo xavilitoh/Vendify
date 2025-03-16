@@ -98,8 +98,10 @@ const CreateCompraView: React.FC = () => {
     const selectedProduct = products.find(
       (p: any) => p.id === values.idProducto
     );
+
+    console.log(selectedProduct);
     const newProduct = {
-      descripcion: selectedProduct?.nombre || "Producto desconocido",
+      descripcion: selectedProduct?.value || "Producto desconocido",
       idProducto: values.idProducto,
       cantidad: values.cantidad,
       precio: values.precio,
@@ -110,10 +112,13 @@ const CreateCompraView: React.FC = () => {
   };
 
   const removeProduct = (id: number) => {
+    console.log(id);
+    console.log(detalleDeCompras);
     setDetalleDeCompras(detalleDeCompras.filter((item) => item.id !== id));
   };
 
   const productColumns = [
+    { title: "ID", dataIndex: "idProducto", key: "id" },
     { title: "Producto", dataIndex: "descripcion", key: "descripcion" },
     { title: "Cantidad", dataIndex: "cantidad", key: "cantidad" },
     { title: "Precio", dataIndex: "precio", key: "precio" },

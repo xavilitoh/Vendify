@@ -24,8 +24,8 @@ import { selectCategoriesSelectList } from "../../Redux/CategorySlice";
 interface CreateProductModalProps {
   visible: boolean;
   onClose: () => void;
-  onCategoryChange: (categoryId: number) => void; // Add this line
-  filteredSubcategories: Subcategoria[]; // Ensure this is also includ
+  onCategoryChange: (categoryId: number) => void;
+  filteredSubcategories: Subcategoria[];
 }
 
 const { Option } = Select;
@@ -56,8 +56,7 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
     const filtered = allSubcategories.filter(
       (subcategory) => subcategory.idCategoria === categoryId
     );
-    console.log(allSubcategories);
-    console.log(filtered);
+
     setFilteredSubcategories(filtered);
     form.setFieldsValue({ idSubcategoria: undefined });
   };
