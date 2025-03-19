@@ -25,31 +25,6 @@ export const ItemSider: MenuProps["items"] = [
     label: <Link to="usuarios"> Usuarios</Link>,
   },
   {
-    key: 2,
-    icon: React.createElement(LaptopOutlined),
-    label: <Link to="productos"> Productos</Link>,
-  },
-  {
-    key: 3,
-    icon: React.createElement(WindowsOutlined),
-    label: <Link to="categorias"> Categorias</Link>,
-  },
-  {
-    key: 4,
-    icon: React.createElement(SubnodeOutlined),
-    label: <Link to="marcas"> Marcas</Link>,
-  },
-  {
-    key: 5,
-    icon: React.createElement(EuroOutlined),
-    label: <Link to="precios"> Precios</Link>,
-  },
-  {
-    key: 6,
-    icon: React.createElement(NotificationOutlined),
-    label: <Link to="Unidades"> Unidades</Link>,
-  },
-  {
     key: 7,
     icon: React.createElement(ShopOutlined),
     label: <Link to="Sucursales"> Sucursales</Link>,
@@ -65,7 +40,7 @@ export const ItemSider: MenuProps["items"] = [
     label: <Link to="proveedores"> Proveedores</Link>,
   },
   {
-      key: "10",
+    key: "10",
     icon: React.createElement(DollarOutlined),
     label: "Compras",
     children: [
@@ -78,6 +53,38 @@ export const ItemSider: MenuProps["items"] = [
         key: "10-2",
         label: <Link to="crearcompra">Crear Compra</Link>,
         icon: React.createElement(PlusOutlined),
+      },
+    ],
+  },
+  {
+    key: "11",
+    icon: React.createElement(DollarOutlined),
+    label: "Inventario",
+    children: [
+      {
+        key: 2,
+        icon: React.createElement(LaptopOutlined),
+        label: <Link to="productos"> Productos</Link>,
+      },
+      {
+        key: 3,
+        icon: React.createElement(WindowsOutlined),
+        label: <Link to="categorias"> Categorias</Link>,
+      },
+      {
+        key: 4,
+        icon: React.createElement(SubnodeOutlined),
+        label: <Link to="marcas"> Marcas</Link>,
+      },
+      {
+        key: 5,
+        icon: React.createElement(EuroOutlined),
+        label: <Link to="precios"> Precios</Link>,
+      },
+      {
+        key: 6,
+        icon: React.createElement(NotificationOutlined),
+        label: <Link to="Unidades"> Unidades</Link>,
       },
     ],
   },

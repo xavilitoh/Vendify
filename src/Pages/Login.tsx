@@ -40,7 +40,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ isDarkMode }) => {
           pass: values.password,
         }
       );
-      console.log(response);
       const { token } = response.data;
       const { usuario } = response.data;
       Cookies.set("token", token, { expires: 7 });

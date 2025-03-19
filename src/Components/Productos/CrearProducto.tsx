@@ -92,7 +92,7 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
 
   const handleSubmit = async () => {
     try {
-      const productValues = await form.validateFields([
+      let productValues = await form.validateFields([
         "idMarca",
         "idCategoria",
         "idSubcategoria",
@@ -107,11 +107,17 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
         throw new Error("Debe agregar al menos un precio.");
       }
 
+      if (!productValues.idSubcategoria) {
+        productValues = { ...productValues, idSubcategoria: 0 };
+      }
+
       const finalData = {
         ...productData,
         ...productValues,
         precios: priceEntries,
       };
+
+      console.log(finalData);
 
       await dispatch(createProduct(finalData)).unwrap();
 
@@ -126,9 +132,11 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
     } catch (error) {
       if (error instanceof Error) {
         console.error("Error al crear el producto", error.message);
-        Modal.error({ title: "Error", content: error.message });
+        message.error("Error al crear el producto");
       } else {
+        console.log(error);
         console.error("Unexpected error:", error);
+        message.error("Error al crear el producto");
       }
     }
   };
@@ -195,12 +203,12 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
             <Form.Item
               name="idSubcategoria"
               label="Subcategoría"
-              rules={[
+              /*     rules={[
                 {
                   required: true,
                   message: "Por favor selecciona una subcategoría",
                 },
-              ]}
+              ]} */
             >
               <Select placeholder="Selecciona una subcategoría">
                 {filteredSubcategories.map((subcategory) => (

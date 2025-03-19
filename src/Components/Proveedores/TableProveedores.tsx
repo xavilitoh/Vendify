@@ -45,6 +45,8 @@ const TableProveedores: React.FC<TableProveedoresProps> = ({
     },
   ];
 
+  console.log(proveedores);
+
   return (
     <Table
       dataSource={proveedores}

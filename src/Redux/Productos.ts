@@ -91,14 +91,17 @@ export const fetchProductsSelectList = createAsyncThunk<
   }
 });
 
-
 export const createProduct = createAsyncThunk<
   Product,
   Omit<Product, "id">,
   { rejectValue: string }
 >("products/createProduct", async (productData, { rejectWithValue }) => {
   try {
+
+    console.log(productData);
+
     const response = await api.post<Product, any>("/Productos", productData);
+    console.log(response);
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -107,7 +110,6 @@ export const createProduct = createAsyncThunk<
     return rejectWithValue("Error inesperado");
   }
 });
-
 
 export const updateProduct = createAsyncThunk<
   Product,
