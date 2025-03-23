@@ -14,6 +14,7 @@ import {
   Tag,
   Space,
   Popconfirm,
+  Image,
 } from "antd";
 import Barcode from "react-barcode";
 import api from "../../Api/VendifyApi";
@@ -25,7 +26,7 @@ import { AxiosHeaders } from "axios";
 import "./VerProducto.css";
 
 const { Option } = Select;
-
+const BaseUrl = import.meta.env.VITE_APP_API_URL;
 interface Product {
   id: number;
   nombre: string;
@@ -42,6 +43,7 @@ interface Product {
   barCode: string;
   conImpuesto: boolean;
   precios: Price[];
+  foto: string;
 }
 
 interface Price {
@@ -118,6 +120,8 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
       console.error("Error adding price:", error);
     }
   };
+
+  console.log(product);
 
   const editPrice = async () => {
     if (!product || !editingPrice) return;
@@ -236,6 +240,19 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
             <p style={{ fontSize: "25px", fontWeight: "600" }}>
               {product.nombre}
             </p>
+            <Row>
+              <Col span={12}>
+                {" "}
+                <Image
+                  width={200}
+                  alt="Product Image"
+                  placeholder={true}
+                  src={
+                    product.foto ? `${BaseUrl}/${product?.foto}` : "default.jpg"
+                  }
+                />
+              </Col>
+            </Row>
             <Row>
               <Col span={12}>
                 <p className="Titulos">Nombre:</p> {product.nombre}

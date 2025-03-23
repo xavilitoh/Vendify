@@ -72,6 +72,11 @@ export const ItemSider: MenuProps["items"] = [
         label: <Link to="categorias"> Categorias</Link>,
       },
       {
+        key: 15,
+        icon: React.createElement(WindowsOutlined),
+        label: <Link to="subcategorias"> Sub-Categorias</Link>,
+      },
+      {
         key: 4,
         icon: React.createElement(SubnodeOutlined),
         label: <Link to="marcas"> Marcas</Link>,

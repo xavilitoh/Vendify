@@ -5,12 +5,17 @@ import axios, {
 } from "axios";
 import Cookies from "js-cookie";
 
+const apiKey = import.meta.env.VITE_APP_MY_API_KEY;
+const apiUrl = import.meta.env.VITE_APP_API_URL;
+
+console.log("API Key: ", apiKey);
+console.log("API URL: ", apiUrl);
+
 const api = axios.create({
-  baseURL: "https://vendify_api.wxbolab.com/api/",
+  baseURL: `${apiUrl}/api`,
   headers: {
     "Content-Type": "application/json",
-    "X-Api-Key":
-      "kjshdfssedfsdgkkf7784399003882jfsd66s7dfsdd6d7v6d6sf6dfs7w3jb23fsdfsfgaserh",
+    "X-Api-Key": apiKey,
   },
 });
 

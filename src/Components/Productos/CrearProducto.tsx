@@ -10,7 +10,10 @@ import {
   Steps,
   Table,
   message,
+  Upload,
+  Spin,
 } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { createProduct, fetchProducts } from "../../Redux/Productos";
 import { selectSubcategorias } from "../../Redux/SubCategoriaSlice";
@@ -45,12 +48,54 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
   const marcas = useSelector(selectMarcas);
   const prices = useSelector(selectPrices);
   const unidades = useSelector(selectUnidades);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [foto, setImageData] = useState<string | null>(null); // This will hold the base64 image data
 
   const [filteredSubcategories, setFilteredSubcategories] = useState<
     Subcategoria[]
   >([]);
 
   useEffect(() => {}, [dispatch]);
+
+  const beforeUpload = (file: File) => {
+    const isImage = file.type.startsWith("image/");
+    if (!isImage) {
+      message.error("You can only upload image files!");
+      return false; // Prevent upload
+    }
+
+    // Convert image to base64 and set it to state
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result as string;
+
+      const cleanedBase64 = base64String.replace(
+        /^data:image\/[a-z]+;base64,/,
+        ""
+      );
+
+      setImageUrl(base64String); // For displaying image
+      setImageData(cleanedBase64); // For saving Base64 data
+    };
+    reader.readAsDataURL(file); // Convert the file to Base64
+    return false; // Don't upload to server, since we handle it locally
+  };
+
+  // Handle the file change (upload, error, etc.)
+  const handleUploadChange = (info: any) => {
+    if (info.file.status === "uploading") {
+      setLoading(true);
+      return;
+    }
+    if (info.file.status === "done") {
+      setLoading(false);
+    }
+    if (info.file.status === "error") {
+      message.error("Image upload failed.");
+      setLoading(false);
+    }
+  };
 
   const handleCategoryChange = (categoryId: number) => {
     const filtered = allSubcategories.filter(
@@ -115,6 +160,7 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
         ...productData,
         ...productValues,
         precios: priceEntries,
+        foto,
       };
 
       console.log(finalData);
@@ -280,6 +326,29 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
               initialValue={false}
             >
               <Checkbox>Con Impuesto</Checkbox>
+            </Form.Item>
+            <Form.Item
+              name="image"
+              label="Imagen"
+              rules={[{ required: true, message: "Por favor sube una imagen" }]}
+            >
+              <Upload
+                name="image"
+                listType="picture-card"
+                showUploadList={false}
+                beforeUpload={beforeUpload}
+                onChange={handleUploadChange}
+                maxCount={1} // Only allow 1 image to be uploaded
+              >
+                {imageUrl ? (
+                  <img src={imageUrl} alt="Image" style={{ width: "100%" }} />
+                ) : (
+                  <div>
+                    {loading ? <Spin /> : <UploadOutlined />}
+                    <div>Subir Imagen</div>
+                  </div>
+                )}
+              </Upload>
             </Form.Item>
           </>
         )}

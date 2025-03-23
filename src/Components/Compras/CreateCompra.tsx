@@ -112,9 +112,10 @@ const CreateCompraView: React.FC = () => {
   };
 
   const removeProduct = (id: number) => {
+    console.log("Removing product with id: ", id);
     console.log(id);
     console.log(detalleDeCompras);
-    setDetalleDeCompras(detalleDeCompras.filter((item) => item.id !== id));
+    setDetalleDeCompras(detalleDeCompras.filter((item) => item.idProducto !== id));
   };
 
   const productColumns = [
@@ -127,7 +128,7 @@ const CreateCompraView: React.FC = () => {
       title: "Acción",
       key: "action",
       render: (_: any, record: any) => (
-        <Button danger onClick={() => removeProduct(record.id)}>
+        <Button danger onClick={() => removeProduct(record.idProducto)}>
           Eliminar
         </Button>
       ),

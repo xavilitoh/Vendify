@@ -21,13 +21,13 @@ const TableProveedores: React.FC<TableProveedoresProps> = ({
   onEdit,
   loading,
 }) => {
+  console.log(proveedores);
   const columns = [
     { title: "Descripción", dataIndex: "descripcion", key: "descripcion" },
     { title: "Dirección", dataIndex: "direccion", key: "direccion" },
     { title: "Teléfono", dataIndex: "telefono", key: "telefono" },
     { title: "Email", dataIndex: "email", key: "email" },
     { title: "RNC", dataIndex: "rnc", key: "rnc" },
-    { title: "Representante", dataIndex: "nombre", key: "nombre" },
     {
       title: "Habilitado",
       dataIndex: "enable",

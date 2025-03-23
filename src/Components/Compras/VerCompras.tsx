@@ -20,6 +20,7 @@ const VerCompras: React.FC<VerComprasProps> = ({ compra }) => {
       dataIndex: "cantidad",
       key: "cantidad",
     },
+    
     {
       title: "Precio",
       dataIndex: "precio",

@@ -114,18 +114,6 @@ const EditProveedorModal: React.FC<EditProveedorModalProps> = ({
         >
           <Input placeholder="Ingrese el RNC" />
         </Form.Item>
-        <Form.Item
-          name="nombre"
-          label="Nombre del Representante"
-          rules={[
-            {
-              required: true,
-              message: "Por favor ingresa el nombre del representante",
-            },
-          ]}
-        >
-          <Input placeholder="Ingrese el nombre del representante" />
-        </Form.Item>
         <Form.Item>
           <Button type="primary" onClick={handleSubmit}>
             Actualizar

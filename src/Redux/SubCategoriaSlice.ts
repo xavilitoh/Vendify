@@ -41,50 +41,60 @@ export interface Subcategoria {
 interface SubcategoriaState {
   subcategorias: Subcategoria[];
   loading: boolean;
+  error: string | null;
 }
 
 // Initial State
 const initialState: SubcategoriaState = {
   subcategorias: [],
   loading: false,
+  error: null,
 };
 
 // Thunks
-export const fetchSubcategorias = createAsyncThunk<Subcategoria[]>(
-  "subcategorias/fetchSubcategorias",
-  async () => {
+export const fetchSubcategorias = createAsyncThunk<
+  Subcategoria[],
+  void,
+  { rejectValue: string }
+>("subcategorias/fetchSubcategorias", async (_, { rejectWithValue }) => {
+  try {
     const response = await api.get<Subcategoria[]>("/Subcategorias");
-    return response.data; // Ensure response is typed as Subcategoria[]
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error.response) {
+      return rejectWithValue(error.response.data);
+    }
+    return rejectWithValue("Error fetching subcategorias");
   }
-);
+});
 
 export const createSubcategoria = createAsyncThunk<
-  Subcategoria, // Return type
-  { descripcion: string; iCategoria: number; idEntidad: number }, // Argument type
-  { rejectValue: string } // Reject value type
+  Subcategoria,
+  { descripcion: string; idCategoria: number; idEntidad: number },
+  { rejectValue: string }
 >(
   "subcategorias/createSubcategoria",
   async (subcategoria, { rejectWithValue }) => {
     try {
+      console.log(subcategoria);
       const response = await api.post<Subcategoria, any>(
         "/Subcategorias",
         subcategoria
       );
-      return response.data; // Ensure response is typed as Subcategoria
+      return response.data;
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
         return rejectWithValue(error.response.data);
-      } else {
-        return rejectWithValue("Error creating subcategoria");
       }
+      return rejectWithValue("Error creating subcategoria");
     }
   }
 );
 
 export const updateSubcategoria = createAsyncThunk<
-  Subcategoria, // Return type
-  Subcategoria, // Argument type
-  { rejectValue: string } // Reject value type
+  Subcategoria,
+  Subcategoria,
+  { rejectValue: string }
 >(
   "subcategorias/updateSubcategoria",
   async (subcategoria, { rejectWithValue }) => {
@@ -93,13 +103,12 @@ export const updateSubcategoria = createAsyncThunk<
         `/Subcategorias?id=${subcategoria.id}`,
         subcategoria
       );
-      return response.data; // Ensure response is typed as Subcategoria
+      return response.data;
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
         return rejectWithValue(error.response.data);
-      } else {
-        return rejectWithValue("Error updating subcategoria");
       }
+      return rejectWithValue("Error updating subcategoria");
     }
   }
 );
@@ -113,24 +122,32 @@ const subcategoriaSlice = createSlice({
     builder
       .addCase(fetchSubcategorias.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(fetchSubcategorias.fulfilled, (state, action) => {
-        state.subcategorias = action.payload; // Typed as Subcategoria[]
+        state.subcategorias = action.payload;
         state.loading = false;
       })
-      .addCase(fetchSubcategorias.rejected, (state) => {
+      .addCase(fetchSubcategorias.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload || "Failed to fetch subcategorias";
       })
       .addCase(createSubcategoria.fulfilled, (state, action) => {
-        state.subcategorias.push(action.payload); // Typed as Subcategoria
+        state.subcategorias.push(action.payload);
+      })
+      .addCase(createSubcategoria.rejected, (state, action) => {
+        state.error = action.payload || "Failed to create subcategoria";
       })
       .addCase(updateSubcategoria.fulfilled, (state, action) => {
         const index = state.subcategorias.findIndex(
           (subcategoria) => subcategoria.id === action.payload.id
         );
         if (index !== -1) {
-          state.subcategorias[index] = action.payload; // Update the subcategoria in the array
+          state.subcategorias[index] = action.payload;
         }
+      })
+      .addCase(updateSubcategoria.rejected, (state, action) => {
+        state.error = action.payload || "Failed to update subcategoria";
       });
   },
 });
@@ -139,6 +156,7 @@ const subcategoriaSlice = createSlice({
 export const selectSubcategorias = (state: RootState) =>
   state.subCategorias.subcategorias;
 export const selectLoading = (state: RootState) => state.subCategorias.loading;
+export const selectError = (state: RootState) => state.subCategorias.error;
 
 // Export Reducer
 export default subcategoriaSlice.reducer;

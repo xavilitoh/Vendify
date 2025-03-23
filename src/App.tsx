@@ -22,6 +22,7 @@ import Almacenes from "./Components/Almacenes/Alamacenes";
 import Proveedores from "./Components/Proveedores/Provedores";
 import Compras from "./Components/Compras/Compras";
 import CrearCompra from "./Components/Compras/CreateCompra";
+import Subcategories from "./Components/SubCategorias/SubCategorias";
 
 const { Content } = Layout;
 
@@ -256,6 +257,14 @@ const App: React.FC = () => {
                   element={
                     <ProtectedRoute>
                       <CrearCompra />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/subcategorias"
+                  element={
+                    <ProtectedRoute>
+                      <Subcategories />
                     </ProtectedRoute>
                   }
                 />

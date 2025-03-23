@@ -48,6 +48,12 @@ const TableCompras: React.FC<TableComprasProps> = ({
       render: (total: number) => moment(total).format("DD/MM/YYYY"),
     },
     {
+      title: "Proovedor",
+      key: "descripcion",
+      render: (_: any, record: Compra) =>
+        record.proveedor?.descripcion || "N/A",
+    },
+    {
       title: "Total",
       dataIndex: "total",
       key: "total",
@@ -61,6 +67,7 @@ const TableCompras: React.FC<TableComprasProps> = ({
       ),
     },
   ];
+
 
   return (
     <>
