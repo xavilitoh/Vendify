@@ -11,6 +11,7 @@ import Sucursal from "./Sucursales";
 import Almacenes from "./Almacenes";
 import Proveedor from "./Proveedores";
 import Compras from "./Compras";
+import Clientes from "./Clientes";
 
 export const store = configureStore({
   reducer: {
@@ -25,6 +26,7 @@ export const store = configureStore({
     almacenes: Almacenes,
     proveedores: Proveedor,
     compras: Compras,
+    clientes: Clientes,
   },
 });
 

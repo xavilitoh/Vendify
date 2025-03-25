@@ -23,6 +23,8 @@ import Proveedores from "./Components/Proveedores/Provedores";
 import Compras from "./Components/Compras/Compras";
 import CrearCompra from "./Components/Compras/CreateCompra";
 import Subcategories from "./Components/SubCategorias/SubCategorias";
+import Clientes from "./Components/Clientes/Clientes";
+
 
 const { Content } = Layout;
 
@@ -265,6 +267,14 @@ const App: React.FC = () => {
                   element={
                     <ProtectedRoute>
                       <Subcategories />
+                    </ProtectedRoute>
+                  }
+                />
+                     <Route
+                  path="/clientes"
+                  element={
+                    <ProtectedRoute>
+                      <Clientes />
                     </ProtectedRoute>
                   }
                 />
