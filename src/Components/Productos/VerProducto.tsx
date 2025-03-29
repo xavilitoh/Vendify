@@ -14,7 +14,7 @@ import {
   Tag,
   Space,
   Popconfirm,
-  Image,
+  Image, Descriptions,
 } from "antd";
 import Barcode from "react-barcode";
 import api from "../../Api/VendifyApi";
@@ -226,7 +226,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
 
   return (
     <Drawer
-      width={640}
+        width={window.innerWidth * 0.5}
       placement="right"
       closable={true}
       onClose={onClose}
@@ -236,76 +236,49 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
         <Spin size="large" />
       ) : (
         product && (
-          <>
-            <p style={{ fontSize: "25px", fontWeight: "600" }}>
-              {product.nombre}
-            </p>
-            <Row>
-              <Col span={12}>
-                {" "}
-                <Image
-                  width={200}
-                  alt="Product Image"
-                  placeholder={true}
-                  src={
-                    product.foto ? `${BaseUrl}/${product?.foto}` : "default.jpg"
-                  }
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col span={12}>
-                <p className="Titulos">Nombre:</p> {product.nombre}
-              </Col>
-              <Col span={12}>
-                <p className="Titulos">Marca:</p> {product.marca}
-              </Col>
-            </Row>
-            <Row>
-              <Col span={12}>
-                <p className="Titulos">Categoría:</p> {product.categoria}
-              </Col>
-              <Col span={12}>
-                <p className="Titulos">Subcategoría:</p> {product.subcategoria}
-              </Col>
-            </Row>
-            <Row>
-              <Col span={12}>
-                <p className="Titulos">Unidad:</p> {product.unidad}
-              </Col>
-              <Col span={12}>
-                <p className="Titulos">Stock Mínimo:</p> {product.stockMinimo}
-              </Col>
-            </Row>
-            <Row>
-              <Col span={12}>
-                <p className="Titulos">Código de Barras:</p>
-                <Barcode value={product.barCode || "-"} />
-              </Col>
-              <Col span={12}>
-                <p className="Titulos">Con Impuesto:</p>
-                {product.conImpuesto ? (
-                  <Tag color="#87d068">Sí</Tag>
-                ) : (
-                  <Tag color="#f50">No</Tag>
-                )}
-              </Col>
-            </Row>
-            <Divider />
-            <p style={{ fontSize: "25px", fontWeight: "600" }}>Precios</p>
-            <Button
-              type="primary"
-              onClick={() => setIsAddPriceModalVisible(true)}
-              style={{ marginBottom: "16px" }}
-            >
-              Agregar Precio
-            </Button>
-            <Table
-              columns={columns}
-              dataSource={priceEntries}
-              rowKey={(record) => `${record.idUnidad}-${record.idPrecio}`}
-              pagination={false}
-            />
+            <>
+              <Row>
+                <Col span={12}>
+                  <Image
+                      width={200}
+                      alt="Product Image"
+                      placeholder={true}
+                      src={
+                        product.foto ? `${BaseUrl}/${product?.foto}` : "default.jpg"
+                      }
+                  />
+                </Col>
+                <Divider type={"vertical"} variant={"solid"} orientation={"center"} />
+                <Col span={6}>
+                  <Barcode value={product.barCode || "-"} />
+                </Col>
+              </Row>
+                <Divider />
+
+              <Descriptions title={`${product.nombre}`} bordered column={1}>
+                <Descriptions.Item label="Marca">{product.marca}</Descriptions.Item>
+                <Descriptions.Item label="Categoria">{product.categoria}</Descriptions.Item>
+                <Descriptions.Item label="Subcategoria">{product.subcategoria}</Descriptions.Item>
+                <Descriptions.Item label="Unidad">{product.unidad}</Descriptions.Item>
+                <Descriptions.Item label="Stock Minimo">{product.stockMinimo}</Descriptions.Item>
+              </Descriptions>
+
+            <Divider/>
+
+              <p style={{ fontSize: "25px", fontWeight: "600" }}>Precios</p>
+              <Button
+                  type="primary"
+                  onClick={() => setIsAddPriceModalVisible(true)}
+                  style={{ marginBottom: "16px" }}
+              >
+                Agregar Precio
+              </Button>
+              <Table
+                  columns={columns}
+                  dataSource={priceEntries}
+                  rowKey={(record) => `${record.idUnidad}-${record.idPrecio}`}
+                  pagination={false}
+              />
           </>
         )
       )}

@@ -19,6 +19,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.idea/
+# Dependency directories
 /node_modules/*
 node_modules
 node_modules/
