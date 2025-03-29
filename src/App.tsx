@@ -1,42 +1,33 @@
-import React, { useState } from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import {
-  LaptopOutlined,
-  NotificationOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
-import type { MenuProps } from "antd";
-import {
-  Breadcrumb,
-  Layout,
-  ConfigProvider,
-  theme,
-  Switch,
-  Button,
-} from "antd";
-import Cookies from "js-cookie"; // For token storage
+import React, { useState, useEffect } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { Layout, ConfigProvider, theme, Button, Switch } from "antd";
+import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-
 import SiderComponent from "./Pages/Sider";
 import HeaderComponent from "./Pages/Header";
 import Home from "./Pages/Home";
 import Login from "./Pages/Login";
+import Productos from "./Components/Productos/Productos";
+import ProtectedRoute from "./Components/ProtectedRoute";
+import BreadcrumbComponent from "./Components/BreadCrumb";
+import { ItemSider } from "./Components/SiderItems";
+import Usuarios from "./Components/Usuarios/Usuarios";
+import Categorias from "./Components/Categorias/Categorias";
+import Registrarse from "./Pages/Registrarse";
+import Marcas from "./Components/Marcas/Marcas";
+import Precios from "./Components/Precios/Precios";
+import Unidades from "./Components/Unidades/Unidades";
+import Sucursales from "./Components/Sucursales/Sucursales";
+import Almacenes from "./Components/Almacenes/Alamacenes";
+import Proveedores from "./Components/Proveedores/Provedores";
+import Compras from "./Components/Compras/Compras";
+import CrearCompra from "./Components/Compras/CreateCompra";
+import Subcategories from "./Components/SubCategorias/SubCategorias";
+import Clientes from "./Components/Clientes/Clientes";
 
-// Items Layout
+
 const { Content } = Layout;
 
-const ItemSider: MenuProps["items"] = [
-  { key: 1, icon: React.createElement(UserOutlined), label: "Usuarios" },
-  { key: 2, icon: React.createElement(LaptopOutlined), label: `Productos` },
-  {
-    key: 3,
-    icon: React.createElement(NotificationOutlined),
-    label: `Categorias`,
-  },
-  { key: 4, icon: React.createElement(NotificationOutlined), label: `Pagos` },
-];
-
-// Light and Dark Theme Settings
 const lightTheme = {
   colorPrimary: "#1890ff",
   colorBgContainer: "#fff",
@@ -44,71 +35,70 @@ const lightTheme = {
 };
 
 const darkTheme = {
-  colorPrimary: "#00b96b",
-  colorBgContainer: "black",
+  colorPrimary: "#1890ff",
+  colorBgContainer: "#000000",
   borderRadius: 8,
 };
 
 const App: React.FC = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
-
   const navigate = useNavigate();
 
-  // Function to toggle dark mode
+  const getSystemDarkMode = () =>
+    window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem("isDarkMode");
+    return savedTheme !== null ? JSON.parse(savedTheme) : getSystemDarkMode();
+  });
+
+  useEffect(() => {
+    // Sync with system dark mode changes
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (localStorage.getItem("isDarkMode") === null) {
+        setIsDarkMode(e.matches);
+      }
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
+  // Toggle dark mode and save user preference
   const toggleDarkMode = (checked: boolean) => {
     setIsDarkMode(checked);
+    localStorage.setItem("isDarkMode", JSON.stringify(checked));
   };
 
-  // Menu items for header
-  // Logout function
   const handleLogout = () => {
-    Cookies.remove("token"); // Remove the token from cookies
-    navigate("/login"); // Redirect to the login page
+    Cookies.remove("token");
+    navigate("/login");
   };
 
-  // Menu items for header
-  const ItemsMenu: MenuProps["items"] = [
-    { key: 1, label: `Perfil` }, // Profile option (can be linked to profile page if needed)
+  const ItemsMenu = [
     {
       key: 2,
       label: (
         <Button onClick={handleLogout} style={{ cursor: "pointer" }}>
           Salir
         </Button>
-      ), // 'Salir' (Logout) option
+      ),
     },
     {
       key: "switch",
       label: (
         <Switch
-          checkedChildren="Claro"
-          unCheckedChildren="Oscuro"
           checked={isDarkMode}
           onChange={toggleDarkMode}
+          checkedChildren="🌙"
+          unCheckedChildren="☀️"
+          style={{ background: isDarkMode ? "#1890ff" : "#f0f0f0" }}
         />
       ),
     },
   ];
 
-  // Check if the user is authenticated (You can store token in local storage or cookies)
   const isAuthenticated = !!Cookies.get("token");
-
-  // Component to protect routes
-  const ProtectedRoute: React.FC<{ children: JSX.Element }> = ({
-    children,
-  }) => {
-    const location = useLocation();
-
-    if (!isAuthenticated) {
-      // If user is not authenticated, redirect to login
-      return <Navigate to="/login" replace state={{ from: location }} />;
-    }
-
-    return children;
-  };
 
   return (
     <ConfigProvider
@@ -119,40 +109,63 @@ const App: React.FC = () => {
     >
       <Layout>
         {isAuthenticated && (
-          <HeaderComponent isDarkMode={isDarkMode} items={ItemsMenu} />
+          <HeaderComponent
+            isDarkMode={isDarkMode}
+            toggleDarkMode={toggleDarkMode}
+            items={ItemsMenu}
+            handleLogout={handleLogout}
+          />
         )}
         <Layout>
           {isAuthenticated && (
             <SiderComponent
               items={ItemSider}
-              backgroundColor={colorBgContainer}
+              backgroundColor={
+                isDarkMode ? "#303030" : lightTheme.colorBgContainer
+              }
             />
           )}
-          <Layout style={{ padding: "0 24px 24px" }}>
-            {isAuthenticated && (
-              <Breadcrumb style={{ margin: "16px 0" }}>
-                <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-                <Breadcrumb.Item>Lista</Breadcrumb.Item>
-                <Breadcrumb.Item>App</Breadcrumb.Item>
-              </Breadcrumb>
-            )}
+          <Layout
+            style={{
+              padding: "0 24px 24px",
+              backgroundColor: isDarkMode ? "#303030" : "",
+            }}
+          >
+            {isAuthenticated && <BreadcrumbComponent />}
             <Content
               style={{
                 padding: 24,
                 margin: 0,
                 minHeight: 280,
                 backgroundColor: isDarkMode
-                  ? "#1f1f1f"
+                  ? "#000000"
                   : lightTheme.colorBgContainer,
                 borderRadius: lightTheme.borderRadius,
                 height: "100vh",
+                overflowY: "auto",
               }}
             >
               <Routes>
-                {/* Public route for login */}
-                <Route path="/login" element={<Login />} />
-
-                {/* Protected route for Home */}
+                <Route
+                  path="/login"
+                  element={
+                    isAuthenticated ? (
+                      <Navigate to="/" replace />
+                    ) : (
+                      <Login isDarkMode={isDarkMode} />
+                    )
+                  }
+                />
+                <Route
+                  path="/registrarse"
+                  element={
+                    isAuthenticated ? (
+                      <Navigate to="/" replace />
+                    ) : (
+                      <Registrarse isDarkMode={isDarkMode} />
+                    )
+                  }
+                />
                 <Route
                   path="/"
                   element={
@@ -161,8 +174,110 @@ const App: React.FC = () => {
                     </ProtectedRoute>
                   }
                 />
-
-                {/* Add more protected routes here */}
+                <Route
+                  path="/usuarios"
+                  element={
+                    <ProtectedRoute>
+                      <Usuarios />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/categorias"
+                  element={
+                    <ProtectedRoute>
+                      <Categorias />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/productos"
+                  element={
+                    <ProtectedRoute>
+                      <Productos />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/marcas"
+                  element={
+                    <ProtectedRoute>
+                      <Marcas />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/precios"
+                  element={
+                    <ProtectedRoute>
+                      <Precios />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/unidades"
+                  element={
+                    <ProtectedRoute>
+                      <Unidades />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/sucursales"
+                  element={
+                    <ProtectedRoute>
+                      <Sucursales />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/almacenes"
+                  element={
+                    <ProtectedRoute>
+                      <Almacenes />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/proveedores"
+                  element={
+                    <ProtectedRoute>
+                      <Proveedores />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/compras"
+                  element={
+                    <ProtectedRoute>
+                      <Compras />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/crearcompra"
+                  element={
+                    <ProtectedRoute>
+                      <CrearCompra />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/subcategorias"
+                  element={
+                    <ProtectedRoute>
+                      <Subcategories />
+                    </ProtectedRoute>
+                  }
+                />
+                     <Route
+                  path="/clientes"
+                  element={
+                    <ProtectedRoute>
+                      <Clientes />
+                    </ProtectedRoute>
+                  }
+                />
               </Routes>
             </Content>
           </Layout>

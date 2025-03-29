@@ -1,14 +1,19 @@
-// src/components/Header.tsx
 import React from "react";
-import { Menu } from "antd";
+import { Switch, Button } from "antd";
 import { MenuProps } from "antd";
 
 interface HeaderProps {
   isDarkMode: boolean;
+  toggleDarkMode: (checked: boolean) => void;
+  handleLogout: () => void; // ✅ Add this prop
   items: MenuProps["items"];
 }
 
-const HeaderComponent: React.FC<HeaderProps> = ({ isDarkMode, items }) => {
+const HeaderComponent: React.FC<HeaderProps> = ({
+  isDarkMode,
+  toggleDarkMode,
+  handleLogout,
+}) => {
   return (
     <header
       style={{
@@ -16,37 +21,36 @@ const HeaderComponent: React.FC<HeaderProps> = ({ isDarkMode, items }) => {
         alignItems: "center",
         justifyContent: "space-between",
         height: "7vh",
-        background: `${isDarkMode ? "black" : "#fff"}`,
-        // Keeps space between logo and menu
+        background: `${isDarkMode ? "#000000" : "#fff"}`,
+        padding: "0 40px",
       }}
     >
       <div
         style={{
           fontSize: "20px",
           textTransform: "uppercase",
-          marginLeft: "25px",
           fontWeight: "800",
-          color: `${isDarkMode ? "#fff" : "black"}`,
+          color: `${isDarkMode ? "#fff" : "#282929"}`,
         }}
       >
         Vendify
       </div>
-      <Menu
-        theme={isDarkMode ? "dark" : "light"}
-        mode="horizontal"
-        defaultSelectedKeys={["2"]}
-        items={items}
-        style={{
-          display: "flex", // Enables flexbox
-          flex: 0.1, // Flex grow, shrink, and basis
-          minWidth: "280px", // Minimum width
-          height: "inherit", // Full height of the container
-          alignItems: "center", // Centers items vertically
-          justifyContent: "center",
-          background: "inherit",
-          border: "none", // Centers items horizontally
-        }}
-      />
+
+      <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+        {/* Logout Button */}
+        <Button onClick={handleLogout} style={{ cursor: "pointer" }}>
+          Salir
+        </Button>
+
+        {/* Theme Switch */}
+        <Switch
+          checked={isDarkMode}
+          onChange={toggleDarkMode}
+          checkedChildren="🌙"
+          unCheckedChildren="☀️"
+          style={{ background: isDarkMode ? "#1890ff" : "#f0f0f0" }}
+        />
+      </div>
     </header>
   );
 };
