@@ -2,7 +2,7 @@ import React from "react";
 import { Table, Button, Space } from "antd";
 
 interface TableProps {
-  data: any[];
+  clientes: any[];
   total: number;
   currentPage: number;
   pageSize: number;
@@ -13,7 +13,7 @@ interface TableProps {
 }
 
 const TableComponent: React.FC<TableProps> = ({
-  data,
+  clientes,
   total,
   currentPage,
   pageSize,
@@ -24,12 +24,37 @@ const TableComponent: React.FC<TableProps> = ({
 }) => {
   const enhancedColumns = [
     {
+      title: "Nombres",
+      dataIndex: "nombres",
+      key: "nombres",
+    },
+    {
+      title: "Apellidos",
+      dataIndex: "apellidos",
+      key: "apellidos",
+    },
+    {
+      title: "No. Documento",
+      dataIndex: "noDocumento",
+      key: "noDocumento",
+    },
+    {
+      title: "Telefono",
+      dataIndex: "telefono",
+      key: "telefono",
+    },
+
+    {
       title: "Actions",
       key: "actions",
       render: (record: any) => (
         <Space>
-          {onEdit && <Button type="link" onClick={() => onEdit(record)}>Edit</Button>}
-          {onDelete && <Button type="link" danger onClick={() => onDelete(record.id)}>Delete</Button>}
+          <Button type="primary" onClick={() => onEdit?.(record)}>
+            Editar
+          </Button>
+          <Button type="primary" danger onClick={() => onDelete?.(record.id)}>
+            Eliminar
+          </Button>
         </Space>
       ),
     },
@@ -38,7 +63,7 @@ const TableComponent: React.FC<TableProps> = ({
   return (
     <Table
       columns={enhancedColumns}
-      dataSource={data}
+      dataSource={clientes}
       loading={loading}
       rowKey="id"
       pagination={{

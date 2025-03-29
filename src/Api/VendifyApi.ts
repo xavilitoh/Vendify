@@ -8,8 +8,6 @@ import Cookies from "js-cookie";
 const apiKey = import.meta.env.VITE_APP_MY_API_KEY;
 const apiUrl = import.meta.env.VITE_APP_API_URL;
 
-console.log("API Key: ", apiKey);
-console.log("API URL: ", apiUrl);
 
 const api = axios.create({
   baseURL: `${apiUrl}/api`,

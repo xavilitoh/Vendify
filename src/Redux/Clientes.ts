@@ -43,12 +43,55 @@ export const fetchClientes = createAsyncThunk<
     const response = await api.get<{ result: Cliente[]; totalRecords: number }>(
       `/Clientes/${page}/${pageSize}`
     );
-    return { clientes: response.data.result || [], total: response.data.totalRecords };
+    return {
+      clientes: response.data.result || [],
+      total: response.data.totalRecords,
+    };
   } catch (error) {
     if (error instanceof AxiosError) {
       return rejectWithValue("Error al obtener los clientes");
     }
     return rejectWithValue("Error inesperado");
+  }
+});
+
+export const createCliente = createAsyncThunk<
+  Cliente,
+  Omit<
+    Cliente,
+    | "id"
+    | "fullName"
+    | "fechaCreacion"
+    | "fechaModificacion"
+    | "descripcion"
+    | "enable"
+    | "idEntidad"
+  >,
+  { rejectValue: string }
+>("clientes/createCliente", async (clienteData, { rejectWithValue }) => {
+  try {
+    console.log(clienteData);
+    const response = await api.post<Cliente, any>("/Clientes", clienteData);
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      return rejectWithValue("Error al crear el cliente");
+    }
+    return rejectWithValue("Error inesperado");
+  }
+});
+
+export const updateCliente = createAsyncThunk<
+  Cliente,
+  Cliente,
+  { rejectValue: string }
+>("clientes/updateCliente", async (cliente, { rejectWithValue }) => {
+  try {
+    console.log(cliente);
+    const response = await api.put(`/Clientes/?id=${cliente.id}`, cliente);
+    return response.data;
+  } catch (error) {
+    return rejectWithValue("Error al actualizar el cliente");
   }
 });
 
@@ -75,6 +118,17 @@ const clienteSlice = createSlice({
       })
       .addCase(fetchClientes.rejected, (state) => {
         state.loading = false;
+      })
+      .addCase(createCliente.fulfilled, (state, action) => {
+        state.clientes.push(action.payload);
+      })
+      .addCase(updateCliente.fulfilled, (state, action) => {
+        state.clientes = state.clientes.map((cliente) =>
+          cliente.id === action.payload.id ? action.payload : cliente
+        );
+      })
+      .addCase(updateCliente.rejected, (state) => {
+        console.log("Error updating client");
       });
   },
 });
