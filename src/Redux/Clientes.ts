@@ -88,7 +88,10 @@ export const updateCliente = createAsyncThunk<
 >("clientes/updateCliente", async (cliente, { rejectWithValue }) => {
   try {
     console.log(cliente);
-    const response = await api.put(`/Clientes/?id=${cliente.id}`, cliente);
+    const response = await api.put<Cliente, any>(
+      `/Clientes/?id=${cliente.id}`,
+      cliente
+    );
     return response.data;
   } catch (error) {
     return rejectWithValue("Error al actualizar el cliente");
@@ -127,7 +130,7 @@ const clienteSlice = createSlice({
           cliente.id === action.payload.id ? action.payload : cliente
         );
       })
-      .addCase(updateCliente.rejected, (state) => {
+      .addCase(updateCliente.rejected, () => {
         console.log("Error updating client");
       });
   },
