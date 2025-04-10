@@ -3,8 +3,8 @@ import { Table, Button, Switch } from "antd";
 import ProductDetailsDrawer from "./VerProducto";
 
 interface Product {
-  id: number;
-  nombre: string;
+  idProducto: number;
+  nombreProducto: string;
   idMarca: number;
   idCategoria: number;
   idSubcategoria: number;
@@ -39,7 +39,7 @@ const TableProducts: React.FC<TableProductsProps> = ({
     null
   );
   const [drawerVisible, setDrawerVisible] = useState(false);
-
+  console.log("Products:", products); // Log the products array
   const showDrawer = (productId: number) => {
     setSelectedProductId(productId);
     setDrawerVisible(true);
@@ -51,20 +51,21 @@ const TableProducts: React.FC<TableProductsProps> = ({
   };
 
   const columns = [
-    { title: "Nombre", dataIndex: "nombre", key: "nombre" },
+    { title: "Nombre", dataIndex: "nombreProducto", key: "nombre" },
     { title: "Stock", dataIndex: "stockMinimo", key: "stockMinimo" },
-    {
+    { title: "Unidad", dataIndex: "unidad", key: "Unidad" },
+    /*     {
       title: "Con Impuesto",
       dataIndex: "conImpuesto",
       key: "conImpuesto",
       render: (enable: boolean) => <Switch checked={enable} disabled />,
-    },
+    }, */
     {
       title: "Acciones",
       key: "actions",
       render: (_: any, record: Product) => (
         <>
-          <Button onClick={() => showDrawer(record.id)}>Ver</Button>
+          <Button onClick={() => showDrawer(record.idProducto)}>Ver</Button>
           <Button
             type="primary"
             style={{ marginLeft: "10px" }}

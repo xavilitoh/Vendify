@@ -31,6 +31,10 @@ const HeaderComponent: React.FC<HeaderProps> = ({
           textTransform: "uppercase",
           fontWeight: "800",
           color: `${isDarkMode ? "#fff" : "#282929"}`,
+          cursor: "pointer",
+        }}
+        onClick={() => {
+          window.location.href = "/"; // Redirect to home page
         }}
       >
         Vendify

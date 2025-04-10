@@ -1,6 +1,11 @@
-.Titulos{
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 16px;
-    margin-top: 10px;
+.Titulos {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.cards {
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  width: 50%;
 }

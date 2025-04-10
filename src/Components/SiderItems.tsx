@@ -20,6 +20,43 @@ import type { MenuProps } from "antd";
 
 export const ItemSider: MenuProps["items"] = [
   {
+    key: "11",
+    icon: React.createElement(DollarOutlined),
+    label: "Inventario",
+    children: [
+      {
+        key: 2,
+        icon: React.createElement(LaptopOutlined),
+        label: <Link to="productos"> Productos</Link>,
+      },
+      {
+        key: 3,
+        icon: React.createElement(WindowsOutlined),
+        label: <Link to="categorias"> Categorias</Link>,
+      },
+      {
+        key: 15,
+        icon: React.createElement(WindowsOutlined),
+        label: <Link to="subcategorias"> Sub-Categorias</Link>,
+      },
+      {
+        key: 4,
+        icon: React.createElement(SubnodeOutlined),
+        label: <Link to="marcas"> Marcas</Link>,
+      },
+      {
+        key: 5,
+        icon: React.createElement(EuroOutlined),
+        label: <Link to="precios"> Precios</Link>,
+      },
+      {
+        key: 6,
+        icon: React.createElement(NotificationOutlined),
+        label: <Link to="Unidades"> Unidades</Link>,
+      },
+    ],
+  },
+  {
     key: 1,
     icon: React.createElement(UserOutlined),
     label: <Link to="usuarios"> Usuarios</Link>,
@@ -62,40 +99,8 @@ export const ItemSider: MenuProps["items"] = [
     ],
   },
   {
-    key: "11",
-    icon: React.createElement(DollarOutlined),
-    label: "Inventario",
-    children: [
-      {
-        key: 2,
-        icon: React.createElement(LaptopOutlined),
-        label: <Link to="productos"> Productos</Link>,
-      },
-      {
-        key: 3,
-        icon: React.createElement(WindowsOutlined),
-        label: <Link to="categorias"> Categorias</Link>,
-      },
-      {
-        key: 15,
-        icon: React.createElement(WindowsOutlined),
-        label: <Link to="subcategorias"> Sub-Categorias</Link>,
-      },
-      {
-        key: 4,
-        icon: React.createElement(SubnodeOutlined),
-        label: <Link to="marcas"> Marcas</Link>,
-      },
-      {
-        key: 5,
-        icon: React.createElement(EuroOutlined),
-        label: <Link to="precios"> Precios</Link>,
-      },
-      {
-        key: 6,
-        icon: React.createElement(NotificationOutlined),
-        label: <Link to="Unidades"> Unidades</Link>,
-      },
-    ],
+    key: 25,
+    icon: React.createElement(NotificationOutlined),
+    label: <Link to="Ventas"> Ventas</Link>,
   },
 ];

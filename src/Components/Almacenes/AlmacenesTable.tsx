@@ -31,7 +31,7 @@ const TableAlmacenes: React.FC<TableAlmacenesProps> = ({
   return (
     <Table
       dataSource={almacenes}
-      columns={columns}
+      columns={columns ? columns : []}
       rowKey="id"
       style={{ marginTop: "20px" }}
       loading={loading}

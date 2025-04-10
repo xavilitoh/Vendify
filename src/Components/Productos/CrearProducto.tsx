@@ -23,7 +23,7 @@ import { selectUnidades } from "../../Redux/UnidadesSlice";
 import { AppDispatch } from "../../Redux/Store";
 import { Subcategoria } from "../../Redux/SubCategoriaSlice";
 import { selectCategoriesSelectList } from "../../Redux/CategorySlice";
-
+import { fetchInventario } from "../../Redux/Inventario";
 interface CreateProductModalProps {
   visible: boolean;
   onClose: () => void;
@@ -51,6 +51,7 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [foto, setImageData] = useState<string | null>(null); // This will hold the base64 image data
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   const [filteredSubcategories, setFilteredSubcategories] = useState<
     Subcategoria[]
@@ -136,6 +137,8 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
   };
 
   const handleSubmit = async () => {
+    setSubmitLoading(true); // Start loading
+
     try {
       let productValues = await form.validateFields([
         "idMarca",
@@ -163,11 +166,9 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
         foto,
       };
 
-      console.log(finalData);
-
       await dispatch(createProduct(finalData)).unwrap();
 
-      await dispatch(fetchProducts({ page: 1, pageSize: 10 }));
+      await dispatch(fetchInventario({ page: 1, pageSize: 10 }));
 
       form.resetFields();
       setProductData({});
@@ -184,6 +185,8 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
         console.error("Unexpected error:", error);
         message.error("Error al crear el producto");
       }
+    } finally {
+      setSubmitLoading(false);
     }
   };
 
@@ -338,7 +341,7 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
                 showUploadList={false}
                 beforeUpload={beforeUpload}
                 onChange={handleUploadChange}
-                maxCount={1} // Only allow 1 image to be uploaded
+                maxCount={1}
               >
                 {imageUrl ? (
                   <img src={imageUrl} alt="Image" style={{ width: "100%" }} />
@@ -435,8 +438,8 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({
           </Button>
         )}
         {currentStep === 2 && (
-          <Button type="primary" onClick={handleSubmit}>
-            Crear
+          <Button type="primary" onClick={handleSubmit} loading={submitLoading}>
+            {submitLoading ? "Creando..." : "Crear"}
           </Button>
         )}
       </div>

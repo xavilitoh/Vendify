@@ -24,7 +24,7 @@ import Compras from "./Components/Compras/Compras";
 import CrearCompra from "./Components/Compras/CreateCompra";
 import Subcategories from "./Components/SubCategorias/SubCategorias";
 import Clientes from "./Components/Clientes/Clientes";
-
+import Ventas from "./Components/Ventas/Ventas";
 
 const { Content } = Layout;
 
@@ -170,7 +170,7 @@ const App: React.FC = () => {
                   path="/"
                   element={
                     <ProtectedRoute>
-                      <Home />
+                      <Productos />
                     </ProtectedRoute>
                   }
                 />
@@ -270,11 +270,19 @@ const App: React.FC = () => {
                     </ProtectedRoute>
                   }
                 />
-                     <Route
+                <Route
                   path="/clientes"
                   element={
                     <ProtectedRoute>
                       <Clientes />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/ventas"
+                  element={
+                    <ProtectedRoute>
+                      <Ventas />
                     </ProtectedRoute>
                   }
                 />

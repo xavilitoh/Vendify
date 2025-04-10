@@ -18,12 +18,18 @@ interface Cliente {
   idEntidad: number;
 }
 
+interface ClienteSelect {
+  id: number;
+  value: string;
+}
+
 interface ClienteState {
   clientes: Cliente[];
   loading: boolean;
   total: number;
   page: number;
   pageSize: number;
+  selectList: ClienteSelect[];
 }
 
 const initialState: ClienteState = {
@@ -32,7 +38,24 @@ const initialState: ClienteState = {
   total: 0,
   page: 1,
   pageSize: 8,
+  selectList: [],
 };
+
+export const fetchClientesSelectList = createAsyncThunk<
+  ClienteSelect[],
+  void,
+  { rejectValue: string }
+>("clientes/fetchSelectList", async (_, { rejectWithValue }) => {
+  try {
+    const response = await api.get<Cliente[]>("/Clientes/select");
+    return response.data.map((c) => ({
+      id: c.id,
+      value: `${c.nombres} ${c.apellidos}`,
+    }));
+  } catch (error) {
+    return rejectWithValue("Error al cargar lista de clientes");
+  }
+});
 
 export const fetchClientes = createAsyncThunk<
   { clientes: Cliente[]; total: number },
@@ -132,6 +155,9 @@ const clienteSlice = createSlice({
       })
       .addCase(updateCliente.rejected, () => {
         console.log("Error updating client");
+      })
+      .addCase(fetchClientesSelectList.fulfilled, (state, action) => {
+        state.selectList = action.payload;
       });
   },
 });
@@ -142,5 +168,7 @@ export const selectLoading = (state: RootState) => state.clientes.loading;
 export const selectTotal = (state: RootState) => state.clientes.total;
 export const selectPage = (state: RootState) => state.clientes.page;
 export const selectPageSize = (state: RootState) => state.clientes.pageSize;
+export const selectClientesSelectList = (state: RootState) =>
+  state.clientes.selectList;
 
 export default clienteSlice.reducer;

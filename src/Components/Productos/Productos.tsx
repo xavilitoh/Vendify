@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Button } from "antd";
+import { Button, Divider } from "antd";
 import {
   fetchProducts,
-  selectProducts,
   selectLoading,
   selectTotal,
   selectPage,
@@ -28,10 +27,13 @@ import TableProducts from "./TablaProductos";
 import { AppDispatch } from "../../Redux/Store";
 import { Subcategoria } from "../../Redux/SubCategoriaSlice";
 import { PlusOutlined } from "@ant-design/icons";
+import { fetchInventario, selectInventario } from "../../Redux/Inventario";
+import Stats from "./Stats";
+import StatsPrueba from "./StatsPrueba";
 
 const Products: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
-  const products = useSelector(selectProducts);
+  const Items = useSelector(selectInventario);
   const loading = useSelector(selectLoading);
   const subcategories = useSelector(selectSubcategorias);
   const total = useSelector(selectTotal);
@@ -51,6 +53,7 @@ const Products: React.FC = () => {
     dispatch(fetchMarcas());
     dispatch(fetchPrices());
     dispatch(fetchUnidades());
+    dispatch(fetchInventario({ page, pageSize }));
   }, [dispatch, page, pageSize]);
 
   const handleCategoryChange = (categoryId: number) => {
@@ -74,6 +77,8 @@ const Products: React.FC = () => {
 
   return (
     <div>
+      <StatsPrueba />
+      <Divider />
       <div style={{ marginBottom: 16 }}>
         <Button
           type="primary"
@@ -85,7 +90,7 @@ const Products: React.FC = () => {
       </div>
 
       <TableProducts
-        products={products}
+        products={Items}
         total={total}
         currentPage={page}
         pageSize={pageSize}

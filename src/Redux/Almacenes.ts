@@ -59,7 +59,7 @@ export const fetchAlmacenes = createAsyncThunk<
   { rejectValue: string }
 >("almacenes/fetchAlmacenes", async (_, { rejectWithValue }) => {
   try {
-    const response = await api.get<Almacen[]>("/Almacenes");
+    const response = await api.get<Almacen[]>("/Almacenes/8/1");
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -79,6 +79,8 @@ export const createAlmacen = createAsyncThunk<
 
   try {
     const response = await api.post<Almacen, any>("/Almacenes", almacenData);
+
+    console.log(response.data);
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
