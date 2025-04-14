@@ -52,6 +52,8 @@ interface Price {
   idPrecio: number;
   monto: number;
   fraccion: number;
+  id:number;
+
 }
 
 interface ProductDetailsDrawerProps {
@@ -75,7 +77,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
     idUnidad: 0,
     idPrecio: 0,
     monto: 0,
-    fraccion: 0,
+    fraccion: 0
   });
 
   const unidades = useSelector(selectUnidades);
@@ -93,6 +95,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
       const response = await api.get<Product>(
         `https://vendify_api.wxbolab.com/api/Productos/${id}`
       );
+      console.log(response.data);
       setProduct(response.data);
       setPriceEntries(response.data.precios || []);
     } catch (error) {
@@ -171,7 +174,6 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
     }
   };
 
-  console.log(product);
 
   const columns = [
     {

@@ -21,7 +21,7 @@ const HeaderComponent: React.FC<HeaderProps> = ({
         alignItems: "center",
         justifyContent: "space-between",
         height: "7vh",
-        background: `${isDarkMode ? "#000000" : "#fff"}`,
+        background: `${isDarkMode ? "#202020" : "#fff"}`,
         padding: "0 40px",
       }}
     >

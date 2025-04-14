@@ -3,11 +3,16 @@ import { useSelector, useDispatch } from "react-redux";
 import { Button, message } from "antd";
 import {
   fetchAlmacenes,
-  createAlmacen,
-  updateAlmacen,
   selectAlmacenes,
   selectLoading,
-} from "../../Redux/Almacenes";
+  selectTotal,
+  selectPage,
+  selectPageSize,
+  setPage,
+  setPageSize,
+  createAlmacen,
+  updateAlmacen
+} from "../../Redux//Almacenes";
 import { AppDispatch } from "../../Redux/Store";
 import TableAlmacenes from "./AlmacenesTable";
 import CreateAlmacenModal from "./CreateAlmacen";
@@ -18,6 +23,9 @@ const Almacenes: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const almacenes = useSelector(selectAlmacenes) || [];
   const loading = useSelector(selectLoading);
+  const total = useSelector(selectTotal);
+  const page = useSelector(selectPage);
+  const pageSize = useSelector(selectPageSize);
 
   const [isCreateModalVisible, setCreateModalVisible] = useState(false);
   const [isEditModalVisible, setEditModalVisible] = useState(false);
@@ -25,8 +33,15 @@ const Almacenes: React.FC = () => {
 
   // Fetch almacenes on component mount
   useEffect(() => {
-    dispatch(fetchAlmacenes());
-  }, [dispatch]);
+    dispatch(fetchAlmacenes({ page, pageSize }));
+  }, [dispatch,page, pageSize]);
+
+  const handlePageChange = (newPage: number, newPageSize?: number) => {
+    dispatch(setPage(newPage));
+    if (newPageSize && newPageSize !== pageSize) {
+      dispatch(setPageSize(newPageSize));
+    }
+  };
 
   // Handle opening the edit modal
   const handleEdit = (almacen: any) => {
@@ -38,7 +53,7 @@ const Almacenes: React.FC = () => {
   const handleCreate = async (values: any) => {
     try {
       await dispatch(createAlmacen(values)).unwrap();
-      message.success("Almacén actualizado correctamente");
+      message.success("Almacén Creado correctamente");
       setCreateModalVisible(false);
     } catch (error: any) {
       message.error("Ocurrió un error al actualizar el almacén");
@@ -70,9 +85,13 @@ const Almacenes: React.FC = () => {
       </Button>
 
       <TableAlmacenes
-        almacenes={almacenes.result}
-        onEdit={handleEdit}
+        almacenes={almacenes}
+        total={total}
+        currentPage={page}
+        pageSize={pageSize}
         loading={loading}
+        onPageChange={handlePageChange}
+        onEdit={handleEdit}
       />
 
       <CreateAlmacenModal

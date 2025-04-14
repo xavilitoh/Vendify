@@ -40,27 +40,44 @@ export interface Almacen {
   entidad?: Entidad | null;
 }
 
+
+
+
+// Fetch Almacenes
 interface AlmacenesState {
   almacenes: Almacen[];
   loading: boolean;
   error: string | null;
+  total: number;
+  page: number;
+  pageSize: number;
 }
 
 const initialState: AlmacenesState = {
   almacenes: [],
   loading: false,
   error: null,
+  total: 0,
+  page: 1,
+  pageSize: 8,
 };
 
-// Fetch Almacenes
+// Fetch with pagination
 export const fetchAlmacenes = createAsyncThunk<
-  Almacen[],
-  void,
+  { almacenes: Almacen[]; total: number },
+  { page: number; pageSize: number },
   { rejectValue: string }
->("almacenes/fetchAlmacenes", async (_, { rejectWithValue }) => {
+>("almacenes/fetchAlmacenes", async ({ page, pageSize }, { rejectWithValue }) => {
+  console.log( "Almacenes");
   try {
-    const response = await api.get<Almacen[]>("/Almacenes/8/1");
-    return response.data;
+    const response = await api.get<{ result: Almacen[]; totalRecords: number }>(
+      `/Almacenes/${page}/${pageSize}`
+    );
+    console.log(response.data.result, "Almacenes");
+    return {
+      almacenes: response.data.result,
+      total: response.data.totalRecords,
+    };
   } catch (error) {
     if (error instanceof AxiosError) {
       return rejectWithValue("Error al obtener los almacenes");
@@ -68,6 +85,7 @@ export const fetchAlmacenes = createAsyncThunk<
     return rejectWithValue("Error inesperado");
   }
 });
+
 
 // Create Almacen
 export const createAlmacen = createAsyncThunk<
@@ -80,7 +98,7 @@ export const createAlmacen = createAsyncThunk<
   try {
     const response = await api.post<Almacen, any>("/Almacenes", almacenData);
 
-    console.log(response);
+    console.log(response,"Create");
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -119,28 +137,37 @@ export const updateAlmacen = createAsyncThunk<
 const almacenesSlice = createSlice({
   name: "almacenes",
   initialState,
-  reducers: {},
+  reducers: {
+    setPage: (state, action) => {
+      state.page = action.payload;
+    },
+    setPageSize: (state, action) => {
+      state.pageSize = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchAlmacenes.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchAlmacenes.fulfilled, (state, action) => {
-        state.almacenes = action.payload;
-        state.loading = false;
-      })
-      .addCase(fetchAlmacenes.rejected, (state, action) => {
-        state.loading = false;
-        state.error =
-          action.payload || "Error inesperado al obtener los almacenes";
-      })
+    builder
+    .addCase(fetchAlmacenes.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    })
+    .addCase(fetchAlmacenes.fulfilled, (state, action) => {
+      state.almacenes = action.payload.almacenes;
+      state.total = action.payload.total;
+      state.loading = false;
+    })
+    .addCase(fetchAlmacenes.rejected, (state, action) => {
+      state.loading = false;
+      state.error =
+        action.payload || "Error inesperado al obtener los almacenes";
+    })
       .addCase(createAlmacen.fulfilled, (state, action) => {
         state.almacenes.push(action.payload);
       })
       .addCase(createAlmacen.rejected, (state, action) => {
         state.error = action.payload || "Error inesperado al crear el almacén";
-      })
+      }) 
       .addCase(updateAlmacen.fulfilled, (state, action) => {
         const index = state.almacenes.findIndex(
           (almacen) => almacen.id === action.payload.id
@@ -156,8 +183,13 @@ const almacenesSlice = createSlice({
   },
 });
 
+export const { setPage, setPageSize } = almacenesSlice.actions;
+
 export const selectAlmacenes = (state: RootState) => state.almacenes.almacenes;
 export const selectLoading = (state: RootState) => state.almacenes.loading;
 export const selectError = (state: RootState) => state.almacenes.error;
+export const selectTotal = (state: RootState) => state.almacenes.total;
+export const selectPage = (state: RootState) => state.almacenes.page;
+export const selectPageSize = (state: RootState) => state.almacenes.pageSize;
 
 export default almacenesSlice.reducer;

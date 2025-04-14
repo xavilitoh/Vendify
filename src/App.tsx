@@ -36,7 +36,7 @@ const lightTheme = {
 
 const darkTheme = {
   colorPrimary: "#1890ff",
-  colorBgContainer: "#000000",
+  colorBgContainer: "#202020",
   borderRadius: 8,
 };
 
@@ -138,7 +138,7 @@ const App: React.FC = () => {
                 margin: 0,
                 minHeight: 280,
                 backgroundColor: isDarkMode
-                  ? "#000000"
+                  ? "#202020"
                   : lightTheme.colorBgContainer,
                 borderRadius: lightTheme.borderRadius,
                 height: "100vh",

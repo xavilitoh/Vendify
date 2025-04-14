@@ -3,15 +3,24 @@ import { Table, Button, Space } from "antd";
 
 interface TableAlmacenesProps {
   almacenes: any[];
-  onEdit: (almacen: any) => void;
+  total: number;
+  currentPage: number;
+  pageSize: number;
   loading?: boolean;
+  onPageChange: (page: number, pageSize?: number) => void;
+  onEdit: (almacen: any) => void;
 }
 
 const TableAlmacenes: React.FC<TableAlmacenesProps> = ({
   almacenes,
-  onEdit,
+  total,
+  currentPage,
+  pageSize,
   loading,
+  onPageChange,
+  onEdit,
 }) => {
+
   const columns = [
     { title: "Descripción", dataIndex: "descripcion", key: "descripcion" },
     { title: "Dirección", dataIndex: "direccion", key: "direccion" },
@@ -29,12 +38,22 @@ const TableAlmacenes: React.FC<TableAlmacenesProps> = ({
   ];
 
   return (
-    <Table
+<Table
       dataSource={almacenes}
-      columns={columns ? columns : []}
+      columns={columns}
       rowKey="id"
-      style={{ marginTop: "20px" }}
+      style={{ marginTop: 20 }}
       loading={loading}
+      pagination={{
+        current: currentPage,
+        pageSize: pageSize,
+        total: total,
+        onChange: (newPage, newPageSize) => {
+          onPageChange(newPage, newPageSize);
+        },
+        showSizeChanger: true,
+        showTotal: (total) => `Total: ${total}`,
+      }}
     />
   );
 };

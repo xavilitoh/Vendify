@@ -39,7 +39,6 @@ const TableProducts: React.FC<TableProductsProps> = ({
     null
   );
   const [drawerVisible, setDrawerVisible] = useState(false);
-  console.log("Products:", products); // Log the products array
   const showDrawer = (productId: number) => {
     setSelectedProductId(productId);
     setDrawerVisible(true);

@@ -28,7 +28,6 @@ import { AppDispatch } from "../../Redux/Store";
 import { Subcategoria } from "../../Redux/SubCategoriaSlice";
 import { PlusOutlined } from "@ant-design/icons";
 import { fetchInventario, selectInventario } from "../../Redux/Inventario";
-import Stats from "./Stats";
 import StatsPrueba from "./StatsPrueba";
 
 const Products: React.FC = () => {
