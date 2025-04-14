@@ -1,8 +1,6 @@
 // components/CreateSubcategoryModal.tsx
 import React from "react";
 import { Modal, Form, Input, Select, Button } from "antd";
-import { useSelector } from "react-redux";
-import { selectCategoriesSelectList } from "../../Redux/CategorySlice";
 
 interface CreateSubcategoryModalProps {
   visible: boolean;
@@ -12,15 +10,18 @@ interface CreateSubcategoryModalProps {
     idCategoria: number;
     idEntidad: number;
   }) => void;
+  categories: { id: number; value: string }[]; // Pass available categories
 }
 
 const CreateSubcategoryModal: React.FC<CreateSubcategoryModalProps> = ({
   visible,
   onCancel,
   onSubmit,
+  categories,
 }) => {
   const [form] = Form.useForm();
-  const categories = useSelector(selectCategoriesSelectList);
+
+  console.log("Categories", categories);
 
   const handleOk = () => {
     form

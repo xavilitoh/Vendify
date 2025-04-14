@@ -80,7 +80,7 @@ export const createAlmacen = createAsyncThunk<
   try {
     const response = await api.post<Almacen, any>("/Almacenes", almacenData);
 
-    console.log(response.data);
+    console.log(response);
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {

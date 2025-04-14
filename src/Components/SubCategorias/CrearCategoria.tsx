@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Modal, Form, Input, Select, Switch, Button } from "antd";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../Redux/Store";
+import { fetchCategoriesSelectList } from "../../Redux/CategorySlice";
 
 interface CreateSubcategoriaFormValues {
   descripcion: string;
@@ -11,7 +14,7 @@ interface CreateSubcategoriaModalProps {
   visible: boolean;
   onCancel: () => void;
   onSubmit: (values: CreateSubcategoriaFormValues) => void;
-  categories: { id: number; descripcion: string }[]; // Pass available categories
+  categories: { id: number; descripcion: string; enable: boolean }[]; // Pass available categories
 }
 
 const CreateSubcategoriaModal: React.FC<CreateSubcategoriaModalProps> = ({
@@ -21,6 +24,11 @@ const CreateSubcategoriaModal: React.FC<CreateSubcategoriaModalProps> = ({
   categories,
 }) => {
   const [form] = Form.useForm();
+  const dispatch: AppDispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchCategoriesSelectList());
+  }, [dispatch]);
 
   return (
     <Modal
@@ -50,7 +58,9 @@ const CreateSubcategoriaModal: React.FC<CreateSubcategoriaModalProps> = ({
         <Form.Item
           label="Descripción"
           name="descripcion"
-          rules={[{ required: true, message: "Por favor ingrese una descripción" }]}
+          rules={[
+            { required: true, message: "Por favor ingrese una descripción" },
+          ]}
         >
           <Input placeholder="Ingrese la descripción" />
         </Form.Item>

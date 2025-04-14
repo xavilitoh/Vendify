@@ -25,7 +25,7 @@ import CrearCompra from "./Components/Compras/CreateCompra";
 import Subcategories from "./Components/SubCategorias/SubCategorias";
 import Clientes from "./Components/Clientes/Clientes";
 import Ventas from "./Components/Ventas/Ventas";
-
+import CrearVentas from "./Components/Ventas/CrearVentas";
 const { Content } = Layout;
 
 const lightTheme = {
@@ -286,6 +286,7 @@ const App: React.FC = () => {
                     </ProtectedRoute>
                   }
                 />
+                <Route path="/crearVentas" element={<CrearVentas />} />
               </Routes>
             </Content>
           </Layout>

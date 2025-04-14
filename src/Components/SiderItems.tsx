@@ -99,8 +99,20 @@ export const ItemSider: MenuProps["items"] = [
     ],
   },
   {
-    key: 25,
-    icon: React.createElement(NotificationOutlined),
-    label: <Link to="Ventas"> Ventas</Link>,
+    key: "150",
+    icon: React.createElement(DollarOutlined),
+    label: "Ventas",
+    children: [
+      {
+        key: "10-5",
+        label: <Link to="ventas">Ver Ventas</Link>,
+        icon: React.createElement(EyeOutlined),
+      },
+      {
+        key: "10-8",
+        label: <Link to="crearventas">Crear Venta</Link>,
+        icon: React.createElement(PlusOutlined),
+      },
+    ],
   },
 ];

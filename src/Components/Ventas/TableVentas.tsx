@@ -8,7 +8,6 @@ interface Props {
   currentPage: number;
   pageSize: number;
   onPageChange: (page: number, pageSize?: number) => void;
-  onEdit: (venta: any) => void;
   loading: boolean;
 }
 
@@ -18,7 +17,6 @@ const TablaVentas: React.FC<Props> = ({
   currentPage,
   pageSize,
   onPageChange,
-  onEdit,
   loading,
 }) => {
   const columns: ColumnsType<any> = [
@@ -34,14 +32,6 @@ const TablaVentas: React.FC<Props> = ({
       title: "Fecha",
       dataIndex: "fechaCreacion",
       render: (text) => new Date(text).toLocaleDateString(),
-    },
-    {
-      title: "Acciones",
-      render: (_, record) => (
-        <Button onClick={() => onEdit(record)} type="link">
-          Editar
-        </Button>
-      ),
     },
   ];
 

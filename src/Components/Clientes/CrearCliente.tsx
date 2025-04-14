@@ -1,5 +1,6 @@
 import React from "react";
 import { Modal, Form, Input, Select } from "antd";
+import { formatNoDocumento, formatPhoneNumber } from "../Utils/Validators"; // Adjust the import path as necessary
 
 interface ClientProps {
   visible: boolean;
@@ -14,6 +15,16 @@ const ClientForm: React.FC<ClientProps> = ({
 }: ClientProps) => {
   const [form] = Form.useForm();
 
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formattedValue = formatPhoneNumber(e.target.value);
+    form.setFieldsValue({ telefono: formattedValue });
+  };
+
+  const handleNoDocumentoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formattedValue = formatNoDocumento(e.target.value);
+    form.setFieldsValue({ noDocumento: formattedValue });
+  };
+
   return (
     <Modal
       visible={visible}
@@ -26,6 +37,7 @@ const ClientForm: React.FC<ClientProps> = ({
           .validateFields()
           .then((values) => {
             onCreate(values);
+            form.resetFields();
           })
           .catch((info) => console.log("Validation Failed:", info));
       }}
@@ -33,21 +45,21 @@ const ClientForm: React.FC<ClientProps> = ({
       <Form form={form} layout="vertical">
         <Form.Item
           name="nombres"
-          label="nombres"
+          label="Nombre Completo"
           rules={[
             { required: true, message: "Un Cliente debe tener un nombre" },
           ]}
         >
-          <Input />
+          <Input placeholder="Jose Ureña" min={3} max={50} />
         </Form.Item>
         <Form.Item
           name="apellidos"
-          label="apellidos"
+          label="Apellidos"
           rules={[
             { required: true, message: "Un Cliente debe tener un apellido" },
           ]}
         >
-          <Input type="email" />
+          <Input placeholder="Hernadez Suarez" min={2} max={50}/>
         </Form.Item>
         <Form.Item
           name="noDocumento"
@@ -57,9 +69,16 @@ const ClientForm: React.FC<ClientProps> = ({
               required: true,
               message: "Un Cliente debe tener un No. Documento",
             },
+            {
+              message: "El documento debe estar en formato 000-000000-0",
+            },
           ]}
         >
-          <Input />
+          <Input
+            maxLength={13}
+            onChange={handleNoDocumentoChange}
+            placeholder="402-3616656-8"
+          />
         </Form.Item>
         <Form.Item
           name="telefono"
@@ -69,9 +88,17 @@ const ClientForm: React.FC<ClientProps> = ({
               required: true,
               message: "Un Cliente debe tener un telefono",
             },
+            {
+              pattern: /^\d{3}-\d{3}-\d{4}$/,
+              message: "El teléfono debe estar en formato 809-430-5241",
+            },
           ]}
         >
-          <Input />
+          <Input
+            onChange={handlePhoneChange}
+            maxLength={12}
+            placeholder="829-395-9249"
+          />
         </Form.Item>
         <Form.Item
           label="Sexo"

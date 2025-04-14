@@ -57,6 +57,8 @@ const Almacenes: React.FC = () => {
     }
   };
 
+  console.log(almacenes);
+
   return (
     <div>
       <Button
@@ -68,7 +70,7 @@ const Almacenes: React.FC = () => {
       </Button>
 
       <TableAlmacenes
-        almacenes={almacenes}
+        almacenes={almacenes.result}
         onEdit={handleEdit}
         loading={loading}
       />

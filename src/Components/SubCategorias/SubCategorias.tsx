@@ -9,6 +9,10 @@ import {
   fetchSubcategorias,
 } from "../../Redux/SubCategoriaSlice";
 import SubcategoriesTable from "./SubCategoriaTable";
+import {
+  fetchCategoriesSelectList,
+  selectCategoriesSelectList,
+} from "../../Redux/CategorySlice";
 
 interface CreateSubcategoryFormValues {
   descripcion: string;
@@ -22,8 +26,10 @@ const Subcategories: React.FC = () => {
   const { subcategorias, loading } = useSelector(
     (state: RootState) => state.subCategorias
   );
+  const categorias = useSelector(selectCategoriesSelectList);
 
   useEffect(() => {
+    dispatch(fetchCategoriesSelectList());
     dispatch(fetchSubcategorias());
   }, [dispatch]);
 
@@ -63,6 +69,7 @@ const Subcategories: React.FC = () => {
         visible={isModalVisible}
         onCancel={handleCancel}
         onSubmit={handleCreateSubcategory}
+        categories={categorias}
       />
       <SubcategoriesTable subcategories={subcategorias} loading={loading} />
     </div>

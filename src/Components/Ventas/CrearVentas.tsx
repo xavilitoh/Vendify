@@ -1,8 +1,8 @@
+// src/Views/Ventas/CrearVenta.tsx
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Form,
-  Input,
   Select,
   InputNumber,
   Button,
@@ -18,15 +18,14 @@ import {
 } from "../../Redux/Clientes";
 import { createVenta } from "../../Redux/Ventas";
 import moment from "moment";
+import { useNavigate } from "react-router-dom";
 
 const { Panel } = Collapse;
 const { Option } = Select;
 
-const CreateVentaModal: React.FC<{ visible: boolean; onClose: () => void }> = ({
-  visible,
-  onClose,
-}) => {
+const CrearVenta: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
+  const navigate = useNavigate();
   const [form] = Form.useForm();
   const [productForm] = Form.useForm();
   const [detalles, setDetalles] = useState<any[]>([]);
@@ -34,11 +33,9 @@ const CreateVentaModal: React.FC<{ visible: boolean; onClose: () => void }> = ({
   const clientes = useSelector(selectClientesSelectList);
 
   useEffect(() => {
-    if (visible) {
-      dispatch(fetchProductsSelectList());
-      dispatch(fetchClientesSelectList());
-    }
-  }, [dispatch, visible]);
+    dispatch(fetchProductsSelectList());
+    dispatch(fetchClientesSelectList());
+  }, [dispatch]);
 
   const handleAddProduct = (values: any) => {
     const selectedProduct = products.find(
@@ -84,7 +81,7 @@ const CreateVentaModal: React.FC<{ visible: boolean; onClose: () => void }> = ({
           message.success("Venta creada exitosamente");
           setDetalles([]);
           form.resetFields();
-          onClose();
+          navigate("/ventas");
         })
         .catch(() => {
           message.error("Error al crear la venta");
@@ -107,8 +104,6 @@ const CreateVentaModal: React.FC<{ visible: boolean; onClose: () => void }> = ({
       ),
     },
   ];
-
-  if (!visible) return null;
 
   return (
     <div style={{ display: "flex", gap: "20px", marginTop: 20 }}>
@@ -196,4 +191,4 @@ const CreateVentaModal: React.FC<{ visible: boolean; onClose: () => void }> = ({
   );
 };
 
-export default CreateVentaModal;
+export default CrearVenta;

@@ -82,6 +82,21 @@ export const fetchVentas = createAsyncThunk<
   }
 });
 
+export const createVenta = createAsyncThunk<
+  void,
+  { idCliente: number; detalles: DetalleVenta[] },
+  { rejectValue: string }
+>("ventas/createVenta", async (venta, { rejectWithValue }) => {
+  try {
+    await api.post("/Ventas", venta);
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      return rejectWithValue("Error al crear la venta");
+    }
+    return rejectWithValue("Error inesperado");
+  }
+});
+
 // Slice
 const ventasSlice = createSlice({
   name: "ventas",
@@ -105,6 +120,15 @@ const ventasSlice = createSlice({
         state.loading = false;
       })
       .addCase(fetchVentas.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(createVenta.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(createVenta.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(createVenta.rejected, (state) => {
         state.loading = false;
       });
   },

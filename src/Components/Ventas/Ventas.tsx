@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Button, Divider } from "antd";
+import React, { useEffect } from "react";
+import { Button } from "antd";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import {
   fetchVentas,
   selectVentas,
@@ -12,8 +13,6 @@ import {
   setPageSize,
 } from "../../Redux/Ventas";
 import TablaVentas from "./TableVentas";
-import CrearVentaModal from "./CrearVentas";
-import EditarVentaModal from "./EditarVenta";
 import { AppDispatch } from "../../Redux/Store";
 import { PlusOutlined } from "@ant-design/icons";
 
@@ -24,10 +23,6 @@ const Ventas: React.FC = () => {
   const total = useSelector(selectVentasTotal);
   const page = useSelector(selectVentasPage);
   const pageSize = useSelector(selectVentasPageSize);
-
-  const [isCreateModalVisible, setCreateModalVisible] = useState(false);
-  const [isEditModalVisible, setEditModalVisible] = useState(false);
-  const [ventaEditando, setVentaEditando] = useState<any>(null);
 
   useEffect(() => {
     dispatch(fetchVentas({ page, pageSize }));
@@ -40,21 +35,11 @@ const Ventas: React.FC = () => {
     }
   };
 
-  const handleEdit = (venta: any) => {
-    setVentaEditando(venta);
-    setEditModalVisible(true);
-  };
-
   return (
     <div>
-      <Divider>Ventas</Divider>
       <div style={{ marginBottom: 16 }}>
-        <Button
-          type="primary"
-          onClick={() => setCreateModalVisible(true)}
-          icon={<PlusOutlined />}
-        >
-          Crear Venta
+        <Button type="primary" icon={<PlusOutlined />}>
+          <Link to="/crearventas">Crear Venta</Link>
         </Button>
       </div>
 
@@ -64,25 +49,8 @@ const Ventas: React.FC = () => {
         currentPage={page}
         pageSize={pageSize}
         onPageChange={handlePageChange}
-        onEdit={handleEdit}
         loading={loading}
       />
-
-      <CrearVentaModal
-        visible={isCreateModalVisible}
-        onClose={() => setCreateModalVisible(false)}
-      />
-
-      {ventaEditando && (
-        <EditarVentaModal
-          visible={isEditModalVisible}
-          venta={ventaEditando}
-          onClose={() => {
-            setEditModalVisible(false);
-            setVentaEditando(null);
-          }}
-        />
-      )}
     </div>
   );
 };
