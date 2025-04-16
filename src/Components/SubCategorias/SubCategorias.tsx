@@ -13,14 +13,18 @@ import {
   fetchCategoriesSelectList,
   selectCategoriesSelectList,
 } from "../../Redux/CategorySlice";
+import Container from "../Utils/Container";
 
 interface CreateSubcategoryFormValues {
   descripcion: string;
   idCategoria: number;
   idEntidad: number;
 }
+interface SubcategoriesProps {
+  isDarkMode?: boolean; // Optional prop for dark mode
+}
 
-const Subcategories: React.FC = () => {
+const Subcategories: React.FC<SubcategoriesProps> = ({isDarkMode}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const dispatch: AppDispatch = useDispatch();
   const { subcategorias, loading } = useSelector(
@@ -60,19 +64,21 @@ const Subcategories: React.FC = () => {
   };
 
   return (
-    <div className="subcategories">
-      <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
-        Crear Subcategoría
-      </Button>
+    <Container isDarkMode={isDarkMode}>
+      <div className="subcategories">
+        <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
+          Crear Subcategoría
+        </Button>
 
-      <CreateSubcategoryModal
-        visible={isModalVisible}
-        onCancel={handleCancel}
-        onSubmit={handleCreateSubcategory}
-        categories={categorias}
-      />
-      <SubcategoriesTable subcategories={subcategorias} loading={loading} />
-    </div>
+        <CreateSubcategoryModal
+          visible={isModalVisible}
+          onCancel={handleCancel}
+          onSubmit={handleCreateSubcategory}
+          categories={categorias}
+        />
+        <SubcategoriesTable subcategories={subcategorias} loading={loading} />
+      </div>
+    </Container>
   );
 };
 

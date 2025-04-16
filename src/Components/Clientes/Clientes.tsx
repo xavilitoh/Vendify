@@ -18,8 +18,13 @@ import CreateClienteModal from "./CrearCliente";
 import TableClientes from "./TableCliente";
 import { AppDispatch } from "../../Redux/Store";
 import EditClientForm from "./EditComponet";
+import Container from "../Utils/Container";
 
-const Clientes: React.FC = () => {
+interface ClientesProps {
+  isDarkMode: boolean; // This prop is not used in the current component but can be used for styling or theming   
+}
+
+const Clientes: React.FC<ClientesProps> = ({isDarkMode}) => {
   const dispatch: AppDispatch = useDispatch();
   const clientes = useSelector(selectClientes);
   const loading = useSelector(selectLoading);
@@ -72,7 +77,7 @@ const Clientes: React.FC = () => {
   };
 
   return (
-    <div>
+    <Container isDarkMode={isDarkMode}>
       <div style={{ marginBottom: 16 }}>
         <Button
           type="primary"
@@ -105,7 +110,7 @@ const Clientes: React.FC = () => {
         onUpdate={handleUpdateClient}
         onCancel={() => setEditModalVisible(false)}
       />
-    </div>
+    </Container>
   );
 };
 

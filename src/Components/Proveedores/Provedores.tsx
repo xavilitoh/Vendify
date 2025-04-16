@@ -16,8 +16,13 @@ import EditProveedorModal from "./EditarProveedores";
 import TableProveedores from "./TableProveedores";
 import { AppDispatch } from "../../Redux/Store";
 import { Proveedor } from "../../Redux/Proveedores";
+import Container from "../Utils/Container";
 
-const Proveedores: React.FC = () => {
+interface ProveedoresProps {
+  isDarkMode: boolean;
+}
+
+const Proveedores: React.FC<ProveedoresProps> = ({isDarkMode}) => {
   const dispatch: AppDispatch = useDispatch();
   const proveedores = useSelector(selectProveedores);
   const loading = useSelector(selectProveedoresLoading);
@@ -48,7 +53,7 @@ const Proveedores: React.FC = () => {
   };
 
   return (
-    <div>
+    <Container isDarkMode={isDarkMode}>
       <Button type="primary" onClick={() => setCreateModalVisible(true)}>
         Crear Proveedor
       </Button>
@@ -77,7 +82,7 @@ const Proveedores: React.FC = () => {
           }}
         />
       )}
-    </div>
+    </Container>
   );
 };
 

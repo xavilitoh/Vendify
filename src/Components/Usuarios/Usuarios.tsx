@@ -7,6 +7,7 @@ import { AppDispatch, RootState } from "../../Redux/Store";
 import { createUser } from "../../Redux/UserSlice";
 import { fetchUsers } from "../../Redux/UserSlice";
 import UsersTable from "./UserTable";
+import Container from "../Utils/Container";
 
 interface CreateUserFormValues {
   email: string;
@@ -20,7 +21,11 @@ interface CreateUserFormValues {
   sexo: boolean;
 }
 
-const Usuarios: React.FC = () => {
+interface UsuariosProps {
+  isDarkMode: boolean;      
+}     
+
+const Usuarios: React.FC<UsuariosProps> = ({isDarkMode}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const dispatch: AppDispatch = useDispatch();
   const { users, loading } = useSelector((state: RootState) => state.user);
@@ -39,7 +44,6 @@ const Usuarios: React.FC = () => {
 
   const handleCreateUser = async (values: CreateUserFormValues) => {
     try {
-      console.log(values);
       const resultAction = await dispatch(createUser(values));
 
       if (createUser.fulfilled.match(resultAction)) {
@@ -54,7 +58,7 @@ const Usuarios: React.FC = () => {
     }
   };
   return (
-    <div className="usuarios">
+    <Container isDarkMode={isDarkMode}>
       <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
         Crear Usuario
       </Button>
@@ -65,7 +69,7 @@ const Usuarios: React.FC = () => {
         onSubmit={handleCreateUser}
       />
       <UsersTable users={users} loading={loading} />
-    </div>
+    </Container>
   );
 };
 

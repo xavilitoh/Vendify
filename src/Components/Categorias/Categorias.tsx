@@ -12,12 +12,17 @@ import {
   setPageSize,
 } from "../../Redux/CategorySlice";
 import CategoriesTable from "./CategoriasTable";
+import Container from "../Utils/Container";
 
 interface CreateCategoryFormValues {
   descripcion: string;
 }
 
-const Categories: React.FC = () => {
+interface CategoriesProps {
+  isDarkMode?: boolean; // Optional prop for dark mode
+}
+
+const Categories: React.FC<CategoriesProps> = ({isDarkMode}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const dispatch: AppDispatch = useDispatch();
   const { categorias, loading, page, pageSize, total } = useSelector(
@@ -61,7 +66,9 @@ const Categories: React.FC = () => {
   };
 
   return (
-    <div className="categories">
+    <Container isDarkMode={isDarkMode}>
+
+
       <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
         Crear Categoría
       </Button>
@@ -79,7 +86,7 @@ const Categories: React.FC = () => {
         page={page}
         onPageChange={handlePageChange}
       />
-    </div>
+        </Container>
   );
 };
 

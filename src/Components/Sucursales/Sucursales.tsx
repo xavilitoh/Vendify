@@ -13,8 +13,12 @@ import TableSucursales from "./TableSucursales";
 import CreateSucursalModal from "./CreateSucursales";
 import EditSucursalModal from "./EditarSucursales";
 import { PlusOutlined } from "@ant-design/icons";
+import Container from "../Utils/Container";
 
-const Sucursales: React.FC = () => {
+interface SucursalesProps {
+  isDarkMode?: boolean; // Optional prop for dark mode
+}
+const Sucursales: React.FC<SucursalesProps> = ({isDarkMode}) => {
   const dispatch: AppDispatch = useDispatch();
   const sucursales = useSelector(selectSucursales);
   const loading = useSelector(selectLoading);
@@ -44,7 +48,7 @@ const Sucursales: React.FC = () => {
   };
 
   return (
-    <div>
+    <Container isDarkMode={isDarkMode}>
       <div style={{ marginBottom: 16 }}>
         <Button
           type="primary"
@@ -78,7 +82,7 @@ const Sucursales: React.FC = () => {
           onUpdate={handleUpdate}
         />
       )}
-    </div>
+    </Container>
   );
 };
 

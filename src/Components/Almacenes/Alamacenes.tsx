@@ -18,8 +18,13 @@ import TableAlmacenes from "./AlmacenesTable";
 import CreateAlmacenModal from "./CreateAlmacen";
 import EditAlmacenModal from "./EditarAlmacen";
 import { PlusOutlined } from "@ant-design/icons";
+import Container from "../Utils/Container";
 
-const Almacenes: React.FC = () => {
+interface AlmacenesProps {
+  isDarkMode?: boolean; // Optional prop for dark mode  
+}
+
+const Almacenes: React.FC<AlmacenesProps> = ({isDarkMode}) => {
   const dispatch: AppDispatch = useDispatch();
   const almacenes = useSelector(selectAlmacenes) || [];
   const loading = useSelector(selectLoading);
@@ -75,7 +80,7 @@ const Almacenes: React.FC = () => {
   console.log(almacenes);
 
   return (
-    <div>
+    <Container isDarkMode={isDarkMode}>
       <Button
         type="primary"
         onClick={() => setCreateModalVisible(true)}
@@ -111,7 +116,7 @@ const Almacenes: React.FC = () => {
           onUpdate={handleUpdate}
         />
       )}
-    </div>
+    </Container>
   );
 };
 

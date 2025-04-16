@@ -15,8 +15,13 @@ import {
 import { AppDispatch } from "../../Redux/Store";
 import TableCompras from "./TableCompras";
 import { Link } from "react-router-dom";
+import Container from "../Utils/Container";
 
-const Compras: React.FC = () => {
+interface ComprasProps {
+  isDarkMode: boolean;  // This prop is not used in the current component but can be used for styling or theming
+}
+
+const Compras: React.FC<ComprasProps> = ({isDarkMode}) => {
   const dispatch: AppDispatch = useDispatch();
   const compras = useSelector(selectCompras);
   const loading = useSelector(selectLoading);
@@ -36,6 +41,7 @@ const Compras: React.FC = () => {
   };
 
   return (
+    <Container isDarkMode={isDarkMode}>
     <div style={{ overflow: "auto" }}>
       <div style={{ marginBottom: 16 }}>
         <Button type="primary" icon={<PlusOutlined />}>
@@ -52,6 +58,7 @@ const Compras: React.FC = () => {
         loading={loading}
       />
     </div>
+    </Container>
   );
 };
 

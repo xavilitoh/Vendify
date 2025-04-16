@@ -29,8 +29,13 @@ import { Subcategoria } from "../../Redux/SubCategoriaSlice";
 import { PlusOutlined } from "@ant-design/icons";
 import { fetchInventario, selectInventario } from "../../Redux/Inventario";
 import StatsPrueba from "./StatsPrueba";
+import Container from "../Utils/Container";
 
-const Products: React.FC = () => {
+
+interface ProductsProps {
+  isDarkMode?: boolean; // Optional prop for dark mode    
+}
+const Products: React.FC<ProductsProps> = ({isDarkMode}) => {
   const dispatch: AppDispatch = useDispatch();
   const Items = useSelector(selectInventario);
   const loading = useSelector(selectLoading);
@@ -75,48 +80,51 @@ const Products: React.FC = () => {
   };
 
   return (
-    <div>
-      <StatsPrueba />
-      <Divider />
-      <div style={{ marginBottom: 16 }}>
-        <Button
-          type="primary"
-          onClick={() => setCreateModalVisible(true)}
-          icon={<PlusOutlined />}
-        >
-          Crear Producto
-        </Button>
-      </div>
+    <>
+     <StatsPrueba />
+      <Container isDarkMode={isDarkMode}>
+     <Divider />
+     <div style={{ marginBottom: 16 }}>
+       <Button
+         type="primary"
+         onClick={() => setCreateModalVisible(true)}
+         icon={<PlusOutlined />}
+       >
+         Crear Producto
+       </Button>
+     </div>
 
-      <TableProducts
-        products={Items}
-        total={total}
-        currentPage={page}
-        pageSize={pageSize}
-        onPageChange={handlePageChange}
-        onEdit={handleEdit}
-        onCategoryChange={handleCategoryChange}
-        loading={loading}
-      />
+     <TableProducts
+       products={Items}
+       total={total}
+       currentPage={page}
+       pageSize={pageSize}
+       onPageChange={handlePageChange}
+       onEdit={handleEdit}
+       onCategoryChange={handleCategoryChange}
+       loading={loading}
+     />
 
-      <CreateProductModal
-        visible={isCreateModalVisible}
-        onClose={() => setCreateModalVisible(false)}
-        onCategoryChange={handleCategoryChange}
-        filteredSubcategories={filteredSubcategories}
-      />
+     <CreateProductModal
+       visible={isCreateModalVisible}
+       onClose={() => setCreateModalVisible(false)}
+       onCategoryChange={handleCategoryChange}
+       filteredSubcategories={filteredSubcategories}
+     />
 
-      {editingProduct && (
-        <EditProductModal
-          visible={isEditModalVisible}
-          product={editingProduct}
-          onClose={() => {
-            setEditModalVisible(false);
-            setEditingProduct(null);
-          }}
-        />
-      )}
-    </div>
+     {editingProduct && (
+       <EditProductModal
+         visible={isEditModalVisible}
+         product={editingProduct}
+         onClose={() => {
+           setEditModalVisible(false);
+           setEditingProduct(null);
+         }}
+       />
+     )}
+   </Container>
+    </>
+    
   );
 };
 

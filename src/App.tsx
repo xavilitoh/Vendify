@@ -5,7 +5,6 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import SiderComponent from "./Pages/Sider";
 import HeaderComponent from "./Pages/Header";
-import Home from "./Pages/Home";
 import Login from "./Pages/Login";
 import Productos from "./Components/Productos/Productos";
 import ProtectedRoute from "./Components/ProtectedRoute";
@@ -32,12 +31,14 @@ const lightTheme = {
   colorPrimary: "#1890ff",
   colorBgContainer: "#fff",
   borderRadius: 8,
+  secondaryColor: "#f5f5f5",
 };
 
 const darkTheme = {
   colorPrimary: "#1890ff",
   colorBgContainer: "#202020",
   borderRadius: 8,
+  secondaryColor: "#303030",
 };
 
 const App: React.FC = () => {
@@ -92,7 +93,7 @@ const App: React.FC = () => {
           onChange={toggleDarkMode}
           checkedChildren="🌙"
           unCheckedChildren="☀️"
-          style={{ background: isDarkMode ? "#1890ff" : "#f0f0f0" }}
+          style={{ background: isDarkMode ? darkTheme.colorBgContainer : lightTheme.colorBgContainer }}
         />
       ),
     },
@@ -121,25 +122,25 @@ const App: React.FC = () => {
             <SiderComponent
               items={ItemSider}
               backgroundColor={
-                isDarkMode ? "#303030" : lightTheme.colorBgContainer
+                isDarkMode ?  darkTheme.secondaryColor : lightTheme.colorBgContainer
               }
             />
           )}
           <Layout
             style={{
               padding: "0 24px 24px",
-              backgroundColor: isDarkMode ? "#303030" : "",
+              backgroundColor: isDarkMode ? darkTheme.secondaryColor : "",
             }}
           >
             {isAuthenticated && <BreadcrumbComponent />}
             <Content
               style={{
-                padding: 24,
+                padding: 10,
                 margin: 0,
                 minHeight: 280,
                 backgroundColor: isDarkMode
-                  ? "#202020"
-                  : lightTheme.colorBgContainer,
+                  ? darkTheme.secondaryColor
+                  : lightTheme.secondaryColor,
                 borderRadius: lightTheme.borderRadius,
                 height: "100vh",
                 overflowY: "auto",
@@ -170,7 +171,7 @@ const App: React.FC = () => {
                   path="/"
                   element={
                     <ProtectedRoute>
-                      <Productos />
+                      <Productos  isDarkMode={isDarkMode} />
                     </ProtectedRoute>
                   }
                 />
@@ -178,7 +179,7 @@ const App: React.FC = () => {
                   path="/usuarios"
                   element={
                     <ProtectedRoute>
-                      <Usuarios />
+                      <Usuarios isDarkMode={isDarkMode}  />
                     </ProtectedRoute>
                   }
                 />
@@ -186,7 +187,7 @@ const App: React.FC = () => {
                   path="/categorias"
                   element={
                     <ProtectedRoute>
-                      <Categorias />
+                      <Categorias isDarkMode={isDarkMode}/>
                     </ProtectedRoute>
                   }
                 />
@@ -194,7 +195,7 @@ const App: React.FC = () => {
                   path="/productos"
                   element={
                     <ProtectedRoute>
-                      <Productos />
+                      <Productos isDarkMode={isDarkMode}/>
                     </ProtectedRoute>
                   }
                 />
@@ -202,7 +203,7 @@ const App: React.FC = () => {
                   path="/marcas"
                   element={
                     <ProtectedRoute>
-                      <Marcas />
+                      <Marcas isDarkMode={isDarkMode}/>
                     </ProtectedRoute>
                   }
                 />
@@ -210,7 +211,7 @@ const App: React.FC = () => {
                   path="/precios"
                   element={
                     <ProtectedRoute>
-                      <Precios />
+                      <Precios isDarkMode={isDarkMode}/>
                     </ProtectedRoute>
                   }
                 />
@@ -218,7 +219,7 @@ const App: React.FC = () => {
                   path="/unidades"
                   element={
                     <ProtectedRoute>
-                      <Unidades />
+                      <Unidades isDarkMode={isDarkMode}/>
                     </ProtectedRoute>
                   }
                 />
@@ -226,7 +227,7 @@ const App: React.FC = () => {
                   path="/sucursales"
                   element={
                     <ProtectedRoute>
-                      <Sucursales />
+                      <Sucursales isDarkMode={isDarkMode}/>
                     </ProtectedRoute>
                   }
                 />
@@ -234,7 +235,7 @@ const App: React.FC = () => {
                   path="/almacenes"
                   element={
                     <ProtectedRoute>
-                      <Almacenes />
+                      <Almacenes isDarkMode={isDarkMode}/>
                     </ProtectedRoute>
                   }
                 />
@@ -242,7 +243,7 @@ const App: React.FC = () => {
                   path="/proveedores"
                   element={
                     <ProtectedRoute>
-                      <Proveedores />
+                      <Proveedores  isDarkMode={isDarkMode}/>
                     </ProtectedRoute>
                   }
                 />
@@ -250,7 +251,7 @@ const App: React.FC = () => {
                   path="/compras"
                   element={
                     <ProtectedRoute>
-                      <Compras />
+                      <Compras isDarkMode={isDarkMode}/>
                     </ProtectedRoute>
                   }
                 />
@@ -258,7 +259,7 @@ const App: React.FC = () => {
                   path="/crearcompra"
                   element={
                     <ProtectedRoute>
-                      <CrearCompra />
+                      <CrearCompra isDarkMode={isDarkMode}/>
                     </ProtectedRoute>
                   }
                 />
@@ -266,7 +267,7 @@ const App: React.FC = () => {
                   path="/subcategorias"
                   element={
                     <ProtectedRoute>
-                      <Subcategories />
+                      <Subcategories isDarkMode={isDarkMode} />
                     </ProtectedRoute>
                   }
                 />
@@ -274,7 +275,7 @@ const App: React.FC = () => {
                   path="/clientes"
                   element={
                     <ProtectedRoute>
-                      <Clientes />
+                      <Clientes isDarkMode={isDarkMode}/>
                     </ProtectedRoute>
                   }
                 />
@@ -282,7 +283,7 @@ const App: React.FC = () => {
                   path="/ventas"
                   element={
                     <ProtectedRoute>
-                      <Ventas />
+                      <Ventas isDarkMode={isDarkMode}/>
                     </ProtectedRoute>
                   }
                 />

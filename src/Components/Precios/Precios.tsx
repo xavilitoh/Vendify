@@ -6,12 +6,17 @@ import { AppDispatch, RootState } from "../../Redux/Store";
 import { fetchPrices, createPrice } from "../../Redux/Price";
 import CreatePriceModal from "./CrearPrecios";
 import PricesTable from "./PreciosTable";
+import Container from "../Utils/Container";
 
 interface CreatePriceFormValues {
   descripcion: string;
 }
 
-const Precios: React.FC = () => {
+interface PreciosProps {
+  isDarkMode?: boolean; // Optional prop for dark mode
+}
+
+const Precios: React.FC<PreciosProps> = ({isDarkMode}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const dispatch: AppDispatch = useDispatch();
   const { prices, loading } = useSelector((state: RootState) => state.precios);
@@ -39,7 +44,7 @@ const Precios: React.FC = () => {
   };
 
   return (
-    <div>
+    <Container isDarkMode={isDarkMode}>
       <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
         Crear Precio
       </Button>
@@ -49,7 +54,7 @@ const Precios: React.FC = () => {
         onSubmit={handleCreatePrice}
       />
       <PricesTable prices={prices} loading={loading} />
-    </div>
+    </Container>
   );
 };
 

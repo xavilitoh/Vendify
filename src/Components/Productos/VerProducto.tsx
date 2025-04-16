@@ -11,7 +11,6 @@ import {
   Select,
   InputNumber,
   Form,
-  Tag,
   Space,
   Popconfirm,
   Image,
@@ -77,7 +76,8 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
     idUnidad: 0,
     idPrecio: 0,
     monto: 0,
-    fraccion: 0
+    fraccion: 0,
+    id:0
   });
 
   const unidades = useSelector(selectUnidades);
@@ -107,6 +107,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
 
   const addPrice = async () => {
     if (!product) return;
+    
     try {
       const response = await api.post(
         `https://vendify_api.wxbolab.com/api/Productos/AddPrecio/${product.id}`,
@@ -119,7 +120,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
       );
       setPriceEntries((prev) => [...prev, response.data as Price]);
       setIsAddPriceModalVisible(false);
-      setNewPrice({ idUnidad: 0, idPrecio: 0, monto: 0, fraccion: 0 });
+      setNewPrice({ idUnidad: 0, idPrecio: 0, monto: 0, fraccion: 0,id:0 });
     } catch (error) {
       console.error("Error adding price:", error);
     }
@@ -129,6 +130,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
 
   const editPrice = async () => {
     if (!product || !editingPrice) return;
+    console.log(editingPrice,'Prueba');
     try {
       await api.put(
         `https://vendify_api.wxbolab.com/api/Productos/UpdatePrecio/${product.id}`,

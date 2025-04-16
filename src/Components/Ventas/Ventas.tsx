@@ -15,8 +15,13 @@ import {
 import TablaVentas from "./TableVentas";
 import { AppDispatch } from "../../Redux/Store";
 import { PlusOutlined } from "@ant-design/icons";
+import Container from "../Utils/Container";
 
-const Ventas: React.FC = () => {
+interface VentasProps { 
+  isDarkMode: boolean; // This prop is not used in the current component but can be used for styling or theming
+}
+
+const Ventas: React.FC<VentasProps> = ({isDarkMode}) => {
   const dispatch: AppDispatch = useDispatch();
   const ventas = useSelector(selectVentas);
   const loading = useSelector(selectVentasLoading);
@@ -36,7 +41,7 @@ const Ventas: React.FC = () => {
   };
 
   return (
-    <div>
+    <Container isDarkMode={isDarkMode}>
       <div style={{ marginBottom: 16 }}>
         <Button type="primary" icon={<PlusOutlined />}>
           <Link to="/crearventas">Crear Venta</Link>
@@ -51,7 +56,7 @@ const Ventas: React.FC = () => {
         onPageChange={handlePageChange}
         loading={loading}
       />
-    </div>
+    </Container>
   );
 };
 

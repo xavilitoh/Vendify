@@ -6,13 +6,18 @@ import { AppDispatch, RootState } from "../../Redux/Store";
 import { fetchUnidades, createUnidad } from "../../Redux/UnidadesSlice";
 import CreateUnidadModal from "./CrearUnidadModal";
 import UnidadesTable from "./UnidadesTable";
+import Container from "../Utils/Container";
 
 interface CreateUnidadFormValues {
   descripcion: string;
   abreviatura: string;
 }
 
-const Unidades: React.FC = () => {
+interface UnidadesProps {
+  isDarkMode?: boolean; // Optional prop for dark mode
+}
+
+const Unidades: React.FC<UnidadesProps> = ({isDarkMode}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const dispatch: AppDispatch = useDispatch();
 
@@ -51,22 +56,19 @@ const Unidades: React.FC = () => {
   };
 
   return (
-    <div>
-      {/* Button to trigger Create Modal */}
+    <Container isDarkMode={isDarkMode}>
       <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
         Crear Unidad
       </Button>
 
-      {/* Modal Component */}
       <CreateUnidadModal
         visible={isModalVisible}
         onCancel={handleCancel}
         onSubmit={handleCreateUnidad}
       />
 
-      {/* Table Component */}
       <UnidadesTable unidades={unidades} loading={loading} />
-    </div>
+    </Container>
   );
 };
 

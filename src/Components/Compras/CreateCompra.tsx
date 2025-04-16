@@ -24,6 +24,7 @@ import {
 } from "../../Redux/Proveedores";
 import { createCompra } from "../../Redux/Compras"; // Import createCompra
 import "./CrearCompra.css";
+import Container from "../Utils/Container";
 const { Option } = Select;
 const { Panel } = Collapse;
 
@@ -43,7 +44,11 @@ export interface Compra {
   entidad: any | null;
 }
 
-const CreateCompraView: React.FC = () => {
+interface CreateCompraViewprosps {
+  isDarkMode: boolean; // This prop is not used in the current component but can be used for styling or theming
+}
+
+const CreateCompraView: React.FC<CreateCompraViewprosps> = ({isDarkMode}) => {
   const dispatch: AppDispatch = useDispatch();
   const [form] = Form.useForm();
   const [productForm] = Form.useForm();
@@ -136,6 +141,7 @@ const CreateCompraView: React.FC = () => {
   ];
 
   return (
+    <Container isDarkMode={isDarkMode}>
     <div style={{ display: "flex", gap: "20px" }}>
       <div style={{ flex: "1 1 50%" }} className="card">
         <h3>Crear Compra</h3>
@@ -242,6 +248,7 @@ const CreateCompraView: React.FC = () => {
         </Collapse>
       </div>
     </div>
+    </Container>
   );
 };
 
