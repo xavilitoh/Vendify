@@ -126,15 +126,25 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
     }
   };
 
-  console.log(product);
 
   const editPrice = async () => {
     if (!product || !editingPrice) return;
     console.log(editingPrice,'Prueba');
     try {
+      const updatedPrice = {
+        idUnidad: editingPrice.idUnidad,
+        idPrecio: editingPrice.idPrecio,
+        monto: editingPrice.monto,
+        fraccion: editingPrice.fraccion,
+        idProducto: product.id,
+        id: editingPrice.precio?.id // fallback to editingPrice.id if precio.id doesn't exist
+      };
+      console.log(editingPrice);
+      console.log(product);
+
       await api.put(
         `https://vendify_api.wxbolab.com/api/Productos/UpdatePrecio/${product.id}`,
-        editingPrice
+        updatedPrice
       );
       setPriceEntries((prev) =>
         prev.map((price) =>
@@ -210,6 +220,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
           <Button
             type="primary"
             onClick={() => {
+              console.log(record);
               setEditingPrice(record);
               setIsEditPriceModalVisible(true);
             }}
