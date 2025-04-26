@@ -15,7 +15,7 @@ import {
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { createProduct, fetchProducts } from "../../Redux/Productos";
+import { createProduct } from "../../Redux/Productos";
 import { selectSubcategorias } from "../../Redux/SubCategoriaSlice";
 import { selectMarcas } from "../../Redux/MarcasSlice";
 import { selectPrices } from "../../Redux/Price";

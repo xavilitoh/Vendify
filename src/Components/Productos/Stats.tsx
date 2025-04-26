@@ -1,47 +1,51 @@
-import React from "react";
-import type { StatisticProps } from "antd";
-import { Col, Row, Statistic } from "antd";
-import CountUp from "react-countup";
+import React from 'react';
+import { LaptopOutlined,DollarOutlined,SubnodeOutlined } from '@ant-design/icons';
+import { Card, Col, Row, Statistic } from 'antd';
 
-const formatter: StatisticProps["formatter"] = (value) => (
-  <CountUp end={value as number} separator="," />
-);
 
-const Stats: React.FC = () => (
-  <Row gutter={16} style={{ marginBottom: 25 }}>
-    <Col span={6}>
-      <Statistic
-        title="Usuarios"
-        value={112893}
-        formatter={formatter}
-        precision={2}
-      />
-    </Col>
-    <Col span={6}>
-      <Statistic
-        title="Compras"
-        value={112893}
-        precision={2}
-        formatter={formatter}
-      />
-    </Col>
-    <Col span={6}>
-      <Statistic
-        title="Marcas"
-        value={112893}
-        precision={2}
-        formatter={formatter}
-      />
-    </Col>
-    <Col span={6}>
-      <Statistic
-        title="Categorias"
-        value={112893}
-        precision={2}
-        formatter={formatter}
-      />
-    </Col>
+interface CardProps {
+  isDarkMode: boolean ;  
+}
+
+
+const valores = [{
+  title: "Productos",
+  value: 605,
+  icon: <LaptopOutlined />,
+},
+{
+  title: "Marcas",
+  value: 50,
+  icon: <SubnodeOutlined />,
+},
+{
+  title: "Ventas",
+  value: 400,
+  icon: <DollarOutlined />,
+},
+{
+  title: "Compras",
+  value: 300,
+  icon: <DollarOutlined />,
+}]
+
+
+const App: React.FC<CardProps> = ( {isDarkMode})=> (
+
+  
+  <Row gutter={32}>
+    {valores.map((e)=>(
+      <Col span={6} key={e.title}>  
+        <Card style={{ backgroundColor: isDarkMode ? '#1f1f1f' : '#fff', borderRadius: '8px' }}>
+          <Statistic
+            title={<span style={{ fontSize: '18px', fontWeight: "700",color: isDarkMode ? '#fff' : 'black' }}>{e.title}</span>}
+            value={e.value}
+       
+            prefix={e.icon}
+          />
+        </Card>
+      </Col>))}
   </Row>
 );
 
-export default Stats;
+export default App;

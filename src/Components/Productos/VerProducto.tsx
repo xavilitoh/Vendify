@@ -25,6 +25,9 @@ import { AxiosHeaders } from "axios";
 
 import "./VerProducto.css";
 
+
+
+
 const { Option } = Select;
 const BaseUrl = import.meta.env.VITE_APP_API_URL;
 interface Product {
@@ -142,7 +145,6 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
         fraccion: editingPrice.fraccion,
         idProducto: product.id,
         id: editingPrice.id, // fallback to editingPrice.id if precio.id doesn't exist
-        descripcion:editingPrice.precio.descripcion
       };
 
      

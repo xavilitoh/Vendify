@@ -1,18 +1,16 @@
 import React, { useState } from "react";
-import { Table, Button, Switch } from "antd";
+import { Table, Button } from "antd";
 import ProductDetailsDrawer from "./VerProducto";
 
 interface Product {
   idProducto: number;
   nombreProducto: string;
-  idMarca: number;
-  idCategoria: number;
-  idSubcategoria: number;
-  idUnidad: number;
-  descripcion: string;
+  abrebiaturaUnidad: string;
+  idUnidadBase: number;
+  unidad: string;
+  stock: number;
   stockMinimo: number;
-  barCode: string;
-  conImpuesto: boolean;
+  codigo: string;
 }
 
 interface TableProductsProps {

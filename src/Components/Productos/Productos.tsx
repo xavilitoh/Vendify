@@ -28,7 +28,7 @@ import { AppDispatch } from "../../Redux/Store";
 import { Subcategoria } from "../../Redux/SubCategoriaSlice";
 import { PlusOutlined } from "@ant-design/icons";
 import { fetchInventario, selectInventario } from "../../Redux/Inventario";
-import StatsPrueba from "./StatsPrueba";
+import Stats from "./Stats";
 import Container from "../Utils/Container";
 
 
@@ -78,10 +78,12 @@ const Products: React.FC<ProductsProps> = ({isDarkMode}) => {
       dispatch(setPageSize(newPageSize));
     }
   };
+  
 
   return (
     <>
-     <StatsPrueba />
+     {/* <StatsPrueba /> */}
+     <Stats isDarkMode={isDarkMode ? true : false}/>
       <Container isDarkMode={isDarkMode}>
      <Divider />
      <div style={{ marginBottom: 16 }}>
