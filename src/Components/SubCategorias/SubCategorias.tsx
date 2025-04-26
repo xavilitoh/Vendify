@@ -45,6 +45,9 @@ const Subcategories: React.FC<SubcategoriesProps> = ({isDarkMode}) => {
     setIsModalVisible(false);
   };
 
+
+  console.log("Categorías", categorias);
+
   const handleCreateSubcategory = async (
     values: CreateSubcategoryFormValues
   ) => {
@@ -71,11 +74,15 @@ const Subcategories: React.FC<SubcategoriesProps> = ({isDarkMode}) => {
         </Button>
 
         <CreateSubcategoryModal
-          visible={isModalVisible}
-          onCancel={handleCancel}
-          onSubmit={handleCreateSubcategory}
-          categories={categorias}
-        />
+  visible={isModalVisible}
+  onCancel={handleCancel}
+  onSubmit={handleCreateSubcategory}
+  categories={categorias.map((cat) => ({
+    id: cat.id,
+    value: String(cat.value), // <-- force value to be string
+    enable: true, // <-- add enable
+  }))}
+ />
         <SubcategoriesTable subcategories={subcategorias} loading={loading} />
       </div>
     </Container>

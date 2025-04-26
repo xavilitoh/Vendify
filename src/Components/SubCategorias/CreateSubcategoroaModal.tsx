@@ -10,7 +10,7 @@ interface CreateSubcategoryModalProps {
     idCategoria: number;
     idEntidad: number;
   }) => void;
-  categories: { id: number; value: string }[]; // Pass available categories
+  categories: { id: number; value: string, enable:boolean }[]; // Pass available categories
 }
 
 const CreateSubcategoryModal: React.FC<CreateSubcategoryModalProps> = ({

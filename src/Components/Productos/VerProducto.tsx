@@ -179,7 +179,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
           data: priceToDelete,
         }
       );
-
+      console.log(priceToDelete)
       setPriceEntries((prev) =>
         prev.filter(
           (price) =>
@@ -189,6 +189,8 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
             )
         )
       );
+      console.log(priceEntries)
+
     } catch (error) {
       console.error("Error borrando el precio:", error);
     }
