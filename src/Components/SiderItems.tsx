@@ -115,4 +115,15 @@ export const ItemSider: MenuProps["items"] = [
       },
     ],
   },
+  {
+    key: "196",
+    icon: React.createElement(DollarOutlined),
+    label: <Link to="cajas"> Cajas</Link>,
+  },
+
+{
+  key: "143",
+  icon: React.createElement(DollarOutlined),
+  label: <Link to="cajasestacion"> Cajas Estacion</Link>,
+}
 ];

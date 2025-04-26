@@ -25,6 +25,8 @@ import Subcategories from "./Components/SubCategorias/SubCategorias";
 import Clientes from "./Components/Clientes/Clientes";
 import Ventas from "./Components/Ventas/Ventas";
 import CrearVentas from "./Components/Ventas/CrearVentas";
+import Cajas from "./Components/Cajas/Cajas";
+import CajaEstacionPage from "./Components/EstacionCajas/EstacionCajas";
 
 const { Content } = Layout;
 
@@ -289,7 +291,25 @@ const App: React.FC = () => {
                   }
                 />
                 <Route path="/crearVentas" element={<CrearVentas />} />
+
+                <Route
+                  path="/cajas"
+                  element={
+                    <ProtectedRoute>
+                      <Cajas isDarkMode={isDarkMode}/>
+                    </ProtectedRoute>
+                  }
+                />
+                    <Route
+                  path="/cajasestacion"
+                  element={
+                    <ProtectedRoute>
+                      <CajaEstacionPage isDarkMode={isDarkMode}/>
+                    </ProtectedRoute>
+                  }
+                />
               </Routes>
+              
             </Content>
           </Layout>
         </Layout>

@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Redux/Store";
 import { updatePrice } from "../../Redux/Price";
 import EditPriceModal from "./EditarPrecios";
+import { EditOutlined } from "@ant-design/icons";
 
 interface Price {
   id: number;
@@ -99,7 +100,7 @@ const PricesTable: React.FC<PricesTableProps> = ({ prices, loading }) => {
       title: "Acción",
       key: "action",
       render: (_: any, record: Price) => (
-        <Button type="primary" onClick={() => handleEditClick(record)}>
+        <Button type="primary" icon={<EditOutlined/>} onClick={() => handleEditClick(record)}>
           Editar
         </Button>
       ),

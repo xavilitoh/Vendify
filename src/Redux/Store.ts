@@ -14,6 +14,8 @@ import Compras from "./Compras";
 import Clientes from "./Clientes";
 import Inventario from "./Inventario";
 import Ventas from "./Ventas";
+import Cajas from "./Cajas.";
+import CajasEstacion from "./CajaEstacion";
 
 export const store = configureStore({
   reducer: {
@@ -31,6 +33,8 @@ export const store = configureStore({
     clientes: Clientes,
     inventario: Inventario,
     ventas: Ventas,
+    cajas: Cajas,
+    cajasEstacion:CajasEstacion
   },
 });
 
