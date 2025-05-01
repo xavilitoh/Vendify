@@ -1,8 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Button, Divider } from "antd";
+import { Button } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { fetchCajaEstaciones,selectCajaEstaciones, selectLoading, selectTotal, selectPage, selectPageSize, setPage, setPageSize } from "../../Redux/\CajaEstacion";
+import {
+  fetchCajaEstaciones,
+  selectCajaEstaciones,
+  selectLoading,
+  /*   selectTotal, */
+  selectPage,
+  selectPageSize,
+  /*   setPage,
+  setPageSize, */
+} from "../../Redux/CajaEstacion";
 import TableCajaEstacion from "./TableCajaEstacion";
 import CreateCajaEstacion from "./CreateCajaEstacion";
 import { AppDispatch } from "../../Redux/Store";
@@ -16,8 +25,8 @@ const CajaEstacionPage: React.FC<CajaEstacionProps> = ({ isDarkMode }) => {
   const dispatch: AppDispatch = useDispatch();
   const cajaEstaciones = useSelector(selectCajaEstaciones);
   const loading = useSelector(selectLoading);
-  const total = useSelector(selectTotal);
-  const page = useSelector(selectPage);
+  /*   const total = useSelector(selectTotal);
+   */ const page = useSelector(selectPage);
   const pageSize = useSelector(selectPageSize);
   const [isCreateModalVisible, setCreateModalVisible] = useState(false);
 
@@ -25,13 +34,14 @@ const CajaEstacionPage: React.FC<CajaEstacionProps> = ({ isDarkMode }) => {
     dispatch(fetchCajaEstaciones({ page, pageSize }));
   }, [dispatch, page, pageSize]);
 
-  const handlePageChange = (newPage: number, newPageSize?: number) => {
+  /*  const handlePageChange = (newPage: number, newPageSize?: number) => {
     dispatch(setPage(newPage));
     if (newPageSize && newPageSize !== pageSize) {
       dispatch(setPageSize(newPageSize));
     }
-  };
-  console.log("Caja Estaciones:", cajaEstaciones);
+  }; */
+
+  console.log("Caja Estaciones:", cajaEstaciones); // Debugging line
   return (
     <Container isDarkMode={isDarkMode}>
       <div style={{ marginBottom: 16 }}>
@@ -44,14 +54,7 @@ const CajaEstacionPage: React.FC<CajaEstacionProps> = ({ isDarkMode }) => {
         </Button>
       </div>
 
-      <TableCajaEstacion
-        cajaEstaciones={cajaEstaciones}
-        total={total}
-        currentPage={page}
-        pageSize={pageSize}
-        onPageChange={handlePageChange}
-        loading={loading}
-      />
+      <TableCajaEstacion cajaEstaciones={cajaEstaciones} loading={loading} />
 
       <CreateCajaEstacion
         visible={isCreateModalVisible}

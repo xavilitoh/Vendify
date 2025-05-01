@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { Table, Button } from "antd";
+import { Table, Button, Switch } from "antd";
 import { EditOutlined } from "@ant-design/icons";
+
 import EditCajaEstacion from "./EditarCajaEstacion";
 
 interface CajaEstacion {
   id: number;
   descripcion: string;
-  idSucursal: number;
-  estado: number;
+  enable: boolean;
 }
 
 interface TableCajaEstacionProps {
@@ -15,14 +15,20 @@ interface TableCajaEstacionProps {
   loading: boolean;
 }
 
-const TableCajaEstacion: React.FC<TableCajaEstacionProps> = ({ cajaEstaciones, loading }) => {
+const TableCajaEstacion: React.FC<TableCajaEstacionProps> = ({
+  cajaEstaciones,
+  loading,
+}) => {
   const [isEditModalVisible, setEditModalVisible] = useState(false);
-  const [selectedCajaEstacion, setSelectedCajaEstacion] = useState<CajaEstacion | null>(null);
+  const [selectedCajaEstacion, setSelectedCajaEstacion] =
+    useState<CajaEstacion | null>(null);
 
   const handleEdit = (cajaEstacion: CajaEstacion) => {
     setSelectedCajaEstacion(cajaEstacion);
     setEditModalVisible(true);
   };
+
+  console.log("Caja Estaciones:", cajaEstaciones); // Debugging line
 
   const columns = [
     {
@@ -30,16 +36,21 @@ const TableCajaEstacion: React.FC<TableCajaEstacionProps> = ({ cajaEstaciones, l
       dataIndex: "descripcion",
       key: "descripcion",
     },
-    {
+    /*     {
       title: "Sucursal",
-      dataIndex: "idSucursal",
+      dataIndex: "id",
       key: "idSucursal",
-    },
+      render: (id: number) => {
+        // Ensure sucursales is available and has data
+        const sucursal = sucursales.find((s) => s.id === id);
+        return sucursal ? sucursal.descripcion : "Sucursal no encontrada"; // Return descripcion or fallback message
+      },
+    }, */
     {
       title: "Estado",
-      dataIndex: "estado",
+      dataIndex: "enable",
       key: "estado",
-      render: (estado: number) => (estado === 1 ? "Activo" : "Inactivo"),
+      render: (enable: boolean) => <Switch checked={enable} disabled />,
     },
     {
       title: "Acciones",

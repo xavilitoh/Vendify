@@ -15,6 +15,8 @@ import {
   Popconfirm,
   Image,
   Descriptions,
+  Tabs,
+  Typography,
 } from "antd";
 import Barcode from "react-barcode";
 import api from "../../Api/VendifyApi";
@@ -25,11 +27,11 @@ import { AxiosHeaders } from "axios";
 
 import "./VerProducto.css";
 
-
-
-
 const { Option } = Select;
+const { TabPane } = Tabs;
 const BaseUrl = import.meta.env.VITE_APP_API_URL;
+const { Title } = Typography;
+
 interface Product {
   id: number;
   nombre: string;
@@ -54,8 +56,7 @@ interface Price {
   idPrecio: number;
   monto: number;
   fraccion: number;
-  id:number;
-
+  id: number;
 }
 
 interface ProductDetailsDrawerProps {
@@ -80,7 +81,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
     idPrecio: 0,
     monto: 0,
     fraccion: 0,
-    id:0
+    id: 0,
   });
 
   const unidades = useSelector(selectUnidades);
@@ -98,7 +99,6 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
       const response = await api.get<Product>(
         `https://vendify_api.wxbolab.com/api/Productos/${id}`
       );
-      console.log(response.data);
       setProduct(response.data);
       setPriceEntries(response.data.precios || []);
     } catch (error) {
@@ -110,7 +110,6 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
 
   const addPrice = async () => {
     if (!product) return;
-    
     try {
       const response = await api.post(
         `https://vendify_api.wxbolab.com/api/Productos/AddPrecio/${product.id}`,
@@ -123,20 +122,14 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
       );
       setPriceEntries((prev) => [...prev, response.data as Price]);
       setIsAddPriceModalVisible(false);
-      setNewPrice({ idUnidad: 0, idPrecio: 0, monto: 0, fraccion: 0,id:0 });
+      setNewPrice({ idUnidad: 0, idPrecio: 0, monto: 0, fraccion: 0, id: 0 });
     } catch (error) {
       console.error("Error adding price:", error);
     }
   };
 
-
   const editPrice = async () => {
-
-/*     console.log("Editing price:", editingPrice);
- */
     if (!product || !editingPrice) return;
-  
-
     try {
       const updatedPrice = {
         idUnidad: editingPrice.idUnidad,
@@ -144,16 +137,14 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
         monto: editingPrice.monto,
         fraccion: editingPrice.fraccion,
         idProducto: product.id,
-        id: editingPrice.id, // fallback to editingPrice.id if precio.id doesn't exist
+        id: editingPrice.id,
       };
-
-     
-      console.log("Editing price:", updatedPrice);
 
       await api.put(
         `https://vendify_api.wxbolab.com/api/Productos/UpdatePrecio/${updatedPrice.id}`,
         updatedPrice
       );
+
       setPriceEntries((prev) =>
         prev.map((price) =>
           price.idUnidad === editingPrice.idUnidad &&
@@ -179,7 +170,6 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
           data: priceToDelete,
         }
       );
-      console.log(priceToDelete)
       setPriceEntries((prev) =>
         prev.filter(
           (price) =>
@@ -189,13 +179,10 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
             )
         )
       );
-      console.log(priceEntries)
-
     } catch (error) {
-      console.error("Error borrando el precio:", error);
+      console.error("Error deleting price:", error);
     }
   };
-
 
   const columns = [
     {
@@ -230,7 +217,6 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
           <Button
             type="primary"
             onClick={() => {
-            
               setEditingPrice(record);
               setIsEditPriceModalVisible(true);
             }}
@@ -239,7 +225,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
           </Button>
           <Popconfirm
             title="¿Estás seguro de eliminar este precio?"
-            onConfirm={() => deletePrice(record)} // Execute delete function on confirm
+            onConfirm={() => deletePrice(record)}
             okText="Sí"
             cancelText="No"
           >
@@ -254,86 +240,81 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
 
   return (
     <Drawer
-      width={window.innerWidth * 0.5}
+      width={window.innerWidth * 0.6}
       placement="right"
-      closable={true}
+      closable
       onClose={onClose}
       open={visible}
+      keyboard={true} // <-- Esto permite cerrar con ESC
+      title={<Title>{product?.nombre}</Title>}
     >
+      <Row>
+        <Col span={12}>
+          <Image
+            width={200}
+            alt="Product Image"
+            placeholder={
+              <div
+                style={{
+                  width: 200,
+                  height: 200,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Spin />
+              </div>
+            }
+            src={product?.foto ? `${BaseUrl}/${product.foto}` : "default.jpg"}
+          />
+        </Col>
+        <Divider type="vertical" orientation="center" />
+        <Col span={6}>
+          <Barcode value={product?.barCode || "-"} />
+        </Col>
+      </Row>
       {loading ? (
         <Spin size="large" />
       ) : (
         product && (
-          <>
-            <Row>
-              <Col span={12}>
-                <Image
-                  width={200}
-                  alt="Product Image"
-                  placeholder={
-                    <div
-                      style={{
-                        width: 200,
-                        height: 200,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Spin />
-                    </div>
-                  }
-                  src={
-                    product.foto ? `${BaseUrl}/${product?.foto}` : "default.jpg"
-                  }
-                />
-              </Col>
-              <Divider
-                type={"vertical"}
-                variant={"solid"}
-                orientation={"center"}
+          <Tabs defaultActiveKey="1" type="card">
+            <TabPane tab="Información" key="1">
+              <Descriptions bordered column={1}>
+                <Descriptions.Item label="Marca">
+                  {product.marca}
+                </Descriptions.Item>
+                <Descriptions.Item label="Categoria">
+                  {product.categoria}
+                </Descriptions.Item>
+                <Descriptions.Item label="Subcategoria">
+                  {product.subcategoria}
+                </Descriptions.Item>
+                <Descriptions.Item label="Unidad">
+                  {product.unidad}
+                </Descriptions.Item>
+                <Descriptions.Item label="Stock Minimo">
+                  {product.stockMinimo}
+                </Descriptions.Item>
+              </Descriptions>
+            </TabPane>
+
+            <TabPane tab="Precios" key="2">
+              <Button
+                type="primary"
+                onClick={() => setIsAddPriceModalVisible(true)}
+                style={{ marginBottom: 16 }}
+              >
+                Agregar Precio
+              </Button>
+              <Table
+                columns={columns}
+                dataSource={priceEntries}
+                rowKey={(record) => `${record.idUnidad}-${record.idPrecio}`}
+                pagination={false}
               />
-              <Col span={6}>
-                <Barcode value={product.barCode || "-"} />
-              </Col>
-            </Row>
-            <Divider />
-
-            <Descriptions title={`${product.nombre}`} bordered column={1}>
-              <Descriptions.Item label="Marca">
-                {product.marca}
-              </Descriptions.Item>
-              <Descriptions.Item label="Categoria">
-                {product.categoria}
-              </Descriptions.Item>
-              <Descriptions.Item label="Subcategoria">
-                {product.subcategoria}
-              </Descriptions.Item>
-              <Descriptions.Item label="Unidad">
-                {product.unidad}
-              </Descriptions.Item>
-              <Descriptions.Item label="Stock Minimo">
-                {product.stockMinimo}
-              </Descriptions.Item>
-            </Descriptions>
-
-            <Divider />
-
-            <p style={{ fontSize: "25px", fontWeight: "600" }}>Precios</p>
-            <Button
-              type="primary"
-              onClick={() => setIsAddPriceModalVisible(true)}
-              style={{ marginBottom: "16px" }}
-            >
-              Agregar Precio
-            </Button>
-            <Table
-              columns={columns}
-              dataSource={priceEntries}
-              rowKey={(record) => `${record.idUnidad}-${record.idPrecio}`}
-              pagination={false}
-            />
-          </>
+            </TabPane>
+          </Tabs>
         )
       )}
 
@@ -345,12 +326,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
         onCancel={() => setIsAddPriceModalVisible(false)}
       >
         <Form layout="vertical">
-          <Form.Item
-            label="Unidad"
-            rules={[
-              { required: true, message: "Por favor selecciona una unidad" },
-            ]}
-          >
+          <Form.Item label="Unidad">
             <Select
               placeholder="Selecciona una unidad"
               onChange={(value) =>
@@ -365,12 +341,7 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
               ))}
             </Select>
           </Form.Item>
-          <Form.Item
-            label="Precio"
-            rules={[
-              { required: true, message: "Por favor selecciona un precio" },
-            ]}
-          >
+          <Form.Item label="Precio">
             <Select
               placeholder="Selecciona un precio"
               onChange={(value) =>
@@ -387,22 +358,22 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
           </Form.Item>
           <Form.Item label="Monto">
             <InputNumber
-              placeholder="Monto"
               style={{ width: "100%" }}
+              placeholder="Monto"
               onChange={(value) =>
                 setNewPrice((prev) => ({ ...prev, monto: value || 0 }))
               }
-              value={newPrice.monto || undefined}
+              value={newPrice.monto}
             />
           </Form.Item>
           <Form.Item label="Fracción">
             <InputNumber
-              placeholder="Fracción"
               style={{ width: "100%" }}
+              placeholder="Fracción"
               onChange={(value) =>
                 setNewPrice((prev) => ({ ...prev, fraccion: value || 0 }))
               }
-              value={newPrice.fraccion || undefined}
+              value={newPrice.fraccion}
             />
           </Form.Item>
         </Form>
@@ -418,8 +389,8 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
         <Form layout="vertical">
           <Form.Item label="Monto">
             <InputNumber
-              placeholder="Monto"
               style={{ width: "100%" }}
+              placeholder="Monto"
               value={editingPrice?.monto}
               onChange={(value) =>
                 setEditingPrice((prev) =>
@@ -430,8 +401,8 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
           </Form.Item>
           <Form.Item label="Fracción">
             <InputNumber
-              placeholder="Fracción"
               style={{ width: "100%" }}
+              placeholder="Fracción"
               value={editingPrice?.fraccion}
               onChange={(value) =>
                 setEditingPrice((prev) =>

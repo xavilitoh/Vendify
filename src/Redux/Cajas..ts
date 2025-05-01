@@ -96,6 +96,7 @@ export const createCaja = createAsyncThunk<
 >("cajas/createCaja", async (cajaData, { rejectWithValue }) => {
   try {
     const response = await api.post<Caja, any>("/Cajas", cajaData);
+    console.log(response.data, "Caja creada");
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -167,6 +168,7 @@ export const selectLoading = (state: RootState) => state.cajas.loading;
 export const selectTotal = (state: RootState) => state.cajas.total;
 export const selectPage = (state: RootState) => state.cajas.page;
 export const selectPageSize = (state: RootState) => state.cajas.pageSize;
-export const selectCajasSelectList = (state: RootState) => state.cajas.selectList;
+export const selectCajasSelectList = (state: RootState) =>
+  state.cajas.selectList;
 
 export default cajaSlice.reducer;

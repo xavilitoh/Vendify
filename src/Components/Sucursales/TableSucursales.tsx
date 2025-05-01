@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { Table, Button, Space, Switch } from "antd";
+import VerSucursal from "./VerSucursal";
 
 interface TableSucursalesProps {
   sucursales: any[];
@@ -12,7 +13,13 @@ const TableSucursales: React.FC<TableSucursalesProps> = ({
   onEdit,
   loading,
 }) => {
-  console.log(sucursales);
+  const [openDrawer, setOpenDrawer] = useState(false);
+  const [selectedSucursal, setSelectedSucursal] = useState<any>(null);
+
+  const handleView = (record: any) => {
+    setSelectedSucursal(record);
+    setOpenDrawer(true);
+  };
 
   const columns = [
     {
@@ -44,24 +51,32 @@ const TableSucursales: React.FC<TableSucursalesProps> = ({
           <Button type="primary" onClick={() => onEdit(record)}>
             Editar
           </Button>
+          <Button onClick={() => handleView(record)}>Ver</Button>
         </Space>
       ),
     },
   ];
 
   return (
-    <Table
-      dataSource={sucursales}
-      loading={loading}
-      pagination={{
-        pageSize: 8,
-        showSizeChanger: true,
-        pageSizeOptions: ["5", "10", "20"],
-        defaultCurrent: 1,
-      }}
-      columns={columns}
-      rowKey="id"
-    />
+    <React.Fragment>
+      <Table
+        dataSource={sucursales}
+        loading={loading}
+        pagination={{
+          pageSize: 8,
+          showSizeChanger: true,
+          pageSizeOptions: ["5", "10", "20"],
+          defaultCurrent: 1,
+        }}
+        columns={columns}
+        rowKey="id"
+      />
+      <VerSucursal
+        openDrawer={openDrawer}
+        setOpenDrawer={setOpenDrawer}
+        selectedSucursal={selectedSucursal}
+      ></VerSucursal>
+    </React.Fragment>
   );
 };
 

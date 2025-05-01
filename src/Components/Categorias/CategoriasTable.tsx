@@ -65,7 +65,7 @@ const CategoriesTable: React.FC<CategoriesTableProps> = ({
   total,
   pageSize,
   page,
-  onPageChange
+  onPageChange,
 }) => {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isSubcategoryModalVisible, setIsSubcategoryModalVisible] =
