@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Button, message, Drawer } from "antd";
+import { message, Drawer, Typography } from "antd";
 import {
   fetchAlmacenes,
   selectAlmacenes,
@@ -17,10 +17,9 @@ import { AppDispatch } from "../../Redux/Store";
 import TableAlmacenes from "../Almacenes/AlmacenesTable";
 import CreateAlmacenModal from "../Almacenes/CreateAlmacen";
 import EditAlmacenModal from "../Almacenes/EditarAlmacen";
-import { PlusOutlined } from "@ant-design/icons";
 import CustomTabs from "../Utils/CustomTabs";
 import Container from "../Utils/Container";
-
+const { Title } = Typography;
 interface VerSucursalProps {
   openDrawer: boolean;
   setOpenDrawer: (open: boolean) => void;
@@ -97,7 +96,7 @@ const VerSucursal: React.FC<VerSucursalProps> = ({
       key: "1",
       children: (
         <TableAlmacenes
-          almacenes={filteredAlmacenes} // Pass filtered almacenes
+          almacenes={filteredAlmacenes}
           total={total}
           currentPage={page}
           pageSize={pageSize}
@@ -108,7 +107,6 @@ const VerSucursal: React.FC<VerSucursalProps> = ({
       ),
     },
     { label: "Cajas", key: "2", children: <div>Contenido del Tab 2</div> },
-    { label: "Tab 3", key: "3", children: <div>Contenido del Tab 3</div> },
   ];
 
   return (
@@ -119,15 +117,10 @@ const VerSucursal: React.FC<VerSucursalProps> = ({
       open={openDrawer}
       width={800}
     >
+      <Title level={4} style={{ marginBottom: 16 }}>
+        {selectedSucursal?.descripcion}
+      </Title>
       <Container isDarkMode={isDarkMode}>
-        <Button
-          type="primary"
-          onClick={() => setCreateModalVisible(true)}
-          icon={<PlusOutlined />}
-        >
-          Crear Almacén
-        </Button>
-
         <CustomTabs items={tabs} />
 
         <CreateAlmacenModal

@@ -7,6 +7,7 @@ interface TableAlmacenesProps {
   currentPage: number;
   pageSize: number;
   loading?: boolean;
+  showEditButton?: boolean;
   onPageChange: (page: number, pageSize?: number) => void;
   onEdit: (almacen: any) => void;
 }
@@ -20,7 +21,6 @@ const TableAlmacenes: React.FC<TableAlmacenesProps> = ({
   onPageChange,
   onEdit,
 }) => {
-
   const columns = [
     { title: "Descripción", dataIndex: "descripcion", key: "descripcion" },
     { title: "Dirección", dataIndex: "direccion", key: "direccion" },
@@ -38,7 +38,7 @@ const TableAlmacenes: React.FC<TableAlmacenesProps> = ({
   ];
 
   return (
-<Table
+    <Table
       dataSource={almacenes}
       columns={columns}
       rowKey="id"

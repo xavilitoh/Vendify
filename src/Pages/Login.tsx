@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Form, Input, Button, Checkbox, message } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import  { AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import Cookies from "js-cookie";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./Login.css";
 import apiClient from "../Api/VendifyApi";
 
@@ -99,9 +99,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ isDarkMode }) => {
               <Checkbox>Recuerdame</Checkbox>
             </Form.Item>
 
-            <a className="login-form-forgot" href="">
+            <Link to="/forget-password" className="forget-password">
               Olvidaste la contraseña
-            </a>
+            </Link>
           </Form.Item>
 
           <Form.Item>

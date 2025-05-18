@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Modal, Form, InputNumber, Switch, Input, Select } from "antd";
+import { Modal, Form, InputNumber, Input, Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { createCaja } from "../../Redux/Cajas.";
 import { AppDispatch } from "../../Redux/Store";
@@ -98,7 +98,6 @@ const CreateCajaModal: React.FC<CreateCajaModalProps> = ({
         >
           <InputNumber style={{ width: "100%" }} />
         </Form.Item>
-
 
         <Form.Item
           name="montoApertura"
