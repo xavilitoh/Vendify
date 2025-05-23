@@ -6,12 +6,14 @@ interface TableSucursalesProps {
   sucursales: any[];
   onEdit: (sucursal: any) => void;
   loading?: boolean;
+  isDarkMode?: boolean; // Optional prop for dark mode
 }
 
 const TableSucursales: React.FC<TableSucursalesProps> = ({
   sucursales,
   onEdit,
   loading,
+  isDarkMode
 }) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [selectedSucursal, setSelectedSucursal] = useState<any>(null);
@@ -72,6 +74,7 @@ const TableSucursales: React.FC<TableSucursalesProps> = ({
         rowKey="id"
       />
       <VerSucursal
+        isDarkMode={isDarkMode}
         openDrawer={openDrawer}
         setOpenDrawer={setOpenDrawer}
         selectedSucursal={selectedSucursal}

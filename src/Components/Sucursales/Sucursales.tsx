@@ -63,6 +63,7 @@ const Sucursales: React.FC<SucursalesProps> = ({isDarkMode}) => {
         sucursales={sucursales || []}
         onEdit={handleEdit}
         loading={loading}
+        isDarkMode={isDarkMode} // Pass the isDarkMode prop to the table
       />
 
       <CreateSucursalModal

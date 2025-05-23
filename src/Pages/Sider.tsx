@@ -1,17 +1,47 @@
 // src/components/Sider.tsx
-import React from "react";
-import { Menu } from "antd";
-import { MenuProps, Layout } from "antd";
+import React, { useState, useEffect } from "react";
+import { Menu, Layout } from "antd";
+import { MenuProps } from "antd";
+import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
+
 const { Sider } = Layout;
 
 interface SiderProps {
   items: MenuProps["items"];
-  backgroundColor: string;
+  isDarkMode: boolean;
 }
 
-const SiderComponent: React.FC<SiderProps> = ({ items, backgroundColor }) => {
+const SiderComponent: React.FC<SiderProps> = ({ items, isDarkMode }) => {
+  const [collapsed, setCollapsed] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("sider-collapsed");
+    if (saved !== null) {
+      setCollapsed(saved === "true");
+    }
+  }, []);
+
+  const handleCollapse = (value: boolean) => {
+    setCollapsed(value);
+    localStorage.setItem("sider-collapsed", String(value));
+  };
+
   return (
-    <Sider style={{ width: 200, background: backgroundColor }}>
+    <Sider
+      collapsible
+      collapsed={collapsed}
+      onCollapse={handleCollapse}
+      style={{ background: isDarkMode ? "#001529" : "#fff" }}
+      trigger={
+        <div style={{ background: isDarkMode ? "#202020" : "#fff", textAlign: "center", padding: 8 }}>
+          {collapsed ? (
+            <MenuUnfoldOutlined style={{ color: isDarkMode ? "#fff" : "#202020" }} />
+          ) : (
+            <MenuFoldOutlined style={{ color: isDarkMode ? "#fff" : "#202020" }} />
+          )}
+        </div>
+      }
+    >
       <Menu
         mode="inline"
         defaultSelectedKeys={["1"]}

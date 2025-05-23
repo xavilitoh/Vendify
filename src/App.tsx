@@ -129,11 +129,7 @@ const App: React.FC = () => {
           {isAuthenticated && (
             <SiderComponent
               items={ItemSider}
-              backgroundColor={
-                isDarkMode
-                  ? darkTheme.secondaryColor
-                  : lightTheme.colorBgContainer
-              }
+              isDarkMode={isDarkMode}
             />
           )}
           <Layout
