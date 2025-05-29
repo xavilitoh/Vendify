@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../Api/VendifyApi";
 import { AxiosError } from "axios";
 import { RootState } from "./Store";
+import { Alert } from "antd";
 
 interface Cliente {
   id: number;
@@ -47,12 +48,15 @@ export const fetchClientesSelectList = createAsyncThunk<
   { rejectValue: string }
 >("clientes/fetchSelectList", async (_, { rejectWithValue }) => {
   try {
-    const response = await api.get<Cliente[]>("/Clientes/select");
+
+    const response = await api.get<Cliente[]>("/Clientes/SelectList");
+    console.log(response.data, "CLIENTES SELECT LIST");
     return response.data.map((c) => ({
       id: c.id,
       value: `${c.nombres} ${c.apellidos}`,
     }));
   } catch (error) {
+    console.error("Error al cargar lista de clientes", error);
     return rejectWithValue("Error al cargar lista de clientes");
   }
 });

@@ -139,6 +139,7 @@ const MarcasTable: React.FC<MarcasTableProps> = ({ marcas, loading }) => {
         dataSource={marcasList}
         rowKey={(record) => record.id.toString()}
         loading={loading}
+        scroll={{ x: 'max-content' }} 
         pagination={{
           pageSize: 8,
           showSizeChanger: true,

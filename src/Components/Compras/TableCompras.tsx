@@ -75,6 +75,7 @@ const TableCompras: React.FC<TableComprasProps> = ({
         columns={columns}
         dataSource={compras}
         rowKey={(record) => record.id.toString()}
+        scroll={{ x: 'max-content' }} 
         pagination={{
           current: currentPage,
           pageSize,

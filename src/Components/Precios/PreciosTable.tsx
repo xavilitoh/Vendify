@@ -114,6 +114,7 @@ const PricesTable: React.FC<PricesTableProps> = ({ prices, loading }) => {
         dataSource={pricesList}
         rowKey={(record) => record.id.toString()}
         loading={loading}
+        scroll={{ x: 'max-content' }} 
         pagination={{
           pageSize: 8,
         }}

@@ -66,6 +66,7 @@ const TableComponent: React.FC<TableProps> = ({
       dataSource={clientes}
       loading={loading}
       rowKey="id"
+            scroll={{ x: 'max-content' }} 
       pagination={{
         current: currentPage,
         pageSize,

@@ -36,6 +36,7 @@ interface CajaState {
   page: number;
   pageSize: number;
   selectList: SelectList[];
+  cajaActual: Caja | null;
 }
 
 const initialState: CajaState = {
@@ -45,9 +46,23 @@ const initialState: CajaState = {
   page: 1,
   pageSize: 8,
   selectList: [],
+  cajaActual: null,
 };
 
-// Fetch cajas
+export const checkCajaAbierta = createAsyncThunk(
+  "cajas/checkCajaAbierta",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get("/cajas/Actual");
+      return response.data || null;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Error verificando caja"
+      );
+    }
+  }
+);
+
 export const fetchCajas = createAsyncThunk<
   { cajas: Caja[]; total: number },
   { page: number; pageSize: number },
@@ -57,12 +72,10 @@ export const fetchCajas = createAsyncThunk<
     const response = await api.get<{ result: Caja[]; totalRecords: number }>(
       `/Cajas/${page}/${pageSize}`
     );
-    console.log(response.data.result, "Cajas");
-
-    const cajas = response.data.result || [];
-    const total = response.data.totalRecords;
-
-    return { cajas, total };
+    return {
+      cajas: response.data.result || [],
+      total: response.data.totalRecords,
+    };
   } catch (error) {
     if (error instanceof AxiosError) {
       return rejectWithValue("Error al obtener las cajas");
@@ -71,7 +84,6 @@ export const fetchCajas = createAsyncThunk<
   }
 });
 
-// Fetch cajas select list
 export const fetchCajasSelectList = createAsyncThunk<
   SelectList[],
   void,
@@ -88,38 +100,29 @@ export const fetchCajasSelectList = createAsyncThunk<
   }
 });
 
-// Create caja
-export const createCaja = createAsyncThunk<
+export const abrirCaja = createAsyncThunk<
   Caja,
-  Omit<Caja, "id">,
-  { rejectValue: string }
->("cajas/createCaja", async (cajaData, { rejectWithValue }) => {
+  { idCajaEstacion: number; montoApertura: number },
+  { rejectValue: { message: string } }
+>("cajas/abrirCaja", async ({ idCajaEstacion, montoApertura }, { rejectWithValue }) => {
   try {
-    const response = await api.post<Caja, any>("/Cajas", cajaData);
-    console.log(response.data, "Caja creada");
+    const response = await api.post("/Cajas/open", { idCajaEstacion, montoApertura });
     return response.data;
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      return rejectWithValue("Error al crear la caja");
-    }
-    return rejectWithValue("Error inesperado");
+  } catch (error: any) {
+    return rejectWithValue({ message: error.response?.data?.message || "Error inesperado al abrir la caja" });
   }
 });
 
-// Update caja
-export const updateCaja = createAsyncThunk<
+export const cerrarCaja = createAsyncThunk<
   Caja,
-  { id: number; cajaData: Partial<Caja> },
-  { rejectValue: string }
->("cajas/updateCaja", async ({ id, cajaData }, { rejectWithValue }) => {
+  { idCajaEstacion: number; montoCierre: number },
+  { rejectValue: { message: string } }
+>("cajas/cerrarCaja", async ({ idCajaEstacion, montoCierre }, { rejectWithValue }) => {
   try {
-    const response = await api.put<Caja, any>(`/Cajas/${id}`, cajaData);
+    const response = await api.post("/Cajas/close", { idCajaEstacion, montoCierre });
     return response.data;
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      return rejectWithValue("Error al actualizar la caja");
-    }
-    return rejectWithValue("Error inesperado");
+  } catch (error: any) {
+    return rejectWithValue({ message: error.response?.data?.message || "Error inesperado al cerrar la caja" });
   }
 });
 
@@ -156,19 +159,32 @@ const cajaSlice = createSlice({
       })
       .addCase(fetchCajasSelectList.rejected, (state) => {
         state.loading = false;
+      })
+      .addCase(abrirCaja.fulfilled, (state, action) => {
+        const updatedCaja = action.payload;
+        const index = state.cajas.findIndex(c => c.idCajaEstacion === updatedCaja.idCajaEstacion);
+        if (index !== -1) state.cajas[index] = updatedCaja;
+        else state.cajas.push(updatedCaja);
+      })
+      .addCase(cerrarCaja.fulfilled, (state, action) => {
+        const updatedCaja = action.payload;
+        const index = state.cajas.findIndex(c => c.idCajaEstacion === updatedCaja.idCajaEstacion);
+        if (index !== -1) state.cajas[index] = updatedCaja;
+      })
+      .addCase(checkCajaAbierta.fulfilled, (state, action) => {
+        state.cajaActual = action.payload;
       });
   },
 });
 
 export const { setPage, setPageSize } = cajaSlice.actions;
 
-// Selectors
 export const selectCajas = (state: RootState) => state.cajas.cajas;
 export const selectLoading = (state: RootState) => state.cajas.loading;
 export const selectTotal = (state: RootState) => state.cajas.total;
 export const selectPage = (state: RootState) => state.cajas.page;
 export const selectPageSize = (state: RootState) => state.cajas.pageSize;
-export const selectCajasSelectList = (state: RootState) =>
-  state.cajas.selectList;
+export const selectCajasSelectList = (state: RootState) => state.cajas.selectList;
+export const selectCajaActual = (state: RootState) => state.cajas.cajaActual;
 
 export default cajaSlice.reducer;

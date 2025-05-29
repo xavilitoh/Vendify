@@ -86,6 +86,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, loading }) => {
       dataSource={users || []}
       rowKey={(record) => record.email}
       loading={loading}
+            scroll={{ x: 'max-content' }} 
       pagination={{
         pageSize: 8,
         showSizeChanger: true,

@@ -80,6 +80,7 @@ const SubcategoriesTable: React.FC<SubcategoriesTableProps> = ({
         style={{ marginTop: "15px" }}
         columns={columns}
         dataSource={subcategories}
+        scroll={{ x: 'max-content' }} 
         loading={loading}
         rowKey={(record) => record.id}
         pagination={{ pageSize: 8 }}

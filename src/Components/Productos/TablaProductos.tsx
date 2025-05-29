@@ -82,6 +82,8 @@ const TableProducts: React.FC<TableProductsProps> = ({
         columns={columns}
         rowKey="id"
         loading={loading}
+          scroll={{ x: 'max-content' }} // 👈 makes it responsive horizontally
+
         pagination={{
           current: currentPage,
           pageSize,

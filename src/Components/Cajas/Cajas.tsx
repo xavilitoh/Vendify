@@ -1,71 +1,34 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { Button, Divider } from "antd";
-import {
-  fetchCajas,
-  selectLoading,
-  selectTotal,
-  selectPage,
-  selectPageSize,
-  setPage,
-  setPageSize,
-} from "../../Redux/Cajas.";
-import CreateCajaModal from "./CreateCaja";
-import TableCajas from "./TableCajas";
-import { AppDispatch } from "../../Redux/Store";
-import { PlusOutlined } from "@ant-design/icons";
-import Container from "../Utils/Container";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import AbrirCaja from "../EstacionCajas/AbrirCaja";
+import { checkCajaAbierta, selectCajaActual } from "../../Redux/Cajas.";
 
 interface CajasProps {
   isDarkMode?: boolean;
 }
 
-const Cajas: React.FC<CajasProps> = ({ isDarkMode }) => {
-  const dispatch: AppDispatch = useDispatch();
-  const loading = useSelector(selectLoading);
-  const total = useSelector(selectTotal);
-  const page = useSelector(selectPage);
-  const pageSize = useSelector(selectPageSize);
-  const [isCreateModalVisible, setCreateModalVisible] = useState(false);
+const Cajas: React.FC<CajasProps> = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const cajaActual = useSelector(selectCajaActual);
+  console.log(cajaActual, 'CAJA ACTUAL');
 
   useEffect(() => {
-    dispatch(fetchCajas({ page, pageSize }));
-  }, [dispatch, page, pageSize]);
+    dispatch(checkCajaAbierta());
+  }, [dispatch]);
 
-  const handlePageChange = (newPage: number, newPageSize?: number) => {
-    dispatch(setPage(newPage));
-    if (newPageSize && newPageSize !== pageSize) {
-      dispatch(setPageSize(newPageSize));
+  useEffect(() => {
+    if (cajaActual) {
+      navigate("/crearventas");
     }
-  };
+  }, [cajaActual, navigate]);
 
   return (
     <>
-      <Container isDarkMode={isDarkMode}>
-        <Divider />
-        <div style={{ marginBottom: 16 }}>
-          <Button
-            type="primary"
-            onClick={() => setCreateModalVisible(true)}
-            icon={<PlusOutlined />}
-          >
-            Crear Caja
-          </Button>
-        </div>
-
-        <TableCajas
-          loading={loading}
-          total={total}
-          currentPage={page}
-          pageSize={pageSize}
-          onPageChange={handlePageChange}
-        />
-
-        <CreateCajaModal
-          visible={isCreateModalVisible}
-          onClose={() => setCreateModalVisible(false)}
-        />
-      </Container>
+        
+      {!cajaActual ? <AbrirCaja visible={true} /> : <div>Caja Cerrada</div>} 
     </>
   );
 };

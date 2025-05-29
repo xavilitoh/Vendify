@@ -19,6 +19,8 @@ import {
 import { createVenta } from "../../Redux/Ventas";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
+import { Segmented } from "antd";
+
 
 const { Panel } = Collapse;
 const { Option } = Select;
@@ -36,6 +38,10 @@ const CrearVenta: React.FC = () => {
     dispatch(fetchProductsSelectList());
     dispatch(fetchClientesSelectList());
   }, [dispatch]);
+
+  console.log(clientes,'CLIENTES');  
+
+
 
   const handleAddProduct = (values: any) => {
     const selectedProduct = products.find(
@@ -107,6 +113,11 @@ const CrearVenta: React.FC = () => {
 
   return (
     <div style={{ display: "flex", gap: "20px", marginTop: 20 }}>
+        <Segmented
+            options={['Venta', 'Detalles de Caja', 'Cuadre']}
+            onChange={(value) => {
+              alert(value); // string
+            }}/>
       <div style={{ flex: "1 1 50%" }} className="card">
         <h3>Crear Venta</h3>
         <Form form={form} layout="vertical" onFinish={handleSubmit}>

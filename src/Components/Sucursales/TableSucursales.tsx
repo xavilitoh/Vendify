@@ -64,6 +64,7 @@ const TableSucursales: React.FC<TableSucursalesProps> = ({
       <Table
         dataSource={sucursales}
         loading={loading}
+        scroll={{ x: 'max-content' }} 
         pagination={{
           pageSize: 8,
           showSizeChanger: true,

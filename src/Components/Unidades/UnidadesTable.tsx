@@ -115,6 +115,7 @@ const UnidadesTable: React.FC<UnidadesTableProps> = ({ unidades, loading }) => {
         dataSource={unidadesList}
         rowKey={(record: Unidad) => record.id.toString()}
         loading={loading}
+        scroll={{ x: 'max-content' }} 
         pagination={{ pageSize: 8 }}
         style={{ marginTop: "10px" }}
       />

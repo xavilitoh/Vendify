@@ -22,11 +22,23 @@ import {
   fetchProveedoresSelectList,
   selectProveedoresSelectList,
 } from "../../Redux/Proveedores";
-import { createCompra } from "../../Redux/Compras"; // Import createCompra
+import { createCompra } from "../../Redux/Compras";
 import "./CrearCompra.css";
 import Container from "../Utils/Container";
+
 const { Option } = Select;
 const { Panel } = Collapse;
+
+// 👇 Responsive Hook
+const useWindowSize = () => {
+  const [size, setSize] = useState([window.innerWidth, window.innerHeight]);
+  useEffect(() => {
+    const handleResize = () => setSize([window.innerWidth, window.innerHeight]);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  return size;
+};
 
 export interface Compra {
   id: number;
@@ -45,15 +57,17 @@ export interface Compra {
 }
 
 interface CreateCompraViewprosps {
-  isDarkMode: boolean; // This prop is not used in the current component but can be used for styling or theming
+  isDarkMode: boolean;
 }
 
-const CreateCompraView: React.FC<CreateCompraViewprosps> = ({isDarkMode}) => {
+const CreateCompraView: React.FC<CreateCompraViewprosps> = ({ isDarkMode }) => {
   const dispatch: AppDispatch = useDispatch();
   const [form] = Form.useForm();
   const [productForm] = Form.useForm();
-  const products = useSelector((state: any) => state.productos.selectList);
   const [detalleDeCompras, setDetalleDeCompras] = useState<any[]>([]);
+  const [width] = useWindowSize();
+
+  const products = useSelector((state: any) => state.productos.selectList);
   const page = useSelector(selectPage);
   const pageSize = useSelector(selectPageSize);
   const proveedores = useSelector(selectProveedoresSelectList);
@@ -74,18 +88,17 @@ const CreateCompraView: React.FC<CreateCompraViewprosps> = ({isDarkMode}) => {
         descripcion: values.descripcion,
         factura: values.factura,
         idProveedor: values.idProveedor,
-        fechaFactura: moment(values.fechaFactura).toISOString(), // Ensure it's a string
+        fechaFactura: moment(values.fechaFactura).toISOString(),
         proveedor: null,
         detalleDeCompras,
         enable: true,
         idEntidad: 0,
         entidad: null,
-        total: detalleDeCompras.reduce((acc, item) => acc + item.total, 0), // Sum of product totals
-        fechaCreacion: moment().toISOString(), // Current timestamp
-        fechaModificacion: moment().toISOString(), // Current timestamp (or null if not modified yet)
+        total: detalleDeCompras.reduce((acc, item) => acc + item.total, 0),
+        fechaCreacion: moment().toISOString(),
+        fechaModificacion: moment().toISOString(),
       };
 
-      console.log(newCompra);
       dispatch(createCompra(newCompra))
         .unwrap()
         .then(() => {
@@ -103,8 +116,6 @@ const CreateCompraView: React.FC<CreateCompraViewprosps> = ({isDarkMode}) => {
     const selectedProduct = products.find(
       (p: any) => p.id === values.idProducto
     );
-
-    console.log(selectedProduct);
     const newProduct = {
       descripcion: selectedProduct?.value || "Producto desconocido",
       idProducto: values.idProducto,
@@ -117,9 +128,6 @@ const CreateCompraView: React.FC<CreateCompraViewprosps> = ({isDarkMode}) => {
   };
 
   const removeProduct = (id: number) => {
-    console.log("Removing product with id: ", id);
-    console.log(id);
-    console.log(detalleDeCompras);
     setDetalleDeCompras(detalleDeCompras.filter((item) => item.idProducto !== id));
   };
 
@@ -140,114 +148,110 @@ const CreateCompraView: React.FC<CreateCompraViewprosps> = ({isDarkMode}) => {
     },
   ];
 
+  const isMobile = width < 768;
+
   return (
     <Container isDarkMode={isDarkMode}>
-    <div style={{ display: "flex", gap: "20px" }}>
-      <div style={{ flex: "1 1 50%" }} className="card">
-        <h3>Crear Compra</h3>
-        <Form form={form} layout="vertical" onFinish={handleSubmit}>
-          <Form.Item
-            name="descripcion"
-            label="Descripción"
-            rules={[{ required: true, message: "Ingrese la descripción" }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="factura"
-            label="Factura"
-            rules={[
-              { required: true, message: "Ingrese el número de factura" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="fechaFactura"
-            label="Fecha Factura"
-            rules={[{ required: true, message: "Ingrese la descripción" }]}
-          >
-            <DatePicker />
-          </Form.Item>
-          <Form.Item
-            name="idProveedor"
-            label="Proveedor"
-            rules={[{ required: true, message: "Seleccione un proveedor" }]}
-          >
-            <Select placeholder="Seleccione un producto">
-              {proveedores.map((proveedor: any) => (
-                <Select.Option key={proveedor.id} value={proveedor.id}>
-                  {proveedor.value}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            style={{ width: "100%", marginTop: 16 }}
-          >
-            Crear Compra
-          </Button>
-        </Form>
-      </div>
-
-      <div style={{ flex: "1 1 50%" }} className="card">
-        <h3>Productos Agregados</h3>
-        <Table
-          dataSource={detalleDeCompras}
-          columns={productColumns}
-          rowKey="id"
-          pagination={false}
-        />
-
-        {/* Collapsible Add Product Form */}
-        <Collapse>
-          <Panel header="Agregar Producto" key="1">
-            <Form
-              form={productForm}
-              layout="vertical"
-              onFinish={handleAddProduct}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          gap: "20px",
+        }}
+      >
+        <div style={{ flex: 1 }} className="card">
+          <h3>Crear Compra</h3>
+          <Form form={form} layout="vertical" onFinish={handleSubmit}>
+            <Form.Item
+              name="descripcion"
+              label="Descripción"
+              rules={[{ required: true, message: "Ingrese la descripción" }]}
             >
-              <Form.Item
-                name="idProducto"
-                label="Producto"
-                rules={[{ required: true, message: "Seleccione un producto" }]}
-              >
-                <Select placeholder="Seleccione un producto">
-                  {products.map((product: any) => (
-                    <Option key={product.id} value={product.id}>
-                      {product.value}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-              <Form.Item
-                name="cantidad"
-                label="Cantidad"
-                rules={[{ required: true, message: "Ingrese la cantidad" }]}
-              >
-                <InputNumber min={1} />
-              </Form.Item>
-              <Form.Item
-                name="precio"
-                label="Precio"
-                rules={[{ required: true, message: "Ingrese el precio" }]}
-              >
-                <InputNumber min={0} />
-              </Form.Item>
-              <Button
-                type="primary"
-                htmlType="submit"
-                style={{ marginTop: "15px" }}
-              >
-                Agregar Producto
-              </Button>
-            </Form>
-          </Panel>
-        </Collapse>
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="factura"
+              label="Factura"
+              rules={[{ required: true, message: "Ingrese el número de factura" }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="fechaFactura"
+              label="Fecha Factura"
+              rules={[{ required: true, message: "Ingrese la fecha" }]}
+            >
+              <DatePicker style={{ width: "100%" }} />
+            </Form.Item>
+            <Form.Item
+              name="idProveedor"
+              label="Proveedor"
+              rules={[{ required: true, message: "Seleccione un proveedor" }]}
+            >
+              <Select placeholder="Seleccione un proveedor">
+                {proveedores.map((proveedor: any) => (
+                  <Option key={proveedor.id} value={proveedor.id}>
+                    {proveedor.value}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              style={{ width: "100%", marginTop: 16 }}
+            >
+              Crear Compra
+            </Button>
+          </Form>
+        </div>
+
+        <div style={{ flex: 1 }} className="card">
+          <h3>Productos Agregados</h3>
+          <Table
+            dataSource={detalleDeCompras}
+            columns={productColumns}
+            rowKey="idProducto"
+            pagination={false}
+          />
+          <Collapse>
+            <Panel header="Agregar Producto" key="1">
+              <Form form={productForm} layout="vertical" onFinish={handleAddProduct}>
+                <Form.Item
+                  name="idProducto"
+                  label="Producto"
+                  rules={[{ required: true, message: "Seleccione un producto" }]}
+                >
+                  <Select placeholder="Seleccione un producto">
+                    {products.map((product: any) => (
+                      <Option key={product.id} value={product.id}>
+                        {product.value}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+                <Form.Item
+                  name="cantidad"
+                  label="Cantidad"
+                  rules={[{ required: true, message: "Ingrese la cantidad" }]}
+                >
+                  <InputNumber min={1} style={{ width: "100%" }} />
+                </Form.Item>
+                <Form.Item
+                  name="precio"
+                  label="Precio"
+                  rules={[{ required: true, message: "Ingrese el precio" }]}
+                >
+                  <InputNumber min={0} style={{ width: "100%" }} />
+                </Form.Item>
+                <Button type="primary" htmlType="submit" style={{ marginTop: 15 }}>
+                  Agregar Producto
+                </Button>
+              </Form>
+            </Panel>
+          </Collapse>
+        </div>
       </div>
-    </div>
     </Container>
   );
 };

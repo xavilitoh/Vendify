@@ -28,7 +28,6 @@ const TableCajaEstacion: React.FC<TableCajaEstacionProps> = ({
     setEditModalVisible(true);
   };
 
-  console.log("Caja Estaciones:", cajaEstaciones); // Debugging line
 
   const columns = [
     {
@@ -73,6 +72,7 @@ const TableCajaEstacion: React.FC<TableCajaEstacionProps> = ({
         columns={columns}
         dataSource={cajaEstaciones}
         rowKey="id"
+        scroll={{ x: 'max-content' }} 
         loading={loading}
       />
 

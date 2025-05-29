@@ -39,6 +39,7 @@ const TableCajas: React.FC<TableCajasProps> = ({
       columns={columns}
       dataSource={cajas}
       loading={loading}
+            scroll={{ x: 'max-content' }} 
       pagination={{
         current: currentPage,
         pageSize: pageSize,

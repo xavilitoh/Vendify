@@ -44,6 +44,7 @@ const TableAlmacenes: React.FC<TableAlmacenesProps> = ({
       rowKey="id"
       style={{ marginTop: 20 }}
       loading={loading}
+            scroll={{ x: 'max-content' }} 
       pagination={{
         current: currentPage,
         pageSize: pageSize,

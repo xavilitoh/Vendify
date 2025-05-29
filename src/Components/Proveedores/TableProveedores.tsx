@@ -53,6 +53,7 @@ const TableProveedores: React.FC<TableProveedoresProps> = ({
       columns={columns}
       rowKey="id"
       loading={loading}
+      scroll={{ x: 'max-content' }} 
       pagination={{
         current: currentPage,
         pageSize,

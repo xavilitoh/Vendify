@@ -65,6 +65,16 @@ interface ProductDetailsDrawerProps {
   onClose: () => void;
 }
 
+const useWindowSize = () => {
+  const [size, setSize] = useState([window.innerWidth, window.innerHeight]);
+  useEffect(() => {
+    const handleResize = () => setSize([window.innerWidth, window.innerHeight]);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  return size;
+};
+
 const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
   productId,
   visible,
@@ -86,6 +96,8 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
 
   const unidades = useSelector(selectUnidades);
   const precios = useSelector(selectPrices);
+  const [width] = useWindowSize();
+  const drawerWidth = width < 768 ? "100%" : width * 0.6;
 
   useEffect(() => {
     if (productId && visible) {
@@ -240,12 +252,12 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
 
   return (
     <Drawer
-      width={window.innerWidth * 0.6}
+      width={drawerWidth}
       placement="right"
       closable
       onClose={onClose}
       open={visible}
-      keyboard={true} // <-- Esto permite cerrar con ESC
+      keyboard={true}
       title={<Title>{product?.nombre}</Title>}
     >
       <Row>
@@ -318,7 +330,6 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
         )
       )}
 
-      {/* Add Price Modal */}
       <Modal
         title="Agregar Precio"
         visible={isAddPriceModalVisible}
@@ -379,7 +390,6 @@ const ProductDetailsDrawer: React.FC<ProductDetailsDrawerProps> = ({
         </Form>
       </Modal>
 
-      {/* Edit Price Modal */}
       <Modal
         title="Editar Precio"
         visible={isEditPriceModalVisible}
