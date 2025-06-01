@@ -68,7 +68,7 @@ export const fetchVentas = createAsyncThunk<
 >("ventas/fetchVentas", async ({ page, pageSize }, { rejectWithValue }) => {
   try {
     const res = await api.get<{ result: Venta[]; totalRecords: number }>(
-      `/Ventas/${page}/${pageSize}`
+      `/api/Ventas/${page}/${pageSize}`
     );
     return {
       ventas: res.data.result,
@@ -88,7 +88,7 @@ export const createVenta = createAsyncThunk<
   { rejectValue: string }
 >("ventas/createVenta", async (venta, { rejectWithValue }) => {
   try {
-    await api.post("/Ventas", venta);
+    await api.post("/api/Ventas", venta);
   } catch (error) {
     if (error instanceof AxiosError) {
       return rejectWithValue("Error al crear la venta");

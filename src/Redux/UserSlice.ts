@@ -40,7 +40,7 @@ export const createUser = createAsyncThunk<
   try {
     console.log(userData);
     const response = await apiClient.post<CreateUserFormValues, any>(
-      "/Users/Create",
+      "/api/Users/Create",
       userData
     );
     return response.data;
@@ -65,7 +65,7 @@ export const fetchUsers = createAsyncThunk<
     const headers = new AxiosHeaders();
     headers.set("Authorization", `Bearer ${token}`); // Use the set method for AxiosHeaders
 
-    const response = await apiClient.get<CreateUserFormValues[]>("/Users", {
+    const response = await apiClient.get<CreateUserFormValues[]>("/api/Users", {
       headers, // Pass the AxiosHeaders instance
     });
 

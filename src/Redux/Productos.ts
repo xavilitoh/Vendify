@@ -59,7 +59,7 @@ export const fetchProducts = createAsyncThunk<
 >("products/fetchProducts", async ({ page, pageSize }, { rejectWithValue }) => {
   try {
     const response = await api.get<{ result: Product[]; totalRecords: number }>(
-      `/Productos/${page}/${pageSize}`
+      `/api/Productos/${page}/${pageSize}`
     );
 
     const products = response.data.result || [];
@@ -81,7 +81,7 @@ export const fetchProductsSelectList = createAsyncThunk<
   { rejectValue: string }
 >("products/fetchSelectList", async (_, { rejectWithValue }) => {
   try {
-    const response = await api.get<SelectList[]>("/Productos/SelectList");
+    const response = await api.get<SelectList[]>("/api/Productos/SelectList");
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -100,7 +100,7 @@ export const createProduct = createAsyncThunk<
 
     console.log(productData);
 
-    const response = await api.post<Product, any>("/Productos", productData);
+    const response = await api.post<Product, any>("/api/Productos", productData);
     console.log(response);
     return response.data;
   } catch (error) {
@@ -120,7 +120,7 @@ export const updateProduct = createAsyncThunk<
   async ({ id, productData }, { rejectWithValue }) => {
     try {
       const response = await api.put<Product, any>(
-        `/Productos/${id}`,
+        `/api/Productos/${id}`,
         productData
       );
       return response.data;

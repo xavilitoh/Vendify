@@ -42,7 +42,7 @@ export const fetchInventario = createAsyncThunk<
       const response = await api.get<{
         result: InventarioItem[];
         totalRecords: number;
-      }>(`/Inventario/${page}/${pageSize}`);
+      }>(`/api/Inventario/${page}/${pageSize}`);
 
       console.log("Response:", response.data); // Log the response data
 

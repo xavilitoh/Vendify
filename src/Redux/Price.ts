@@ -41,7 +41,7 @@ const initialState: PriceState = {
 export const fetchPrices = createAsyncThunk<Price[]>(
   "prices/fetchPrices",
   async () => {
-    const response = await api.get<Price[]>("/precios");
+    const response = await api.get<Price[]>("/api/precios");
     return response.data; // Ensure response is typed as Price[]
   }
 );
@@ -56,7 +56,7 @@ export const createPrice = createAsyncThunk<
   async (price, { rejectWithValue }) => {
     try {
       const response = await api.post<Price,any>(
-        "/precios",
+        "/api/precios",
         { descripcion: price.descripcion }
       );
       return response.data; // Ensure response is typed as Price
@@ -80,7 +80,7 @@ export const updatePrice = createAsyncThunk<
   async (price, { rejectWithValue }) => {
     try {
       const response = await api.put<Price,any>(
-        `/precios?id=${price.id}`,
+        `/api/precios?id=${price.id}`,
         price
       );
       return response.data; // Ensure response is typed as Price

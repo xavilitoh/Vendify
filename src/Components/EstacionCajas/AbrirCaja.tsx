@@ -1,5 +1,15 @@
 import React, { useEffect } from "react";
-import { Form, InputNumber, Select, Button, message, Typography, Card, Row, Col } from "antd";
+import {
+  Form,
+  InputNumber,
+  Select,
+  Button,
+  message,
+  Typography,
+  Card,
+  Row,
+  Col,
+} from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../Redux/Store";
 import {
@@ -7,6 +17,7 @@ import {
   selectCajaEstaciones,
 } from "../../Redux/CajaEstacion";
 import { abrirCaja } from "../../Redux/Cajas.";
+import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
@@ -15,6 +26,7 @@ interface AbrirCajaPantallaProps {
 }
 
 const AbrirCajaPantalla: React.FC<AbrirCajaPantallaProps> = ({ visible }) => {
+  const navigate = useNavigate();
   const [form] = Form.useForm();
   const dispatch: AppDispatch = useDispatch();
   const cajaEstaciones = useSelector(selectCajaEstaciones);
@@ -31,6 +43,7 @@ const AbrirCajaPantalla: React.FC<AbrirCajaPantallaProps> = ({ visible }) => {
       const { idCajaEstacion, montoApertura } = values;
       await dispatch(abrirCaja({ idCajaEstacion, montoApertura })).unwrap();
       message.success("Caja abierta exitosamente");
+      navigate("/crearventas");
       form.resetFields();
     } catch (error: any) {
       const apiMessage =
@@ -44,7 +57,11 @@ const AbrirCajaPantalla: React.FC<AbrirCajaPantallaProps> = ({ visible }) => {
   if (!visible) return null;
 
   return (
-    <Row justify="center" align="middle" style={{ minHeight: "50vh", background: "inherit" }}>
+    <Row
+      justify="center"
+      align="middle"
+      style={{ minHeight: "50vh", background: "inherit" }}
+    >
       <Col>
         <Card
           style={{
@@ -57,7 +74,9 @@ const AbrirCajaPantalla: React.FC<AbrirCajaPantallaProps> = ({ visible }) => {
           }}
         >
           <div style={{ textAlign: "center", marginBottom: 24 }}>
-            <Title level={2} style={{ margin: 0, color: "#2b3a55" }}>Abrir Caja</Title>
+            <Title level={2} style={{ margin: 0, color: "#2b3a55" }}>
+              Abrir Caja
+            </Title>
             <Text type="secondary">Complete los datos para abrir la caja</Text>
           </div>
           <Form
@@ -69,7 +88,9 @@ const AbrirCajaPantalla: React.FC<AbrirCajaPantallaProps> = ({ visible }) => {
             <Form.Item
               name="idCajaEstacion"
               label={<span style={{ fontWeight: 500 }}>Caja Estación</span>}
-              rules={[{ required: true, message: "Seleccione una caja estación" }]}
+              rules={[
+                { required: true, message: "Seleccione una caja estación" },
+              ]}
             >
               <Select placeholder="Seleccione una caja estación" size="large">
                 {cajaEstaciones.map((caja: any) => (
@@ -83,7 +104,9 @@ const AbrirCajaPantalla: React.FC<AbrirCajaPantallaProps> = ({ visible }) => {
             <Form.Item
               name="montoApertura"
               label={<span style={{ fontWeight: 500 }}>Monto de Apertura</span>}
-              rules={[{ required: true, message: "Ingrese el monto de apertura" }]}
+              rules={[
+                { required: true, message: "Ingrese el monto de apertura" },
+              ]}
             >
               <InputNumber
                 style={{ width: "100%" }}
@@ -106,11 +129,7 @@ const AbrirCajaPantalla: React.FC<AbrirCajaPantallaProps> = ({ visible }) => {
                 </Button>
               </Col>
               <Col>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  size="large"
-                >
+                <Button type="primary" htmlType="submit" size="large">
                   Abrir Caja
                 </Button>
               </Col>

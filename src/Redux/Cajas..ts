@@ -53,7 +53,8 @@ export const checkCajaAbierta = createAsyncThunk(
   "cajas/checkCajaAbierta",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get("/cajas/Actual");
+      const response = await api.get("/Actual");
+      console.log(response.data, "RESPONSE CHECK CAJA");
       return response.data || null;
     } catch (error: any) {
       return rejectWithValue(
@@ -70,7 +71,7 @@ export const fetchCajas = createAsyncThunk<
 >("cajas/fetchCajas", async ({ page, pageSize }, { rejectWithValue }) => {
   try {
     const response = await api.get<{ result: Caja[]; totalRecords: number }>(
-      `/Cajas/${page}/${pageSize}`
+      `/api/Cajas/${page}/${pageSize}`
     );
     return {
       cajas: response.data.result || [],
@@ -90,7 +91,7 @@ export const fetchCajasSelectList = createAsyncThunk<
   { rejectValue: string }
 >("cajas/fetchSelectList", async (_, { rejectWithValue }) => {
   try {
-    const response = await api.get<SelectList[]>("/Cajas/SelectList");
+    const response = await api.get<SelectList[]>("/api/Cajas/SelectList");
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -104,27 +105,45 @@ export const abrirCaja = createAsyncThunk<
   Caja,
   { idCajaEstacion: number; montoApertura: number },
   { rejectValue: { message: string } }
->("cajas/abrirCaja", async ({ idCajaEstacion, montoApertura }, { rejectWithValue }) => {
-  try {
-    const response = await api.post("/Cajas/open", { idCajaEstacion, montoApertura });
-    return response.data;
-  } catch (error: any) {
-    return rejectWithValue({ message: error.response?.data?.message || "Error inesperado al abrir la caja" });
+>(
+  "cajas/abrirCaja",
+  async ({ idCajaEstacion, montoApertura }, { rejectWithValue }) => {
+    try {
+      const response = await api.post("/api/Cajas/open", {
+        idCajaEstacion,
+        montoApertura,
+      });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue({
+        message:
+          error.response?.data?.message || "Error inesperado al abrir la caja",
+      });
+    }
   }
-});
+);
 
 export const cerrarCaja = createAsyncThunk<
   Caja,
   { idCajaEstacion: number; montoCierre: number },
   { rejectValue: { message: string } }
->("cajas/cerrarCaja", async ({ idCajaEstacion, montoCierre }, { rejectWithValue }) => {
-  try {
-    const response = await api.post("/Cajas/close", { idCajaEstacion, montoCierre });
-    return response.data;
-  } catch (error: any) {
-    return rejectWithValue({ message: error.response?.data?.message || "Error inesperado al cerrar la caja" });
+>(
+  "cajas/cerrarCaja",
+  async ({ idCajaEstacion, montoCierre }, { rejectWithValue }) => {
+    try {
+      const response = await api.post("/api/Cajas/close", {
+        idCajaEstacion,
+        montoCierre,
+      });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue({
+        message:
+          error.response?.data?.message || "Error inesperado al cerrar la caja",
+      });
+    }
   }
-});
+);
 
 const cajaSlice = createSlice({
   name: "cajas",
@@ -162,13 +181,17 @@ const cajaSlice = createSlice({
       })
       .addCase(abrirCaja.fulfilled, (state, action) => {
         const updatedCaja = action.payload;
-        const index = state.cajas.findIndex(c => c.idCajaEstacion === updatedCaja.idCajaEstacion);
+        const index = state.cajas.findIndex(
+          (c) => c.idCajaEstacion === updatedCaja.idCajaEstacion
+        );
         if (index !== -1) state.cajas[index] = updatedCaja;
         else state.cajas.push(updatedCaja);
       })
       .addCase(cerrarCaja.fulfilled, (state, action) => {
         const updatedCaja = action.payload;
-        const index = state.cajas.findIndex(c => c.idCajaEstacion === updatedCaja.idCajaEstacion);
+        const index = state.cajas.findIndex(
+          (c) => c.idCajaEstacion === updatedCaja.idCajaEstacion
+        );
         if (index !== -1) state.cajas[index] = updatedCaja;
       })
       .addCase(checkCajaAbierta.fulfilled, (state, action) => {
@@ -184,7 +207,8 @@ export const selectLoading = (state: RootState) => state.cajas.loading;
 export const selectTotal = (state: RootState) => state.cajas.total;
 export const selectPage = (state: RootState) => state.cajas.page;
 export const selectPageSize = (state: RootState) => state.cajas.pageSize;
-export const selectCajasSelectList = (state: RootState) => state.cajas.selectList;
+export const selectCajasSelectList = (state: RootState) =>
+  state.cajas.selectList;
 export const selectCajaActual = (state: RootState) => state.cajas.cajaActual;
 
 export default cajaSlice.reducer;

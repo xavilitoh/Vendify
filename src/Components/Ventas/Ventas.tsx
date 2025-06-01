@@ -52,7 +52,7 @@ const Ventas: React.FC<VentasProps> = ({isDarkMode}) => {
         ventas={ventas}
         total={total}
         currentPage={page}
-        pageSize={pageSize}
+        pageSize={pageSize} 
         onPageChange={handlePageChange}
         loading={loading}
       />

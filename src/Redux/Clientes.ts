@@ -49,7 +49,7 @@ export const fetchClientesSelectList = createAsyncThunk<
 >("clientes/fetchSelectList", async (_, { rejectWithValue }) => {
   try {
 
-    const response = await api.get<Cliente[]>("/Clientes/SelectList");
+    const response = await api.get<Cliente[]>("/api/Clientes/SelectList");
     console.log(response.data, "CLIENTES SELECT LIST");
     return response.data.map((c) => ({
       id: c.id,
@@ -68,7 +68,7 @@ export const fetchClientes = createAsyncThunk<
 >("clientes/fetchClientes", async ({ page, pageSize }, { rejectWithValue }) => {
   try {
     const response = await api.get<{ result: Cliente[]; totalRecords: number }>(
-      `/Clientes/${page}/${pageSize}`
+      `/api/Clientes/${page}/${pageSize}`
     );
     return {
       clientes: response.data.result || [],
@@ -97,8 +97,7 @@ export const createCliente = createAsyncThunk<
   { rejectValue: string }
 >("clientes/createCliente", async (clienteData, { rejectWithValue }) => {
   try {
-    console.log(clienteData);
-    const response = await api.post<Cliente, any>("/Clientes", clienteData);
+    const response = await api.post<Cliente, any>("/api/Clientes", clienteData);
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -116,7 +115,7 @@ export const updateCliente = createAsyncThunk<
   try {
     console.log(cliente);
     const response = await api.put<Cliente, any>(
-      `/Clientes/?id=${cliente.id}`,
+      `/api/Clientes/?id=${cliente.id}`,
       cliente
     );
     return response.data;

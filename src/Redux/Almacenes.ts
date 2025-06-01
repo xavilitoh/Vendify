@@ -71,7 +71,7 @@ export const fetchAlmacenes = createAsyncThunk<
   console.log( "Almacenes");
   try {
     const response = await api.get<{ result: Almacen[]; totalRecords: number }>(
-      `/Almacenes/${page}/${pageSize}`
+      `/api/Almacenes/${page}/${pageSize}`
     );
     console.log(response.data.result, "Almacenes");
     return {
@@ -96,9 +96,8 @@ export const createAlmacen = createAsyncThunk<
   console.log(almacenData);
 
   try {
-    const response = await api.post<Almacen, any>("/Almacenes", almacenData);
+    const response = await api.post<Almacen, any>("/api/Almacenes", almacenData);
 
-    console.log(response,"Create");
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -122,7 +121,7 @@ export const updateAlmacen = createAsyncThunk<
     console.log(id, almacenData);
     try {
       const response = await api.put<Almacen, any>(
-        `/Almacenes?id=${id}`,
+        `/api/Almacenes?id=${id}`,
         almacenData
       );
       return response.data;

@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import AbrirCaja from "../EstacionCajas/AbrirCaja";
 import { checkCajaAbierta, selectCajaActual } from "../../Redux/Cajas.";
+import { Spin } from "antd";
 
 interface CajasProps {
   isDarkMode?: boolean;
@@ -11,26 +12,34 @@ interface CajasProps {
 const Cajas: React.FC<CajasProps> = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const cajaActual = useSelector(selectCajaActual);
-  console.log(cajaActual, 'CAJA ACTUAL');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    dispatch(checkCajaAbierta());
+    const check = async () => {
+      await dispatch(checkCajaAbierta() as any); // Use 'as any' if using thunk
+      setLoading(false);
+    };
+    check();
   }, [dispatch]);
 
   useEffect(() => {
     if (cajaActual) {
-      navigate("/crearventas");
+      navigate("/ventas");
     }
   }, [cajaActual, navigate]);
 
-  return (
-    <>
-        
-      {!cajaActual ? <AbrirCaja visible={true} /> : <div>Caja Cerrada</div>} 
-    </>
-  );
+  if (loading) {
+    return (
+      <div
+        style={{ display: "flex", justifyContent: "center", paddingTop: "20%" }}
+      >
+        <Spin size="large" />
+      </div>
+    );
+  }
+
+  return !cajaActual ? <AbrirCaja visible={true} /> : <div>Caja Cerrada</div>;
 };
 
 export default Cajas;

@@ -44,7 +44,7 @@ export const fetchSucursales = createAsyncThunk<
   { rejectValue: string }
 >("sucursales/fetchSucursales", async (_, { rejectWithValue }) => {
   try {
-    const response = await api.get<Sucursal[]>("/Sucursales");
+    const response = await api.get<Sucursal[]>("/api/Sucursales");
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -61,7 +61,7 @@ export const createSucursal = createAsyncThunk<
   { rejectValue: string }
 >("sucursales/createSucursal", async (sucursalData, { rejectWithValue }) => {
   try {
-    const response = await api.post<Sucursal, any>("/Sucursales", sucursalData);
+    const response = await api.post<Sucursal, any>("/api/Sucursales", sucursalData);
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -80,7 +80,7 @@ export const updateSucursal = createAsyncThunk<
   "sucursales/updateSucursal",
   async ({ id, sucursalData }, { rejectWithValue }) => {
     try {
-      const response = await api.put(`/Sucursales?id=${id}`, sucursalData); // FIXED
+      const response = await api.put(`/api/Sucursales?id=${id}`, sucursalData); // FIXED
       return response.data;
     } catch (error: any) {
       console.error("Error updating sucursal:", error.response?.data);

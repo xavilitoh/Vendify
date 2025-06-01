@@ -41,7 +41,7 @@ export const fetchCompras = createAsyncThunk<
   { rejectValue: string }
 >("compras/fetchCompras", async ({}, { rejectWithValue }) => {
   try {
-    const response = await api.get<Compra[]>("Compras");
+    const response = await api.get<Compra[]>("/api/Compras");
     return {
       compras: response.data || [],
       total: 0,
@@ -61,7 +61,7 @@ export const createCompra = createAsyncThunk<
   { rejectValue: string }
 >("compras/createCompra", async (newCompra, { rejectWithValue }) => {
   try {
-    const response = await api.post<Compra, any>("Compras", newCompra);
+    const response = await api.post<Compra, any>("/api/Compras", newCompra);
     console.log(response);
     return response.data;
   } catch (error) {

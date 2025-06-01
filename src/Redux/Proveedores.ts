@@ -59,12 +59,11 @@ export const fetchProveedores = createAsyncThunk<
 >(
   "proveedores/fetchProveedores",
   async ({ page, pageSize }, { rejectWithValue }) => {
-    console.log("Fetching proveedores");
     try {
       const response = await api.get<{
         result: Proveedor[];
         totalRecords: number;
-      }>(`/Proveedores/${page}/${pageSize}`);
+      }>(`/api/Proveedores/${page}/${pageSize}`);
       const proveedores = response.data.result || [];
       const total = response.data.totalRecords;
       return { proveedores, total };
@@ -85,7 +84,7 @@ export const createProveedor = createAsyncThunk<
 >("proveedores/createProveedor", async (proveedorData, { rejectWithValue }) => {
   try {
     const response = await api.post<Proveedor, any>(
-      "/Proveedores",
+      "/api/Proveedores",
       proveedorData
     );
     return response.data;
@@ -109,7 +108,7 @@ export const updateProveedor = createAsyncThunk<
       console.log(proveedorData);
 
       const response = await api.put<Proveedor, any>(
-        `/Proveedores/?id=${id}`,
+        `/api/Proveedores/?id=${id}`,
         proveedorData
       );
       console.log(response);
@@ -129,7 +128,7 @@ export const fetchProveedoresSelectList = createAsyncThunk<
   { rejectValue: string }
 >("proveedores/fetchSelectList", async (_, { rejectWithValue }) => {
   try {
-    const response = await api.get<SelectList[]>("/Proveedores/SelectList");
+    const response = await api.get<SelectList[]>("/api/Proveedores/SelectList");
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {

@@ -43,7 +43,7 @@ export const fetchUnidades = createAsyncThunk<
   { rejectValue: string }
 >("unidades/fetchUnidades", async (_, { rejectWithValue }) => {
   try {
-    const response = await api.get<Unidad[]>("/Unidades");
+    const response = await api.get<Unidad[]>("/api/Unidades");
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError && error.response) {
@@ -60,7 +60,7 @@ export const createUnidad = createAsyncThunk<
   { rejectValue: string }
 >("unidades/createUnidad", async (unidadData, { rejectWithValue }) => {
   try {
-    const response = await api.post<Unidad,any>("/Unidades", unidadData);
+    const response = await api.post<Unidad,any>("/api/Unidades", unidadData);
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError && error.response) {
@@ -78,7 +78,7 @@ export const updateUnidad = createAsyncThunk<
 >("unidades/updateUnidad", async (unidadData, { rejectWithValue }) => {
   try {
     const response = await api.put<Unidad,any>(
-      `/Unidades?id=${unidadData.id}`,
+      `/api/Unidades?id=${unidadData.id}`,
       unidadData
     );
     return response.data;

@@ -43,7 +43,7 @@ const initialState: MarcaState = {
 export const fetchMarcas = createAsyncThunk<Marca[]>(
   "marcas/fetchMarcas",
   async () => {
-    const response = await api.get<Marca[]>("/Marcas");
+    const response = await api.get<Marca[]>("/api/Marcas");
     return response.data;
   }
 );
@@ -57,7 +57,7 @@ export const createMarca = createAsyncThunk<
   "marcas/createMarca",
   async (marca, { rejectWithValue }) => {
     try {
-      const response = await api.post<Marca,any>("/Marcas", marca);
+      const response = await api.post<Marca,any>("/api/Marcas", marca);
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
@@ -90,7 +90,7 @@ export const updateMarca = createAsyncThunk<
   async (payload, { rejectWithValue }) => {
     try {
       const response = await api.put<Marca,any>(
-        `/Marcas?id=${payload.id}`,
+        `/api/Marcas?id=${payload.id}`,
         payload
       );
       return response.data;

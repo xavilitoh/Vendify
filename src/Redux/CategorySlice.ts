@@ -47,7 +47,7 @@ export const fetchCategories = createAsyncThunk<
       const response = await api.get<{
         result: categorias[];
         totalRecords: number;
-      }>(`/Categorias/${page}/${pageSize}`);
+      }>(`/api/Categorias/${page}/${pageSize}`);
       return {
         categorias: response.data.result,
         total: response.data.totalRecords,
@@ -64,7 +64,7 @@ export const fetchCategoriesSelectList = createAsyncThunk<
   { rejectValue: string }
 >("categories/fetchSelectList", async (_, { rejectWithValue }) => {
   try {
-    const response = await api.get<SelectList[]>("/Categorias/SelectList");
+    const response = await api.get<SelectList[]>("/api/Categorias/SelectList");
     return response.data;
   } catch (error) {
     return rejectWithValue("Error al obtener la lista de categorías");
@@ -77,7 +77,7 @@ export const createCategory = createAsyncThunk<
   { rejectValue: string }
 >("categories/createCategory", async (category, { rejectWithValue }) => {
   try {
-    const response = await api.post<categorias, any>("/Categorias", {
+    const response = await api.post<categorias, any>("/api/Categorias", {
       descripcion: category.descripcion,
     });
 
@@ -115,7 +115,7 @@ export const updateCategory = createAsyncThunk(
   ) => {
     try {
       const response = await api.put(
-        `/categorias?id=${id}`,
+        `/api/categorias?id=${id}`,
         {
           id,
           descripcion,

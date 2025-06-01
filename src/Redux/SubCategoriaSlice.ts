@@ -58,7 +58,7 @@ export const fetchSubcategorias = createAsyncThunk<
   { rejectValue: string }
 >("subcategorias/fetchSubcategorias", async (_, { rejectWithValue }) => {
   try {
-    const response = await api.get<Subcategoria[]>("/Subcategorias");
+    const response = await api.get<Subcategoria[]>("/api/Subcategorias");
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError && error.response) {
@@ -78,7 +78,7 @@ export const createSubcategoria = createAsyncThunk<
     try {
       console.log(subcategoria);
       const response = await api.post<Subcategoria, any>(
-        "/Subcategorias",
+        "/api/Subcategorias",
         subcategoria
       );
       return response.data;
@@ -100,7 +100,7 @@ export const updateSubcategoria = createAsyncThunk<
   async (subcategoria, { rejectWithValue }) => {
     try {
       const response = await api.put<Subcategoria, any>(
-        `/Subcategorias?id=${subcategoria.id}`,
+        `/api/Subcategorias?id=${subcategoria.id}`,
         subcategoria
       );
       return response.data;

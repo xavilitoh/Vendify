@@ -38,7 +38,7 @@ export const fetchCajaEstaciones = createAsyncThunk<
       const response = await api.get<{
         result: CajaEstacion[];
         totalRecords: number;
-      }>(`/CajaEstacion/${page}/${pageSize}`);
+      }>(`/api/CajaEstacion/${page}/${pageSize}`);
       const cajaEstaciones = response.data.result || [];
       const total = response.data.totalRecords;
       return { cajaEstaciones, total };
@@ -61,7 +61,7 @@ export const createCajaEstacion = createAsyncThunk<
   async (cajaEstacionData, { rejectWithValue }) => {
     try {
       const response = await api.post<CajaEstacion, any>(
-        "/CajaEstacion",
+        "/api/CajaEstacion",
         cajaEstacionData
       );
       return response.data;
@@ -85,7 +85,7 @@ export const updateCajaEstacion = createAsyncThunk<
     try {
       console.log(data);
       const response = await api.put<CajaEstacion, any>(
-        `/CajaEstacion/${id}`,
+        `/api/CajaEstacion/${id}`,
         data
       );
       return response.data;
