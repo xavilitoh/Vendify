@@ -1,63 +1,58 @@
-import React, { useEffect } from "react";
-import { Button } from "antd";
-import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import {
-  fetchVentas,
-  selectVentas,
-  selectVentasLoading,
-  selectVentasPage,
-  selectVentasPageSize,
-  selectVentasTotal,
-  setPage,
-  setPageSize,
-} from "../../Redux/Ventas";
-import TablaVentas from "./TableVentas";
+import React, { useEffect, useState } from "react";
+import { Segmented } from "antd";
+import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Redux/Store";
-import { PlusOutlined } from "@ant-design/icons";
+import { fetchClientesSelectList } from "../../Redux/Clientes";
+import { fetchProductsSelectList } from "../../Redux/Productos";
 import Container from "../Utils/Container";
+import VentaForm from "./CrearForm";
 
-interface VentasProps { 
-  isDarkMode: boolean; // This prop is not used in the current component but can be used for styling or theming
+interface PropsVentas {
+  isDarkMode?: boolean;
 }
 
-const Ventas: React.FC<VentasProps> = ({isDarkMode}) => {
+const CrearVenta: React.FC<PropsVentas> = ({ isDarkMode }) => {
   const dispatch: AppDispatch = useDispatch();
-  const ventas = useSelector(selectVentas);
-  const loading = useSelector(selectVentasLoading);
-  const total = useSelector(selectVentasTotal);
-  const page = useSelector(selectVentasPage);
-  const pageSize = useSelector(selectVentasPageSize);
+  const [selectedTab, setSelectedTab] = useState("Venta");
 
   useEffect(() => {
-    dispatch(fetchVentas({ page, pageSize }));
-  }, [dispatch, page, pageSize]);
-
-  const handlePageChange = (newPage: number, newPageSize?: number) => {
-    dispatch(setPage(newPage));
-    if (newPageSize && newPageSize !== pageSize) {
-      dispatch(setPageSize(newPageSize));
-    }
-  };
+    dispatch(fetchClientesSelectList());
+    dispatch(fetchProductsSelectList());
+  }, [dispatch]);
 
   return (
     <Container isDarkMode={isDarkMode}>
-      <div style={{ marginBottom: 16 }}>
-        <Button type="primary" icon={<PlusOutlined />}>
-          <Link to="/crearventas">Crear Venta</Link>
-        </Button>
+      <div style={{ marginTop: 20 }}>
+        <Segmented
+          options={["Venta", "Detalles de Caja", "Cuadre"]}
+          value={selectedTab}
+          onChange={(val) => setSelectedTab(val.toString())}
+        />
       </div>
 
-      <TablaVentas
-        ventas={ventas}
-        total={total}
-        currentPage={page}
-        pageSize={pageSize} 
-        onPageChange={handlePageChange}
-        loading={loading}
-      />
+      {selectedTab === "Venta" && (
+        <div style={{ marginTop: 20 }}>
+          <VentaForm />
+        </div>
+      )}
+
+      {selectedTab === "Detalles de Caja" && (
+        <div className="card" style={{ marginTop: 20 }}>
+          <h3>Detalles de Caja</h3>
+          <p>
+            Contenido relacionado a los movimientos o estado actual de la caja.
+          </p>
+        </div>
+      )}
+
+      {selectedTab === "Cuadre" && (
+        <div className="card" style={{ marginTop: 20 }}>
+          <h3>Cuadre de Caja</h3>
+          <p>Resumen del cuadre de caja al final del día.</p>
+        </div>
+      )}
     </Container>
   );
 };
 
-export default Ventas;
+export default CrearVenta;

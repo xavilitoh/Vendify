@@ -17,7 +17,7 @@ import {
   DollarOutlined,
   AppstoreOutlined,
   BarcodeOutlined,
-  ProfileOutlined  
+  ProfileOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 
@@ -108,7 +108,7 @@ export const ItemSider: MenuProps["items"] = [
     children: [
       {
         key: "10-5",
-        label: <Link to="ventas">Ver Ventas</Link>,
+        label: <Link to="cajasventas">Crear Venta</Link>,
         icon: React.createElement(EyeOutlined),
       },
     ],
@@ -119,9 +119,9 @@ export const ItemSider: MenuProps["items"] = [
     label: <Link to="cajas"> Cajas</Link>,
   },
 
-{
-  key: "143",
-  icon: React.createElement(ProfileOutlined),
-  label: <Link to="cajasestacion"> Cajas Estacion</Link>,
-}
+  {
+    key: "143",
+    icon: React.createElement(ProfileOutlined),
+    label: <Link to="cajasestacion"> Cajas Estacion</Link>,
+  },
 ];

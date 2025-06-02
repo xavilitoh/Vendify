@@ -1,45 +1,60 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import AbrirCaja from "../EstacionCajas/AbrirCaja";
-import { checkCajaAbierta, selectCajaActual } from "../../Redux/Cajas.";
-import { Spin } from "antd";
-
+import {
+  fetchCajas,
+  selectCajas,
+  selectLoading,
+  selectPage,
+  selectPageSize,
+  selectTotal,
+  setPage,
+  setPageSize,
+} from "../../Redux/Cajas.";
+import TableCajas from "./TableCajas";
+import Container from "../Utils/Container";
+import { AppDispatch } from "../../Redux/Store";
+import { Typography } from "antd";
+const { Title, Paragraph } = Typography;
 interface CajasProps {
-  isDarkMode?: boolean;
+  isDarkMode: boolean;
 }
 
-const Cajas: React.FC<CajasProps> = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const cajaActual = useSelector(selectCajaActual);
-  const [loading, setLoading] = useState(true);
+const Cajas: React.FC<CajasProps> = ({ isDarkMode }) => {
+  const dispatch: AppDispatch = useDispatch();
+  const cajas = useSelector(selectCajas);
+  const loading = useSelector(selectLoading);
+  const total = useSelector(selectTotal);
+  const page = useSelector(selectPage);
+  const pageSize = useSelector(selectPageSize);
 
   useEffect(() => {
-    const check = async () => {
-      await dispatch(checkCajaAbierta() as any); // Use 'as any' if using thunk
-      setLoading(false);
-    };
-    check();
-  }, [dispatch]);
+    dispatch(fetchCajas({ page, pageSize }));
+  }, [dispatch, page, pageSize]);
 
-  useEffect(() => {
-    if (cajaActual) {
-      navigate("/ventas");
+  const handlePageChange = (newPage: number, newPageSize?: number) => {
+    dispatch(setPage(newPage));
+    if (newPageSize && newPageSize !== pageSize) {
+      dispatch(setPageSize(newPageSize));
     }
-  }, [cajaActual, navigate]);
+  };
 
-  if (loading) {
-    return (
-      <div
-        style={{ display: "flex", justifyContent: "center", paddingTop: "20%" }}
-      >
-        <Spin size="large" />
+  return (
+    <Container isDarkMode={isDarkMode}>
+      <div style={{ marginBottom: 16 }}>
+        <Title level={4}>Cajas</Title>
+        <Paragraph>Lista de cajas y sus estados actuales.</Paragraph>
       </div>
-    );
-  }
 
-  return !cajaActual ? <AbrirCaja visible={true} /> : <div>Caja Cerrada</div>;
+      <TableCajas
+        cajas={cajas}
+        loading={loading}
+        total={total}
+        currentPage={page}
+        pageSize={pageSize}
+        onPageChange={handlePageChange}
+      />
+    </Container>
+  );
 };
 
 export default Cajas;

@@ -23,12 +23,12 @@ import Compras from "./Components/Compras/Compras";
 import CrearCompra from "./Components/Compras/CreateCompra";
 import Subcategories from "./Components/SubCategorias/SubCategorias";
 import Clientes from "./Components/Clientes/Clientes";
-import Ventas from "./Components/Ventas/Ventas";
-import CrearVentas from "./Components/Ventas/CrearVentas";
-import Cajas from "./Components/Cajas/Cajas";
+import Ventas from "./Components//Ventas/Ventas";
+import CajasVentas from "./Components/Cajas/CajasVentas";
 import CajaEstacionPage from "./Components/EstacionCajas/EstacionCajas";
 import ResetPassword from "./Pages/ResetPassword";
 import OlvideContraseña from "./Pages/OlvideContraseña";
+import Cajas from "./Components/Cajas/Cajas";
 const { Content } = Layout;
 
 const lightTheme = {
@@ -127,10 +127,7 @@ const App: React.FC = () => {
         )}
         <Layout>
           {isAuthenticated && (
-            <SiderComponent
-              items={ItemSider}
-              isDarkMode={isDarkMode}
-            />
+            <SiderComponent items={ItemSider} isDarkMode={isDarkMode} />
           )}
           <Layout
             style={{
@@ -296,8 +293,15 @@ const App: React.FC = () => {
                     </ProtectedRoute>
                   }
                 />
-                <Route path="/crearVentas" element={<CrearVentas />} />
 
+                <Route
+                  path="/cajasventas"
+                  element={
+                    <ProtectedRoute>
+                      <CajasVentas isDarkMode={isDarkMode} />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="/cajas"
                   element={
