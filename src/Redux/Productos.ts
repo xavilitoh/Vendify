@@ -10,6 +10,23 @@ export interface Precio {
   idProducto?: number;
 }
 
+export interface PrecioProducto {
+  idPrecioProducto: number;
+  cantidad: number;
+  resto: number;
+  precio: number;
+  total: number;
+  descripcion: string;
+  enable: boolean;
+  id: number;
+  fechaCreacion: string;
+  fechaModificacion: string | null;
+  idEntidad: number;
+  entidad: any;
+  producto: any;
+}
+
+
 interface Product {
   id: number;
   nombre: string;
@@ -41,6 +58,7 @@ interface ProductState {
   page: number;
   pageSize: number;
   selectList: SelectList[];
+  precioProducto?: PrecioProducto;
 }
 
 const initialState: ProductState = {
@@ -51,6 +69,26 @@ const initialState: ProductState = {
   pageSize: 8,
   selectList: [],
 };
+
+export const fetchPrecioProducto = createAsyncThunk<
+  any, // Adjust this type to match your backend response
+  { idProducto: number; cantidad: number },
+  { rejectValue: string }
+>(
+  "products/fetchPrecioProducto",
+  async ({ idProducto, cantidad }, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`/api/Productos/GetPrecioProductos/${idProducto}`, {
+        params: { cantidad },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue("Error al obtener el precio del producto");
+    }
+  }
+);
+
+
 
 export const fetchProducts = createAsyncThunk<
   { products: Product[]; total: number },
@@ -166,7 +204,10 @@ const productSlice = createSlice({
       })
       .addCase(fetchProductsSelectList.rejected, (state) => {
         state.loading = false;
-      });
+      })
+      .addCase(fetchPrecioProducto.fulfilled, (state, action) => {
+       state.precioProducto = action.payload;
+})
   },
 });
 

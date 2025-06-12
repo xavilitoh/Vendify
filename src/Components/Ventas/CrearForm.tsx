@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Button, Collapse, message } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -6,10 +6,13 @@ import moment from "moment";
 
 import { AppDispatch } from "../../Redux/Store";
 import { createVenta } from "../../Redux/Ventas";
+import { fetchPrecioProducto } from "../../Redux/Productos";
 
 import ClienteSelector from "./ClienteSelector";
 import ProductoForm from "./ProductoForm";
 import ProductosTable from "./ProductoTable";
+
+import { checkCajaAbierta, selectCajaActual } from "../../Redux/Cajas.";
 
 const { Panel } = Collapse;
 
@@ -20,62 +23,89 @@ const VentaForm: React.FC = () => {
   const [form] = Form.useForm();
   const [productForm] = Form.useForm();
   const [detalles, setDetalles] = useState<any[]>([]);
-  const products = useSelector((state: any) => state.productos.selectList);
 
-  const handleAddProduct = (values: any) => {
-    const selectedProduct = products.find(
-      (p: any) => p.id === values.idProducto
-    );
-    const newItem = {
-      id: 0,
-      idVenta: 0,
-      idProducto: values.idProducto,
-      descripcion: selectedProduct?.value || "Producto",
-      cantidad: values.cantidad,
-      precio: values.precio,
-      impuestos: 0,
-      producto: null,
-      total: values.cantidad * values.precio,
-      fechaCreacion: moment().toISOString(),
-      fechaModificacion: moment().toISOString(),
-      enable: true,
-    };
-    setDetalles([...detalles, newItem]);
-    productForm.resetFields();
+  const productos = useSelector((state: any) => state.productos.selectList);
+  const cajaActual = useSelector(selectCajaActual);
+
+  useEffect(() => {
+    dispatch(checkCajaAbierta());
+  }, [dispatch]);
+
+  const handleAddProduct = async (values: any) => {
+    try {
+      const response = await dispatch(
+        fetchPrecioProducto({
+          idProducto: values.idProducto,
+          cantidad: values.cantidad,
+        })
+      ).unwrap();
+
+      const producto = productos.find((p: any) => p.id === values.idProducto);
+
+      const newItem = {
+        ...response,
+        descripcion: producto?.value || "Producto",
+        fechaCreacion: moment().toISOString(),
+        fechaModificacion: moment().toISOString(),
+        enable: true,
+      };
+
+      const alreadyAdded = detalles.some((d) => d.idPrecioProducto === newItem.idPrecioProducto);
+      if (alreadyAdded) {
+        message.warning("Este producto ya fue agregado");
+        return;
+      }
+
+      setDetalles([...detalles, newItem]);
+      productForm.resetFields();
+    } catch {
+      message.error("Error al obtener el precio del producto");
+    }
   };
 
   const removeProduct = (idProducto: number) => {
     setDetalles(detalles.filter((item) => item.idProducto !== idProducto));
   };
 
-  const handleSubmit = () => {
-    if (detalles.length === 0)
-      return message.error("Debe agregar al menos un producto");
+  const handleSubmit = async () => {
+    if (!cajaActual) {
+      message.error("Caja no disponible");
+      return;
+    }
 
-    form.validateFields().then((values) => {
+    if (detalles.length === 0) {
+      message.error("Debe agregar al menos un producto");
+      return;
+    }
+
+    try {
+      const values = await form.validateFields();
+      console.log("Valores del formulario:", values);
+
       const venta = {
         id: 0,
         idCliente: values.idCliente,
+        idCaja: cajaActual.idCajaEstacion,
+        idUsuario: cajaActual.idUsuario,
         detalles,
       };
 
-      dispatch(createVenta(venta))
-        .unwrap()
-        .then(() => {
-          message.success("Venta creada exitosamente");
-          form.resetFields();
-          setDetalles([]);
-          navigate("/ventas");
-        })
-        .catch(() => {
-          message.error("Error al crear la venta");
-        });
-    });
+      console.log("Venta a crear:", venta);
+
+      await dispatch(createVenta(venta)).unwrap();
+
+      message.success("Venta creada exitosamente");
+      form.resetFields();
+      setDetalles([]);
+      navigate("/ventas");
+    } catch(error:any) {
+      message.error(error);
+    }
   };
 
   return (
     <div style={{ display: "flex", gap: "20px" }}>
-      <div style={{ flex: "1 1 50%" }} className="card">
+      <div style={{ flex: 1 }} className="card">
         <h3>Productos Agregados</h3>
         <ProductosTable detalles={detalles} onRemove={removeProduct} />
         <Collapse>
@@ -85,15 +115,11 @@ const VentaForm: React.FC = () => {
         </Collapse>
       </div>
 
-      <div style={{ flex: "1 1 50%" }} className="card">
+      <div style={{ flex: 1 }} className="card">
         <h3>Crear Venta</h3>
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <ClienteSelector />
-          <Button
-            type="primary"
-            htmlType="submit"
-            style={{ width: "100%", marginTop: 16 }}
-          >
+          <Button type="primary" htmlType="submit" block style={{ marginTop: 16 }}>
             Crear Venta
           </Button>
         </Form>

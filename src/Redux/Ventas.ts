@@ -70,11 +70,13 @@ export const fetchVentas = createAsyncThunk<
     const res = await api.get<{ result: Venta[]; totalRecords: number }>(
       `/api/Ventas/${page}/${pageSize}`
     );
+    console.log("Ventas obtenidas:", res.data.result);
     return {
       ventas: res.data.result,
       total: res.data.totalRecords,
     };
   } catch (error) {
+    console.error("Error al obtener las ventas:", error);
     if (error instanceof AxiosError) {
       return rejectWithValue("Error al obtener las ventas");
     }
@@ -90,9 +92,10 @@ export const createVenta = createAsyncThunk<
   try {
     await api.post("/api/Ventas", venta);
   } catch (error) {
-    if (error instanceof AxiosError) {
-      return rejectWithValue("Error al crear la venta");
-    }
+  if (error instanceof AxiosError) {
+    console.log(error.response?.data?.message)
+  return rejectWithValue(error.response?.data?.message || "Error al crear la venta");
+}
     return rejectWithValue("Error inesperado");
   }
 });
@@ -139,8 +142,8 @@ export const { setPage, setPageSize } = ventasSlice.actions;
 // Selectors
 export const selectVentas = (state: RootState) => state.ventas.ventas;
 export const selectVentasLoading = (state: RootState) => state.ventas.loading;
-export const selectVentasTotal = (state: RootState) => state.ventas.total;
-export const selectVentasPage = (state: RootState) => state.ventas.page;
-export const selectVentasPageSize = (state: RootState) => state.ventas.pageSize;
+export const selectTotal = (state: RootState) => state.ventas.total;
+export const selectPage = (state: RootState) => state.ventas.page;
+export const selectPageSize = (state: RootState) => state.ventas.pageSize;
 
 export default ventasSlice.reducer;

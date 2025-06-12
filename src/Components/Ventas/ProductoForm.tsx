@@ -36,15 +36,7 @@ const ProductoForm: React.FC<Props> = ({ form, onFinish }) => {
         <InputNumber min={1} />
       </Form.Item>
 
-      <Form.Item
-        name="precio"
-        label="Precio"
-        rules={[{ required: true, message: "Ingrese el precio" }]}
-      >
-        <InputNumber min={0} />
-      </Form.Item>
-
-      <Button type="primary" htmlType="submit" style={{ marginTop: "15px" }}>
+      <Button type="primary" htmlType="submit" style={{ marginTop: 15 }}>
         Agregar Producto
       </Button>
     </Form>

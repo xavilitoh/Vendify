@@ -29,6 +29,7 @@ import CajaEstacionPage from "./Components/EstacionCajas/EstacionCajas";
 import ResetPassword from "./Pages/ResetPassword";
 import OlvideContraseña from "./Pages/OlvideContraseña";
 import Cajas from "./Components/Cajas/Cajas";
+import VerVentas from "./Components/Ventas/VerVentas";
 const { Content } = Layout;
 
 const lightTheme = {
@@ -290,6 +291,14 @@ const App: React.FC = () => {
                   element={
                     <ProtectedRoute>
                       <Ventas isDarkMode={isDarkMode} />
+                    </ProtectedRoute>
+                  }
+                />
+                 <Route
+                  path="/verventas"
+                  element={
+                    <ProtectedRoute>
+                      <VerVentas isDarkMode={isDarkMode} />
                     </ProtectedRoute>
                   }
                 />

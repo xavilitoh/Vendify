@@ -46,7 +46,6 @@ const Clientes: React.FC<ClientesProps> = ({isDarkMode}) => {
     }
   };
 
-  console.log(clientes);
   const handleCreateCliente = (values: any) => {
     dispatch(createCliente(values))
       .unwrap()

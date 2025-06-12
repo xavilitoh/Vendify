@@ -111,6 +111,11 @@ export const ItemSider: MenuProps["items"] = [
         label: <Link to="cajasventas">Crear Venta</Link>,
         icon: React.createElement(EyeOutlined),
       },
+         {
+        key: "10-6",
+        label: <Link to="verventas">Ver Venta</Link>,
+        icon: React.createElement(EyeOutlined),
+      },
     ],
   },
   {

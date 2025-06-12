@@ -53,7 +53,7 @@ export const checkCajaAbierta = createAsyncThunk(
   "cajas/checkCajaAbierta",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get("/Actual");
+      const response = await api.get("api/cajas/Actual");
       console.log(response.data, "RESPONSE CHECK CAJA");
       return response.data || null;
     } catch (error: any) {

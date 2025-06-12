@@ -50,10 +50,9 @@ export const fetchClientesSelectList = createAsyncThunk<
   try {
 
     const response = await api.get<Cliente[]>("/api/Clientes/SelectList");
-    console.log(response.data, "CLIENTES SELECT LIST");
     return response.data.map((c) => ({
       id: c.id,
-      value: `${c.nombres} ${c.apellidos}`,
+      value: c.value
     }));
   } catch (error) {
     console.error("Error al cargar lista de clientes", error);

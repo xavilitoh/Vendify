@@ -22,6 +22,8 @@ const CrearVenta: React.FC<PropsVentas> = ({ isDarkMode }) => {
 
   return (
     <Container isDarkMode={isDarkMode}>
+
+      
       <div style={{ marginTop: 20 }}>
         <Segmented
           options={["Venta", "Detalles de Caja", "Cuadre"]}
