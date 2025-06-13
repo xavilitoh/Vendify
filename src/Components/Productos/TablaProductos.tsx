@@ -49,14 +49,10 @@ const TableProducts: React.FC<TableProductsProps> = ({
 
   const columns = [
     { title: "Nombre", dataIndex: "nombreProducto", key: "nombre" },
-    { title: "Stock", dataIndex: "stockMinimo", key: "stockMinimo" },
-    { title: "Unidad", dataIndex: "unidad", key: "Unidad" },
-    /*     {
-      title: "Con Impuesto",
-      dataIndex: "conImpuesto",
-      key: "conImpuesto",
-      render: (enable: boolean) => <Switch checked={enable} disabled />,
-    }, */
+    { title: "Código", dataIndex: "codigo", key: "codigo" },
+    { title: "Stock", dataIndex: "stock", key: "stock" },
+    { title: "Stock Mínimo", dataIndex: "stockMinimo", key: "stockMinimo" },
+    { title: "Unidad", dataIndex: "unidad", key: "unidad" },
     {
       title: "Acciones",
       key: "actions",
