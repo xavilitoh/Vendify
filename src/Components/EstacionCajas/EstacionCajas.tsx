@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Button,Row,Col } from "antd";
-import { PlusOutlined, CloseOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 import {
   fetchCajaEstaciones,
   selectCajaEstaciones,
@@ -16,8 +16,6 @@ import TableCajaEstacion from "./TableCajaEstacion";
 import CreateCajaEstacion from "./CreateCajaEstacion";
 import { AppDispatch } from "../../Redux/Store";
 import Container from "../Utils/Container";
-import AbriCaja from "./AbrirCaja"; // Import the new component
-import CerrarCaja from "./CerrarCaja"; // Import the new component
 
 interface CajaEstacionProps {
   isDarkMode?: boolean; // Optional prop for dark mode
@@ -30,8 +28,6 @@ const CajaEstacionPage: React.FC<CajaEstacionProps> = ({ isDarkMode }) => {
 const page = useSelector(selectPage);
   const pageSize = useSelector(selectPageSize);
   const [isCreateModalVisible, setCreateModalVisible] = useState(false);
-  const [isOpenModalVisible, setOpemModalVisible] = useState(false);
-  const [isCloseModalVisible, setCloseModalVisible] = useState(false);
 
 
   useEffect(() => {

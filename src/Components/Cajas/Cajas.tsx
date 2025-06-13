@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchCajas,
-  selectCajas,
   selectLoading,
   selectPage,
   selectPageSize,
@@ -21,7 +20,6 @@ interface CajasProps {
 
 const Cajas: React.FC<CajasProps> = ({ isDarkMode }) => {
   const dispatch: AppDispatch = useDispatch();
-  const cajas = useSelector(selectCajas);
   const loading = useSelector(selectLoading);
   const total = useSelector(selectTotal);
   const page = useSelector(selectPage);
@@ -46,7 +44,6 @@ const Cajas: React.FC<CajasProps> = ({ isDarkMode }) => {
       </div>
 
       <TableCajas
-        cajas={cajas}
         loading={loading}
         total={total}
         currentPage={page}

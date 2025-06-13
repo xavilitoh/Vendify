@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../Api/VendifyApi";
-import { AxiosError } from "axios";
+import { AxiosError, AxiosHeaders } from "axios";
 import { RootState } from "./Store";
 
 export interface Precio {
@@ -80,6 +80,7 @@ export const fetchPrecioProducto = createAsyncThunk<
     try {
       const response = await api.get(`/api/Productos/GetPrecioProductos/${idProducto}`, {
         params: { cantidad },
+        headers: new AxiosHeaders(), // Usar AxiosHeaders para cumplir con el tipo
       });
       return response.data;
     } catch (error) {

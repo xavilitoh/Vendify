@@ -58,7 +58,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ isDarkMode }) => {
     <div className="login">
       <img
         className="imagen-logo"
-        src={`../../public/Images/${isDarkMode ? "2-dark" : "2"}.png`}
+        src={isDarkMode ? "/Images/2-dark.png" : "/Images/2.png"}
+        alt="Welcome"
       />
       <div className="login-form-container">
         <h1 className="">Entrar</h1>

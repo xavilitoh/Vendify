@@ -113,7 +113,12 @@ export const abrirCaja = createAsyncThunk<
         idCajaEstacion,
         montoApertura,
       });
-      return response.data;
+      // Validar que response.data sea un objeto Caja
+      if (response.data && typeof response.data === "object" && "id" in response.data) {
+        return response.data as Caja;
+      } else {
+        return rejectWithValue({ message: "Respuesta inválida del servidor" });
+      }
     } catch (error: any) {
       return rejectWithValue({
         message:
@@ -135,7 +140,11 @@ export const cerrarCaja = createAsyncThunk<
         idCajaEstacion,
         montoCierre,
       });
-      return response.data;
+      if (response.data && typeof response.data === "object" && "id" in response.data) {
+        return response.data as Caja;
+      } else {
+        return rejectWithValue({ message: "Respuesta inválida del servidor" });
+      }
     } catch (error: any) {
       return rejectWithValue({
         message:
@@ -195,7 +204,9 @@ const cajaSlice = createSlice({
         if (index !== -1) state.cajas[index] = updatedCaja;
       })
       .addCase(checkCajaAbierta.fulfilled, (state, action) => {
-        state.cajaActual = action.payload;
+        state.cajaActual = (action.payload && typeof action.payload === "object" && "id" in action.payload)
+          ? action.payload as Caja
+          : null;
       });
   },
 });

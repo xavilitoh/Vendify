@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Modal, Form, InputNumber, Input, Select, message } from "antd";
+import { Modal, Form, InputNumber, Select, message } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../Redux/Store";
 import {selectCajasSelectList,fetchCajasSelectList} from "../../Redux/Cajas.";
@@ -28,9 +28,9 @@ const CreateCajaModal: React.FC<CreateCajaModalProps> = ({
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
-      const { idCaja, montoCierre } = values;
-        form.resetFields();
-    await dispatch(cerrarCaja({ idCaja, montoCierre })).unwrap();
+      const { idCajaEstacion, montoCierre } = values;
+      form.resetFields();
+    await dispatch(cerrarCaja({ idCajaEstacion, montoCierre })).unwrap();
         
       form.resetFields();
       message.success("Caja Cerrada exitosamente");
@@ -53,7 +53,7 @@ const CreateCajaModal: React.FC<CreateCajaModalProps> = ({
       <Form form={form} layout="vertical">
 
         <Form.Item
-          name="idCaja"
+          name="idCajaEstacion"
           label="Caja Estación"
           rules={[{ required: true }]}
         >
